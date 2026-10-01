@@ -38,6 +38,8 @@ export interface FieldDef {
    * Não existe na tabela e nunca é gravada; não vai para o navegador.
    */
   sql?: string;
+  /** Texto: o formulário oferece os valores já usados neste campo (lista digitável) */
+  sugestoes?: boolean;
   /** Só em password: grava cifrado (token que o servidor precisa ler de volta) em vez de bcrypt */
   cifrado?: boolean;
   /** Valor inicial na inclusão */
@@ -90,12 +92,25 @@ export const RESOURCES: ResourceDef[] = [
     pk: ['id'],
     autoIncrement: true,
     labelField: 'nome',
-    defaultSort: { field: 'nome', dir: 'asc' },
+    // Grupo + nome (o nome entra como desempate na listagem)
+    defaultSort: { field: 'grupo', dir: 'asc' },
     canCreate: true,
     canUpdate: true,
     canDelete: true,
     fields: [
       { name: 'id', label: 'ID', type: 'number', readOnly: true, listed: true, width: 'xs' },
+      {
+        name: 'grupo',
+        label: 'Grupo',
+        type: 'text',
+        listed: true,
+        searchable: true,
+        filterable: true,
+        maxLength: 60,
+        sugestoes: true,
+        placeholder: 'Ex.: Fiscal, Utils, Vendas',
+        hint: 'Agrupa o sistema no menu lateral; escreva igual nos sistemas do mesmo grupo. Em branco: fica no topo, sem grupo',
+      },
       { name: 'nome', label: 'Nome', type: 'text', required: true, listed: true, searchable: true, filterable: true, maxLength: 120 },
       {
         name: 'repo_url',

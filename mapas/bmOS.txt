@@ -1,0 +1,114 @@
+Mapa do bmOS (programa Delphi para Windows; raiz do repositório: bmOS.dpr). Cada tela é um par .pas (código) + .dfm (desenho). Linhas aproximadas.
+Tela principal: "BMsoft - OS" em Units/Forms/UFrm.pas
+
+MENU E BOTÕES DA TELA PRINCIPAL
+Incluir: Units/Forms/UFrmIncluir.pas
+Editar: Units/Forms/UFrmIncluir.pas
+Recarregar: BtnRecarregarClick em Units/Forms/UFrm.pas (linha ~1046)
+Sair: BtnSairClick em Units/Forms/UFrm.pas (linha ~1375)
+Requisição: Units/Requisições/UFrmRequisicao.pas ("Requisição de material")
+Cancelar: BtnCancelClick em Units/Forms/UFrm.pas (linha ~987)
+Ocorrência: BtnOcorrenciaClick em Units/Forms/UFrm.pas (linha ~1268)
+Fechar Conta: BtnFecharClick em Units/Forms/UFrm.pas (linha ~1188)
+Atualizar: BtnAtualizarClick em Units/Forms/UFrm.pas (linha ~961)
+Duplicatas: Units/Forms/UFrmFechamento.pas ("Fechamento da OS")
+Defeito: Units/Forms/UFrmDefConst.pas ("Defeito Constatado")
+Imprimir: Units/Impressão/UFrmImpressao.pas ("Impressão OS")
+Manutenção: Units/Forms/UFrmManutencao.pas ("Manutenção")
+Pronto: Pronto1Click em Units/Forms/UFrm.pas (linha ~1455)
+Aprovar: PBtnAprovarClick em Units/Forms/UFrm.pas (linha ~1723)
+Recusar: PBtnRecusarClick em Units/Forms/UFrm.pas (linha ~1728)
+Aguardando retorno: Aguardandoretorno1Click em Units/Forms/UFrm.pas (linha ~579)
+Pré-Termino: PrTrmino1Click em Units/Forms/UFrm.pas (linha ~1460)
+Reabrir: PBtnReabrirClick em Units/Forms/UFrm.pas (linha ~1686)
+Retirar equipamento: Units/Forms/UFrmRetirada.pas ("Retirar Equipamento")
+Deslocamento: Units/Forms/UFrmDeslocamento.pas ("Deslocamento")
+Apontamento de horas: Units/Forms/UFrmApontamento.pas ("Apontamento de horas")
+Requisições Pedido de Compra: MenuReqPedCompClick em Units/Forms/UFrm.pas (linha ~1235)
+Dados Personalizados: Units/Forms/UFrmOSPersonal.pas ("Campos Personalizados OS")
+Fotos: Units/Foto/UFrmFotoServer.pas ("Servidor Fotos OS")
+Pós-Venda: btnPosVendaClick em Units/Forms/UFrm.pas (linha ~1273)
+Cadastros › Cadastro de Veículos: Units/Forms/Veiculo/UFrmVeiculo.pas ("Veículos")
+Cadastros › Cadastro de Objetos: Units/Forms/Objeto/UFrmObjetoCad.pas ("Objetos Cadastrados")
+Cadastros › Cadastro de Objetos do Cliente: Units/Forms/Objeto/UFrmObjetoCli.pas ("Lista de objetos do cliente")
+Cadastros › Cadastro de Classificação: Units/Forms/UFrmClassificacao.pas ("Classificação")
+LOG: Units/Forms/UFrmLog.pas ("Log")
+Ver duplicatas: Units/Forms/UFrmFechamento.pas ("Fechamento da OS")
+Desfazer duplicatas: BtnDesfazerDupClick em Units/Forms/UFrm.pas (linha ~1122)
+Recalcular: Units/Requisições/UFrmRecalculoEst.pas ("Recalcular estoque dos técnicos")
+Estoque: Units/Requisições/UFrmEstoqueTec.pas ("Estoque dos técnicos")
+
+TELAS (título -> arquivo; mensagens que a tela mostra)
+Adicionar objeto na OS.: Units/Cadastros/Objetos/UFrmCadObjeto.pas. Mensagens: "Falha ao inserir dados na tabela OSOBJPersonal. Detalhes:"
+Apontamento de horas: Units/Forms/UFrmApontamento.pas. Mensagens: "Confirma excluir o apontamento ID:"
+Cadastrar Setor: Units/Cadastros/UFrmCadSetor.pas. Mensagens: "Descrição em branco."
+Cadastrar Veiculo do Cliente: Units/Cadastros/Veiculo/UFrmCadVeiculoCliente.pas. Mensagens: "Informe um veículo."; "Informe a descrição do veículo."; "Informe a montadora do veículo."; "Informe o combustível do veículo."
+Cadastro de apontamento de horas: Units/Cadastros/UFrmCadApontamento.pas
+Cadastro de classificação: Units/Cadastros/UFrmCadClassificacao.pas. Mensagens: "Classificação"
+Cadastro de dados genéricos: Units/Cadastros/UFrmCadListGeneric.pas. Mensagens: "Informe uma Descrição."; "Setor inválido."; "Técnico inválido."
+Cadastro de deslocamento: Units/Cadastros/UFrmCadDeslocamento.pas. Mensagens: "KM Total inválido"
+Cadastro de formato: Units/Impressão/uFrmCadFormato.pas. Mensagens: "Informe o Nome"
+Cadastro de objeto: Units/Cadastros/Objetos/UFrmCadObjetoCad.pas. Mensagens: "Objeto não encontrado."
+Cadastro de ocorrências: Units/Cadastros/UFrmCadOcorrencia.pas. Mensagens: "Inclusão da ocorrência obrigatória."; "Ocorrência ID"; "Não foi possivel gravar a Ocorrência. Detalhes:"
+Cadastro de Setores: Units/Forms/UFrmSetor.pas. Mensagens: "Confirma excluir o setor:"
+Cadastro de Veiculos do Cliente: Units/Forms/Veiculo/UFrmVeiculoCliente.pas. Mensagens: "Confirma deletar o cadastro?"
+Cadastro Objeto Cliente: Units/Cadastros/Objetos/UFrmCadObjetoCli.pas. Mensagens: "Falha ao inserir dados na tabela OSOBJPersonal. Detalhes:"; "Objeto não encontrado."
+Cadastro Veiculo: Units/Cadastros/Veiculo/UFrmCadVeiculo.pas
+Campos Personalizados OS: Units/Forms/UFrmOSPersonal.pas. Mensagens: "Falha ao inserir dados na tabela OSPersonal. Detalhes:"
+Capturar Ocorrências: Units/UFrmCapOcorrencia.pas. Mensagens: "Nenhuma OS encontrado"; "Você deve primeiro localizar um conjunto de OS, depois marcá-los para captura"; "Nenhuma OS foi marcado para captura"; "É possível capturar no máximo 6 ocorrências"
+Cesta de itens: Units/Forms/UFrmCestas.pas. Mensagens: "Cesta inválida ou indefinida."; "Quantidade zerada ou negativa."
+Classificação: Units/Forms/UFrmClassificacao.pas. Mensagens: "Confirma exclui a classificacao"
+Combustível: Units/Cadastros/Veiculo/UFrmCadCombustivel.pas. Mensagens: "Combustível ID:"; "Falha ao Inserir/Editar combustível. Detalhes:"
+Defeito Constatado: Units/Forms/UFrmDefConst.pas. Mensagens: "Técnico inválido"; "Setor inválido"; "OS não encontrada."
+Deslocamento: Units/Forms/UFrmDeslocamento.pas. Mensagens: "Confirma excluir o registro selecionado?"
+Devolução: Units/Forms/UFrmDevolucao.pas. Mensagens: "Produto não encontrado na OS"
+Editar Duplicata: Units/Forms/UFrmEditDuplicata.pas
+Editor ECF: Units/Impressão/UFrmDesignECF.pas
+Erro de Transação: Units/ValidaçãoCredito/UFrmCredito.pas. Mensagens: "Venda NEGADA pelo gerente!"
+Estoque dos técnicos: Units/Requisições/UFrmEstoqueTec.pas
+Faturamento pendente.: Units/Forms/UFrmFinancPen.pas
+Fechamento: Units/Forms/UFrmDataFechamento.pas. Mensagens: "Informe a data e a hora."; "Data de fechamento deve ser maior que a data de geração da OS."; "Hora de fechamento deve ser maior que a hora de geração da OS."
+Fechamento da OS: Units/Forms/UFrmFechamento.pas. Mensagens: "É necessário ter um banco padrão configurado."; "Plano de pagamento não está ativo."; "Duplicata(s) com valor(es) inválido(s)"; "OS não encontrada."
+Foto: Units/Foto/UFrmExibirFoto.pas
+FrmCombustivel: Units/Forms/Veiculo/UFrmCombustivel.pas. Mensagens: "Confirma deletar?"
+FrmDadosVeiculo: Units/Forms/Veiculo/UFrmDadosVeiculo.pas
+FrmEmail: Units/Impressão/UFrmEmail.pas
+FrmObjeto: Units/Forms/Objeto/UFrmObjeto.pas. Mensagens: "Falha ao salvar Objetos. Detalhes:"; "Falha ao inserir dados na tabela OSOBJPersonal. Detalhes:"
+Gerenciar Situações: Units/UFrmGerenciarSituacoes.pas. Mensagens: "Confirma excluir a situação selecionada?"; "Informe a Descrição"; "Informe o Valor"; "Valor já em uso por outra Situação"
+Horas Trabalhadas: Units/Cadastros/UFrmCadHoras.pas
+Impressão ECF: Units/Impressão/UFrmImpECF.pas. Mensagens: "Falha ao gravar dados na tabela OrcECF. Detalhes:"
+Impressão OS: Units/Impressão/UFrmImpressao.pas. Mensagens: "Falha ao gravar flag de impressão. Detalhes:"; "Nenhum formato selecionado."
+Incluir: Units/Cadastros/UFrmCadItem.pas. Mensagens: "Não há estoque desse produto para a quantidade especificada."; "Preço de venda zerado."; "Produto chegou no estoque mínimo"; "Produto já foi inserido. Item:"
+Lista de objetos do cliente: Units/Forms/Objeto/UFrmObjetoCli.pas. Mensagens: "Confirma deletar o objeto"; "Falha ao inserir dados na tabela OSOBJPersonal. Detalhes:"; "Objeto não está ativo."
+Log: Units/Forms/UFrmLog.pas
+Login: Units/Forms/UFrmLogin.pas
+Manutenção: Units/Forms/UFrmManutencao.pas. Mensagens: "OS Não encontrada."; "OS não está em edição."; "OS liberada."
+Manutenção de Formatos: Units/Impressão/UFrmFormatos.pas
+Montadora: Units/Cadastros/Veiculo/UFrmCadMontadora.pas. Mensagens: "Montadora ID:"; "Falha ao Inserir/Editar Montadora. Detalhes:"
+Montadoras: Units/Forms/Veiculo/UFrmMontadora.pas. Mensagens: "Confirma deletara montadora?"
+Objetos Cadastrados: Units/Forms/Objeto/UFrmObjetoCad.pas. Mensagens: "Confirma deletar o objeto"
+Ordens de Serviço: Units/Forms/UFrmOS.pas. Mensagens: "Sem permissão para capturar OS já capturada."; "OS está cancelada."; "Você já capturou essa OS."; "Confirma capturar a OS com cliente diferente da captura anterior?"
+Personal Cliente.: Units/Forms/UFrmPersonalCliente.pas
+Produtos Similares: Units/Forms/UFrmSimilar.pas
+Recalcular estoque dos técnicos: Units/Requisições/UFrmRecalculoEst.pas. Mensagens: "Existe processos em execução."
+Requisição de material: Units/Requisições/UFrmRequisicao.pas. Mensagens: "Falha ao inserir Requisição. Detalhes:"; "Nenhuma requisição foi realizada."
+Retirar Equipamento: Units/Forms/UFrmRetirada.pas
+Selecão de preço: Units/Mensagens/UMsgPrecoDifAgrup.pas
+Seleção de item para devolução: Units/Forms/UFrmSelItemDev.pas
+Senha do Técnico que abriu a OS: Units/uFrmSenhaTecOS.pas. Mensagens: "Senha inválida"
+Servidor Fotos OS: Units/Foto/UFrmFotoServer.pas. Mensagens: "Confirma excluir a imagem?"
+Sugestão de Produtos: Units/Forms/UFrmSugestao.pas
+Transferência de Veículo: Units/Forms/Veiculo/UFrmTransfVeic.pas. Mensagens: "Veículo não encontrado."; "Cliente inválido ou indefinido."
+Trocar Ténico dos itens.: Units/Forms/UFrmTrocarTec.pas. Mensagens: "Técnico inválido ou indefinido"
+Validação de Venda - Detalhamento dos Itens: Units/ValidaçãoCredito/UFrmCreditoDet.pas
+Veículos: Units/Forms/Veiculo/UFrmVeiculo.pas. Mensagens: "Confirma deletar o veículo?"
+UControlFrmIncluir: Units/UControlFrmIncluir.pas. Mensagens: "Deseja capturar Apontamento de Horas?"; "Deseja capturar Deslocamentos?"
+UFrmIncluir: Units/Forms/UFrmIncluir.pas. Mensagens: "Confirma exclui os Dados"; "Confirma gravar Ordem de Serviço?"; "OS não encontrada."; "Usuário sem permissão para alterar item de outro Técnico"
+UFrmImpFR3: Units/Impressão/UFrmImpFR3.pas. Mensagens: "Falha ao gerar PDF."; "Erro ao gerar arquivo PDF."; "Falha ao abrir tabela. Detalhes:"
+UFrmImpMOD: Units/Impressão/UFrmImpMOD.pas. Mensagens: "Erro na impressão:"
+
+REGRAS E VALIDAÇÕES (código sem tela)
+Units/Vars.pas: "Registro ID"
+Units/Classes/UVeiculo.pas: "Falha ao inserir Veiculo. Detalhes:"; "Falha ao editar Veiculo. Detalhes:"
+Units/Classes/UVeiculoCliente.pas: "Falha ao inserir VeiculoCliente. Detalhes:"; "VeículoCliente ID:"; "Falha ao editar VeiculoCliente. Detalhes:"
+Units/Requisições/UThreadRecalculo.pas: "O Processo foi parado."

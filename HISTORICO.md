@@ -2,6 +2,13 @@
 
 Mais recente primeiro. PATCH a cada envio ao GitHub; MAJOR/MINOR só quando pedido.
 
+## 0.0.7 — 2026-10-01
+
+- Sistemas: campo Grupo (coluna nova `sistemas.grupo`), com lista digitável dos grupos já usados; a lista de Sistemas mostra o Grupo antes do Nome e ordena por grupo + nome.
+- Menu lateral: sistemas agrupados (Fiscal, Gestão, Utils, Vendas...), cada grupo recolhível; o navegador lembra os fechados.
+- Listas: empate na ordenação desempata pelo nome do registro.
+- Mapas montados para NFe, NFs, NFSe - PWS, PAF - NFCe, Pre - Venda, SPED, XML - Manager, BMOs, Compras, DAV, Master e NFCe - Nacional (mapas/); mapa do Cadastros pronto em mapas/Cadastros.txt; mapa do Notas em mapas/Notas.txt.
+
 ## 0.0.6 — 2026-10-01
 
 - Ecossistema passa a se chamar Fluxograma (menu, título e aviso ao salvar).

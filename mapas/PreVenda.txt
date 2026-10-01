@@ -1,0 +1,35 @@
+Mapa do PreVenda (programa Delphi para Windows; raiz do repositório: Prevenda.dpr). Cada tela é um par .pas (código) + .dfm (desenho). Linhas aproximadas.
+Tela principal: "BMsoft - Pré-Venda" em UFrm.pas
+
+MENU E BOTÕES DA TELA PRINCIPAL
+Recarregar: BtnConfigClick em UFrm.pas (linha ~227)
+Sair: BtnSairClick em UFrm.pas (linha ~233)
+Nova PV [F8]: UFrmPV.pas ("Pré-venda")
+Editar: UFrmAbre.pas
+Imprimir: BtnImprimirClick em UFrm.pas (linha ~314)
+Atualizar: BtnAtualizarClick em UFrm.pas (linha ~323)
+Lista: BtnListaClick em UFrm.pas (linha ~275)
+Manutenção: UFrmManutencao.pas ("Manutenção")
+
+TELAS (título -> arquivo; mensagens que a tela mostra)
+Captura: uFrmCaptura.pas. Mensagens: "Receita inválida."
+Editar Duplicata: UFrmDup.pas. Mensagens: "Valor inválido"; "Valor da duplicata não pode ser maior que o total da pré-venda"; "Especifique o vencimento"; "Data não pode ser inferior a Hoje"
+Entrega do Produto: UFrmEntrega.pas. Mensagens: "Quantidade já entregue deve ser menor que a quantidade total"; "Especifique a data da entrega"; "Data não pode ser retroativa"
+FrmComboPla: UFrmComboPla.pas
+FrmProVlBruto: UFrmProVlBruto.pas
+Incluir Item: UFrmPro.pas. Mensagens: "Produto não definido"; "Produto inválido"; "Produto está desativado"; "Referência do produto está desativada"
+Informações do Intermediador da Transação: uFrmInfoIntermediador.pas. Mensagens: "Informe o documento"; "Documento inválido"; "Informe o identificador"
+Localizar Identificador: UFrmLocateIdent.pas. Mensagens: "Informe o código a localizar"; "Código não encontrado"
+Lotes do Item: UFrmLote.pas. Mensagens: "Não foi possível carregar a tabela de configurações do módulo Receita (Rec_Config), verifique as tabelas do módulo."; "Quantidade do lote inválida"; "Estoque do lote negativo."; "Data de fabricação é obrigatória."
+Manutenção: UFrmManutencao.pas. Mensagens: "Pré-venda não encontrada"; "Confirma zerar a numeração das pré-vendas?"
+Observações das Duplicatas: UFrmObsDuplicatas.pas
+Parear Aniversário do Cliente: UFrmParearNiver.pas. Mensagens: "O dia/mês não coincide com a Data de Nascimento do cadastro do cliente"
+Pré-venda: UFrmPV.pas. Mensagens: "Confirma excluir o item selecionado?"; "Confirma cancelar o item selecionado?"; "O Controle de Lote está desabilitado nas configurações"
+Pré-vendas: UFrmLista.pas
+Similares ao Produto: UFrmSimilar.pas
+Sugestões do Produto: UFrmSugestao.pas
+Transformar Valor em Acréscimo/Desconto: UFrmModValorToAD.pas
+UFrmAbre: UFrmAbre.pas. Mensagens: "Essa pré-venda não existe mais ou já foi impressa"; "Esse pré-venda já está sendo alterada"; "Essa pré-venda está sendo impressa"; "Você não pode alterar essa pré-venda pois ela foi feita em outro computador"
+UFrmGrava: UFrmGrava.pas
+UFrmInfoGravada: UFrmInfoGravada.pas
+

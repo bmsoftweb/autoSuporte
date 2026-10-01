@@ -1,0 +1,65 @@
+Mapa do Master (programa Delphi para Windows; raiz do repositório: Master.dpr). Cada tela é um par .pas (código) + .dfm (desenho). Linhas aproximadas.
+Tela principal: "" em UFrm.pas
+
+MENU E BOTÕES DA TELA PRINCIPAL
+Suporte On-Line: BtnSOLClick em UFrm.pas (linha ~969)
+Login: UFrmLogin.pas ("Login")
+Backup: BtnBackupClick em UFrm.pas (linha ~878)
+Renovar Senha: UFrmLibera.pas ("Renovar Senha")
+NFCe: BtnNFCeClick em UFrm.pas (linha ~598)
+MDFe: BtnManifestoClick em UFrm.pas (linha ~785)
+DAV: BtnDAVClick em UFrm.pas (linha ~474)
+Notas: BtnNotasClick em UFrm.pas (linha ~506)
+Financ: BtnFinancClick em UFrm.pas (linha ~522)
+Caixa: BtnCaixaClick em UFrm.pas (linha ~556)
+Report: BtnReportClick em UFrm.pas (linha ~623)
+NFe: BtnNFeClick em UFrm.pas (linha ~639)
+NFs: BtnNFsClick em UFrm.pas (linha ~655)
+XML Manager: BtnXMLManagerClick em UFrm.pas (linha ~690)
+Compras: BtnComprasClick em UFrm.pas (linha ~674)
+Cadastros: BtnCadastrosClick em UFrm.pas (linha ~490)
+O.S.: BtnOSClick em UFrm.pas (linha ~706)
+Ind: BtnIndClick em UFrm.pas (linha ~722)
+Pré-venda: BtnPrevendaClick em UFrm.pas (linha ~753)
+CTe: BtnCTeClick em UFrm.pas (linha ~769)
+Produção: BtnProducaoClick em UFrm.pas (linha ~737)
+Instalação: UFrmConfig.pas ("Configurações da Instalação")
+Configurador: BtnConfiguradorClick em UFrm.pas (linha ~1007)
+Cadastros: UFrmCadastros.pas ("Cadastros")
+Caixa CONFIG: BtnCaixaCONFIGClick em UFrm.pas (linha ~566)
+Instalar Caixa: BtnInstalarCaixaClick em UFrm.pas (linha ~578)
+DBSYS: BtnDBSYSClick em UFrm.pas (linha ~450)
+Conversor: BtnConversorClick em UFrm.pas (linha ~461)
+Pasta BMsoft: BtnPastaBMsoftClick em UFrm.pas (linha ~908)
+Server: BtnServerClick em UFrm.pas (linha ~1067)
+Chat Server: abre o programa Chat_Server.exe (outro módulo)
+Pedidos Mobile › Gerenciador: abre o programa PedidosMobileServer.exe (outro módulo)
+Pedidos Mobile › Conversor: abre o programa ConversorWS.exe (outro módulo)
+Update Service: BtnUpdServiceClick em UFrm.pas (linha ~1080)
+SPED: BtnSPEDClick em UFrm.pas (linha ~803)
+Sintegra: BtnSintegraClick em UFrm.pas (linha ~814)
+Calculadora: abre o programa calc.exe (outro módulo)
+Report antigo: BtnReportAntigoClick em UFrm.pas (linha ~1094)
+Trocar Senha: UFrmTrocaSenha.pas ("Trocar Senha")
+
+TELAS (título -> arquivo; mensagens que a tela mostra)
+Cadastrar Empresa: UFrmCadEmp.pas. Mensagens: "CNPJ não foi especificado"; "CNPJ inválido"; "Nome em branco"; "Nome fantasia em branco"
+Cadastrar Usuário: UFrmCadUser.pas. Mensagens: "Digite o nome do usuário"; "Digite o login do usuário"
+Cadastros: UFrmCadastros.pas. Mensagens: "Confirma excluir a Empresa selecionada?"; "Confirma excluir o Usuário selecionado?"
+Conferência do CAD da Empresa: UFrmValidaCAD.pas. Mensagens: "Os dados do cadastro da empresa foram adulterados!"; "O CNPJ da Empresa não está liberado para uso do sistema!"
+Configurações da Instalação: UFrmConfig.pas. Mensagens: "Sem serial para efetuar download"
+FrmMain: UFrmMain.pas
+Lembrete de Aniversário: UFrmAniversario.pas. Mensagens: "Erro ao verificar aniversariantes:"
+Lista de Acessos: UFrmAcessos.pas
+Login: UFrmLogin.pas. Mensagens: "Arquivo INI das Bases não econtrado"; "Nenhuma base configurada no INI das Bases"; "A base está em manutenção no momento..."; "Pasta da base não encontrada"
+Renovar Senha: UFrmLibera.pas. Mensagens: "Digite a senha obtida"; "A senha digitada não é válida"; "Serial não encontrado/inválido nos Servidores da BMsoft"; "Serial bloqueado nos Servidores da BMsoft"
+Splash: UFrmSplash.pas
+Trocar Senha: UFrmTrocaSenha.pas. Mensagens: "A nova senha é igual à senha atual"; "As novas senhas não coincidem"; "Senha atual incorreta"
+Versões dos Módulos: UFrmVersoes.pas
+UFrmComboUsers: UFrmComboUsers.pas
+UFrmExpirando: UFrmExpirando.pas
+
+REGRAS E VALIDAÇÕES (código sem tela)
+UCheckProgramDataDLLs.pas: "Erro ao verificar sincronização de DLLs:"; "Pasta ProgramData indisponível"
+UThCheckECFsPAF.pas: "Erro ao verificar ECFs ativas:"
+UWSBloqueio.pas: "ERRO NA THREAD DE VERIFICAÇÃO DE BLOQUEIO:"; "Sistema bloqueado:"

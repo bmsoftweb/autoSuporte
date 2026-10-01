@@ -28,6 +28,7 @@ CREATE TABLE usuarios (
 CREATE TABLE sistemas (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(120) NOT NULL,
+  grupo VARCHAR(60) NULL,             -- grupo no menu lateral (ex.: Fiscal); vazio = sem grupo
   repo_url VARCHAR(255) NOT NULL,     -- https://github.com/dono/repo
   branch VARCHAR(100) NULL,           -- vazio = branch padrão do repositório
   mapa TEXT NULL,                     -- mapa do sistema (botão "Montar mapa")

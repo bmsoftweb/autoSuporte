@@ -184,6 +184,21 @@ export function createCrudRouter() {
     }
   });
 
+  /** Valores já usados num campo com `sugestoes` (lista do campo digitável, ex.: Grupo dos sistemas) */
+  router.get('/sugestoes/:resource/:campo', async (req: Request, res: Response) => {
+    try {
+      const resource = resolveResource(req, res);
+      const f = resource.fields.find((x) => x.name === req.params.campo && x.sugestoes && !x.sql);
+      if (!f) return res.status(404).json({ error: 'Campo sem sugestões.' });
+      const [rows] = await pool.query<any[]>(
+        `SELECT DISTINCT TRIM(t.${f.name}) AS v FROM ${resource.table} t WHERE TRIM(t.${f.name}) <> '' ORDER BY v LIMIT 500`,
+      );
+      res.json(rows.map((r) => String(r.v)));
+    } catch (err: any) {
+      res.status(err.status || 400).json({ error: err.message });
+    }
+  });
+
   /** Opções dos combos de chave estrangeira (busca avançada): id + rótulo do recurso */
   router.get('/options/:resource', async (req: Request, res: Response) => {
     try {
@@ -352,7 +367,10 @@ export function createCrudRouter() {
       const [rows] = await pool.query<any[]>(
         `SELECT ${columnNames(resource).map((c) => `${colunaSql(resource, c)} AS ${c}`).join(', ')}${rotulos.join('')} FROM ${resource.table} t
           WHERE ${whereSql}
-          ORDER BY ${colunaSql(resource, sortField)} ${sortDir}, t.${pkCol(resource)} ${sortDir}
+          ORDER BY ${colunaSql(resource, sortField)} ${sortDir}${
+            // Empate (ex.: mesmo grupo): desempata pelo nome do registro, depois pela chave
+            sortField !== resource.labelField ? `, ${colunaSql(resource, resource.labelField)} ${sortDir}` : ''
+          }, t.${pkCol(resource)} ${sortDir}
           LIMIT ? OFFSET ?`,
         [...params, limit, offset],
       );

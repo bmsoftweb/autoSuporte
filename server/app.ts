@@ -134,7 +134,7 @@ export function createApp() {
   app.get('/api/sistemas', async (_req: Request, res: Response) => {
     try {
       const [rows] = await pool.query<any[]>(
-        `SELECT s.id, s.nome FROM sistemas s
+        `SELECT s.id, s.nome, NULLIF(TRIM(s.grupo), '') AS grupo FROM sistemas s
            JOIN usuario_sistemas us ON us.sistema_id = s.id
           WHERE us.usuario_id = ? ORDER BY s.nome`,
         [res.locals.usuario.id],

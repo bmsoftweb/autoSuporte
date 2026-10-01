@@ -30,6 +30,8 @@ const get = async <T>(url: string): Promise<T> => (await chamar('GET', url)).jso
 export interface Sistema {
   id: number;
   nome: string;
+  /** Grupo no menu lateral (ex.: Fiscal); null = sem grupo */
+  grupo: string | null;
 }
 
 export const login = async (email: string, senha: string) => (await chamar('POST', '/api/login', { email, senha })).json();
@@ -96,6 +98,8 @@ export const updateRecord = (resource: string, id: string, payload: RegistroCrud
 export const deleteRecord = (resource: string, id: string) => chamar('DELETE', `/api/crud/${resource}/${encodeURIComponent(id)}`);
 
 /** Sistemas ligados a um registro (ids): liberados do usuário ou relacionados do sistema */
+/** Valores já usados num campo com lista digitável (ex.: grupos dos sistemas) */
+export const fetchSugestoes = (resource: string, campo: string) => get<string[]>(`/api/sugestoes/${resource}/${campo}`);
 export const fetchLigados = (resource: string, id: string) => get<number[]>(`/api/ligados/${resource}/${encodeURIComponent(id)}`);
 
 /** Configurações (tabela config): grupo + chave */

@@ -1,0 +1,119 @@
+Mapa do Compras (programa Delphi para Windows; raiz do repositório: Compras.dpr). Cada tela é um par .pas (código) + .dfm (desenho). Linhas aproximadas.
+Tela principal: "BMsoft - Compras" em UFrm.pas
+
+MENU E BOTÕES DA TELA PRINCIPAL
+Incluir: UFrmNota.pas ("Incluir Nota")
+Cancelar: UFrmCanc.pas ("Cancelar Nota")
+Fechar: BtnFecharClick em UFrm.pas (linha ~326)
+XML Manager: abre o programa Manager.exe (outro módulo)
+Recarregar: BtnConfigClick em UFrm.pas (linha ~629)
+Abrir: UFrmAbre.pas ("Abre")
+Atualizar: BtnRefreshClick em UFrm.pas (linha ~344)
+Financ: abre o programa Financ.exe (outro módulo)
+Preços: UFrmPrecos.pas ("Formação de Preço")
+Extras: BtnExtrasClick em UFrm.pas (linha ~582)
+Pedidos: UFrmPedLista.pas ("Pedidos de Compra")
+Regras de Captura: UFrmRegras.pas ("Editor de Regras")
+Imprimir Autorização de Pagamento: UFrmAutPgto.pas ("Imprimir Autorização de Pagamento")
+Verificar Produtos com Estoque Mínimo: UFrmVerEstoqueMin.pas ("Verificar Produtos com Estoque Mínimo")
+Requisições de Pedido de Compra: btnRequisicaoPedCompClick em UFrm.pas (linha ~532)
+Etiquetas: UFrmEtiquetas.pas ("Etiquetas")
+Cadastro de classificação: UFrmCadClassific.pas ("Cadastro de Classificação")
+
+TELAS (título -> arquivo; mensagens que a tela mostra)
+-: UFrmPedWr.pas
+Abre: UFrmAbre.pas. Mensagens: "Para modificar uma nota de compra já enviada a Cidasc necessário senha de um técnico."
+Abre Pedido: UFrmPedAbre.pas. Mensagens: "Pedido não encontrado"; "Este pedido já está sendo alterado no momento"; "Esse pedido está cancelado"; "Esse pedido já foi capturado"
+Alterar Conta: UFrmAltConta.pas. Mensagens: "Defina uma conta"; "Conta inválida"; "Fluxo da conta incompatível com o fluxo da nota"; "Conta deve ser de nível "Lançamento""
+Alteração de Referências conforme XML: UFrmAltRefsFromXML.pas. Mensagens: "Nenhuma referência marcada para ser trocada"
+Auto NF Frete: UFrmAutoNFFrete.pas. Mensagens: "Para capturar automaticamente a Nota de Frete, deve estar preenchida a Chave da NF-e nesta nota"; "Para capturar automaticamente a Nota de Frete, devem estar preenchidos os campos Modelo, Série, Número e Fornecedor nesta nota"; "Nenhuma nota de frete encontrada com referência a esta nota"
+Cadastrar NCMs novos do XML: UFrmDifNCMdoXMLCad.pas. Mensagens: "Nenhum NCM marcado para cadastrar"; "Há muitos Subs cadastrados para o NCM"
+Cadastro de Classificação: UFrmCadClassific.pas. Mensagens: "Não é possível salvar valor negativo."
+Cadastro de Formato - Pedidos: UFrmPedFmtCad.pas. Mensagens: "Digite o nome do formato"; "Especifique o arquivo do formato"
+Cancelar Nota: UFrmCanc.pas. Mensagens: "Essa Nota já está cancelada"; "Essa Nota possui duplicatas agrupadas. Você precisa desagrupar as duplicatas no Financ antes de cancelar a nota."; "Essa Nota possui Receituários que já foram enviados à CIDASC. Não é possível cancelá-la, é necessário emitir uma Nota de Devolução."; "Essa Nota possui duplicatas já baixadas. Não é possível cancelá-la (configuração de bloqueio ativa)."
+Cancelar Pedido: UFrmPedCanc.pas
+Capturar CT-e: UFrmCapturaCTe.pas. Mensagens: "Nem todas as NF-e Referenciadas foram encontradas na base de dados. Importe todas elas no XML Manager antes de capturar o CT-e."
+Capturar Marca: UFrmCapturarMarca.pas. Mensagens: "Código do fornecedor vázio"; "Nenhuma marca selecionada"; "Quantidade do produto não pode ser igual ou inferior a 0."; "Não encontrado produto para essa marca"
+Capturar NF3-e: UFrmCapturaNF3e.pas
+Capturar NFCom: UFrmCapturaNFCom.pas
+Capturar Pedido: UFrmCapturaPed.pas. Mensagens: "Especifique o pedido"; "Pedido inválido"; "Esse pedido não é dessa empresa"; "Esse pedido está CANCELADO"
+Capturar Produtos na Promoção: UFrmEtiqCapPromo.pas. Mensagens: "Especifique a data da promoção"; "Nenhum produto foi encontrado na promoção"
+Capturar XML: UFrmCapturaXML.pas. Mensagens: "Existem produtos inativos relacionados a itens do XML, produtos inativos Id:"; "Confirma excluir o item selecionado ?"; "Encontrado divergência de CRT do Cadastros e do XML, deseja substituir pelo do XML capturado?"
+Copiar Pedido: UFrmPedCopia.pas. Mensagens: "Especifique o pedido"; "Pedido inválido"; "Nenhum item encontrado no pedido"
+Dados do Veículo Novo: UFrmVeiculo.pas. Mensagens: "Tipo da Operação inválida"; "Chassi em branco"; "Chassi com tamanho inválido. Deve ter 17 caracteres!"; "Código da Cor na Montadora em branco"
+Depurador de Regras: UFrmDepuraRegras.pas
+Desmembra Fill: UFrmDesmFill.pas
+Desmembramento do Item: UFrmDesmembra.pas. Mensagens: "Confirma limpar todos os itens?"
+Editor de Regras: UFrmRegras.pas
+Embalagem: UFrmEmb.pas. Mensagens: "Quantidade das Embalagens não pode ser zero ou negativa!"; "Quantidade Unitária não pode ser zero ou negativa!"
+Enviar Pedido por E-mail: UFrmPedMail.pas. Mensagens: "Especifique o destinatário"; "Especifique o assunto"
+Etiqueta FastReport: UFrmEtiqFr.pas
+Etiquetas: UFrmEtiquetas.pas. Mensagens: "Confirma excluir o item selecionado?"; "Confirma limpar a lista de etiquetas ?"; "Já existem itens na lista. Deseja capturar mesmo assim?"; "Formato não especificado"
+Etiquetas > Selecionar Produtos: UFrmEtiqSelProds.pas
+Fator de Conversão: UFrmFator.pas
+Find: UFrmFind.pas
+Formação de Preço: UFrmPrecos.pas. Mensagens: "Você não marcou nenhum produto para atualizar os preços"; "Nenhum item selecionado na lista de preços!"; "Nenhuma lista de preço selecionada!"; "Nenhum produto foi marcado para desfazer os custos."
+Frame - Histórico de Fornecimento: UFrmHistFornec.pas
+FrmLoginLiberacao: UFrmLoginLiberacao.pas. Mensagens: "Usuário ou Senha em branco"; "Usuário sem permissão"; "Usuário sem permissão (necessita permissão de gerente)"; "Usuário ou senha inválidos"
+frx: UFrmPedFr.pas
+Gerar Duplicatas com Plano de Pagamento - Pedido: UFrmPedGeraDupPla.pas. Mensagens: "Especifique o valor total da fatura"; "Plano de Pagamento em branco"; "Plano de Pagamento inválido"; "Plano de Pagamento sem parcelas. Verifique o cadastro!"
+Grava: UFrmGrava.pas. Mensagens: "Financ nÃ£o encontrado / Duplicata nÃ£o serÃ¡ baixada"
+Importar arquivo de transferência: UFrmImportTransf.pas. Mensagens: "Especifique o arquivo"; "Arquivo não encontrado"
+Importar Informações de Veículo Novo do XML: UFrmImportarInfosVeiculoDoXML.pas. Mensagens: "Nenhum produto marcado para atualizar"
+Importar Requisições de Pedido de Compra: UFrmImportarRequisicoes.pas. Mensagens: "Não há registros listados!"; "A Requisição de ID = '"; "Nenhum registro marcado!"
+Imprimir Autorização de Pagamento: UFrmAutPgto.pas
+Imprimir Pedido: UFrmPedReport.pas. Mensagens: "Nenhum formato configurado"; "Selecione um formato"
+Incluir Documento de Arrecadação: UFrmArrecada.pas. Mensagens: "Especifique o tipo"; "UF em branco"; "UF incompleta"; "Especifique o valor"
+Incluir Duplicata: UFrmDup.pas. Mensagens: "Especifique o valor"; "Especifique o vencimento"; "Banco em branco"; "Banco inválido"
+Incluir Duplicata - Pedido: UFrmPedDup.pas. Mensagens: "Valor zerado"; "Vencimento em branco"; "Banco não especificado"; "Banco inválido"
+Incluir Item: UFrmDesmPro.pas. Mensagens: "Especifique o produto"; "Produto inválido"; "Especifique a quantidade"
+Incluir Item: UFrmPro.pas. Mensagens: "O fornecedor ainda não foi definido"; "Prezado usuário, este tipo de produto está bloqueado para venda."; "Produto não definido"; "Produto inválido"
+Incluir Justificativa: UFrmJust.pas. Mensagens: "Especifique a Justificativa"; "Justificativa inválida"; "O texto da justificativa está em branco"
+Incluir Nota: UFrmNota.pas. Mensagens: "Confirma limpar todos os itens?"; "Controle de Lote não está habilitado"; "A edição das Duplicatas e de todos os Valores de Notas de Compra está bloqueada! (Configuração)"; "A nota informada não possui modelo do tipo transporte"
+Incluir Nota Referenciada: UFrmRefer.pas. Mensagens: "Especifique a operação"; "Especifique a emissão"; "Especifique o emitente"; "Emitente inválido"
+Incluir Pedido: UFrmPedido.pas. Mensagens: "Confirma limpar todos os itens?"; "Aplicar o Desconto nos produtos ?"; "O Produto ID"; "Aplicar o Acréscimo nos produtos ?"
+Incluir Produto: UFrmEtiqIncPro.pas. Mensagens: "Especifique um produto"; "Produto inválido"
+Incluir Produto: UFrmPedPro.pas. Mensagens: "O fornecedor ainda não foi definido"; "Prezado usuário, este tipo de produto está bloqueado para venda."; "Produto já foi adicionado anteriormente"; "Produto não definido"
+Incluir Registro Analítico: UFrmAnalit.pas. Mensagens: "CFOP em branco"; "CFOP incompleto"; "CFOP deve iniciar com 1 ou 2"; "CST em branco"
+Lançamento no Centro de Custos: UFrmLancaCC.pas. Mensagens: "A soma já atingiu o valor total da Nota de Compra"; "Essa Conta possui Centros de Custo cadastrados para rateio. Deseja ratear o Valor Total da Nota de Compra por esses Centros de Custo?"; "Deve haver pelo menos um lançamento"; "Total dos lançamentos deve ser igual ao total da Nota de Compra"
+LastDadosPro: UFrmLastDadosPro.pas
+Lotes do Item: UFrmLote.pas. Mensagens: "Quantidade do lote inválida"; "Soma das quantidades dos lotes deve fechar com a quantidade do produto"
+Manutenção de Formatos - Pedidos: UFrmPedFmtMan.pas. Mensagens: "Selecione um formato"; "Confirma excluir o formato selecionado?"
+Mod Preco: UFrmModPreco.pas
+Montar Duplicatas: UFrmMontaDup.pas. Mensagens: "Total da fatura zerado"; "Número de parcelas inválido"; "Data inicial em branco"; "Intervalo zerado"
+Montar Duplicatas - Pedido: UFrmPedMontaDup.pas. Mensagens: "Total da fatura zerado"; "Número de parcelas inválido"; "Data inicial em branco"; "Intervalo zerado"
+Notas de Compra: UFrmLista.pas
+Notificaçôes de Novas Requisições: UFrmNotificacoesReq.pas
+Números de OP do Item: UFrmOPNum.pas. Mensagens: "Número não especificado"; "Quantidade não especificada"; "Quantidade inválida"; "Quantidade zerada"
+Observação Geral das Duplicatas: UFrmObsGeralDup.pas
+Orçamento da Conta: UFrmLancaCCOrc.pas
+Pedido > Fator de Conversão: UFrmPedFator.pas
+Pedidos de Compra: UFrmPedLista.pas. Mensagens: "Não é possível cancelar este pedido"; "Esse pedido já está cancelado"; "Esse pedido já foi capturado"; "Esse pedido está cancelado"
+Pedidos Vinculados ao Produto: UFrmPedidosVinculadosProduto.pas. Mensagens: "Não é possível gravar quantidade inferior ou igual a zero"; "Não se pode fazer vinculo de pedido inferior ou igual a zero"; "Há divergência nas informações de Qtd. do Item e Qtd. Pedidos, deseja vincular?"
+PedUpdSitCap: UFrmPedUpdSitCap.pas
+Preços de Produtos Relacionados: UFrmPrecoRelac.pas. Mensagens: "Nenhum produto relacionado aos produtos que você alterou o preço foi localizado"; "Confirma gravar as alterações de preço ?"
+Produtos com CEST divergente do XML: UFrmDifCESTdoXML.pas. Mensagens: "Nenhum produto marcado para atualizar"
+Produtos com EAN divergentes do XML: UFrmDifEANofXML.pas. Mensagens: "Nenhum produto marcado para atualizar"
+Produtos com EAN em branco no XML: UFrmEANsEmBrancoXML.pas
+Produtos com NCM divergentes do XML: UFrmDifNCMofXML.pas. Mensagens: "Nenhum produto marcado para atualizar"
+Produtos com Origem divergentes do XML: UFrmDifOrigemOfXML.pas. Mensagens: "Nenhum produto marcado para atualizar"
+Proporção: UFrmProporcao.pas. Mensagens: "Digite uma quantidade"
+Rateio de Valores: UFrmRateio.pas
+Rateio do Frete de CT-e de Compra nas Vendas: UFrmRateioFreteCTe.pas
+Relacionar Produto: UFrmRelPro.pas. Mensagens: "Produto foi excluído dos cadastros"; "Produto marcado como inativo"; "Referencia não encontrada"; "Especifique um produto"
+Requisições de Pedidos de Compra do Produto: UFrmPedRequisicoes.pas
+Requisições do Pedido de Compra do Produto: UFrmCompraRequisicoes.pas
+Selecão de preço: UMsgPrecoDifAgrup.pas
+Total da Fatura Divergente: UFrmValidaTotalFatura.pas
+Trocar códigos: UFrmTrocar.pas
+Verificar Produtos com Estoque Mínimo: UFrmVerEstoqueMin.pas. Mensagens: "Nenhum produto listado"; "Nenhum produto foi marcado para captura"; "A aba atual não é um pedido"
+Vincular Duplicatas: UFrmVincularDuplicatas.pas. Mensagens: "Valor total das parcelas diferente do total da nota. Deseja continuar?"; "Nenhuma duplicata foi marcada para vincular"; "Existem duplicatas na lista, deseja limpa-las e importar as de adiantamento?"; "Fornecedor não possui duplicatas a receber"
+Vincular Pedido à Captura de XML: UFrmVinculaPedCap.pas. Mensagens: "O pedido vinculado não possui esse produto!"; "Pedido inválido!"; "O pedido vinculado pertence à outra empresa!"; "O pedido vinculado está cancelado!"
+UDMCapturaPedReq: UDMCapturaPedReq.pas
+UFrmDetalhesXML: UFrmDetalhesXML.pas
+UFrmFramePrecoRelac: UFrmFramePrecoRelac.pas
+UFrmLstPnlObs: UFrmLstPnlObs.pas
+UFrmRecusar: UFrmRecusar.pas. Mensagens: "Confirma RECUSAR TODOS OS ITENS do Pedido?"; "Você só pode fazer isso com Pedidos"; "Esse Pedido já está cancelado"
+
+REGRAS E VALIDAÇÕES (código sem tela)
+UPedWhats.pas: "O envio permaneceu na fila por mais de 5 segundos."; "Fornecedor sem número de Celular cadastrado, não foi possível enviar o WhatsApp"; "Gerenciador BmAutoWhats não está em execução (fila pausada)."

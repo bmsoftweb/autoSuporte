@@ -1,0 +1,19 @@
+Mapa do SPED (programa Delphi para Windows; raiz do repositório: SPED.dpr). Cada tela é um par .pas (código) + .dfm (desenho). Linhas aproximadas.
+Tela principal: "BMsoft - SPED" em UFrm.pas
+
+MENU E BOTÕES DA TELA PRINCIPAL
+Gerar: UFRM_NCM_MVA.pas ("FRM_NCM_MVA")
+
+TELAS (título -> arquivo; mensagens que a tela mostra)
+Alertas: UFrmAlertas.pas
+Comum: UFrmComum.pas
+Configurações: UFrmConfig.pas
+Contas Analíticas: UFrmContasAnaliticas.pas
+FRM_NCM_MVA: UFRM_NCM_MVA.pas. Mensagens: "Campo NCM é obrigatório."; "Campo MVA é obrigatório."; "Informação excluida."; "Erro ao salvar arquivo ncm_mva.txt."
+Int > SPED Contribuições: UFrmIntContrib.pas
+Int > SPED Fiscal: UFrmIntFiscal.pas
+Processamento: UFrmPro.pas
+
+REGRAS E VALIDAÇÕES (código sem tela)
+pcnAuxiliar.pas: "Tamanho de TimeZone deve ser 6. Ex: -03:00"; "Primeiro caractere deve ser "+,-". Ex: -03:00"; "Quarto caractere deve ser ":". Ex: -03:00"
+UInfo.pas: "Processamento cancelado pelo usuário"

@@ -1,0 +1,43 @@
+Mapa do NFsPWS (programa Delphi para Windows; raiz do repositório: NFs.dpr). Cada tela é um par .pas (código) + .dfm (desenho). Linhas aproximadas.
+Tela principal: "BMsoft - NFs" em Units/UFrm.pas
+
+MENU E BOTÕES DA TELA PRINCIPAL
+Cancelar: BtnCancelarClick em Units/UFrm.pas (linha ~944)
+Configurações: BtnConfigClick em Units/UFrm.pas (linha ~949)
+Localizar: BtnProcurarClick em Units/UFrm.pas (linha ~970)
+Invalidar: BtnInvalidarClick em Units/UFrm.pas (linha ~965)
+Comprovante: BtnImprimirClick em Units/UFrm.pas (linha ~960)
+Atualizar: BtnAtualizarClick em Units/UFrm.pas (linha ~939)
+Sair: RzToolButton5Click em Units/UFrm.pas (linha ~1151)
+Enviar: BtnEnviarClick em Units/UFrm.pas (linha ~955)
+Recarregar: btnRecarregar1Click em Units/UFrm.pas (linha ~985)
+Detalhes da nota: Detalhesdanota1Click em Units/UFrm.pas (linha ~742)
+Portal: ConsultarWebISS1Click em Units/UFrm.pas (linha ~995)
+Consultar WebService: Units/UfrmConsWS.pas ("Consultar via WebService")
+Consultar Convênio NFS-e Nacional: ConsultarConvenioNacional1Click em Units/UFrm.pas (linha ~1001)
+Sincronizar Cancelamento: SincronizaCancelamento1Click em Units/UFrm.pas (linha ~789)
+Manutenção › Copiar XML da DPS/RPS enviado: CopiarXMLDPSRPSEnviado1Click em Units/UFrm.pas (linha ~760)
+Manutenção › Copiar XML da DPS/RPS recebido: CopiarXMLDPSRPSRecebido1Click em Units/UFrm.pas (linha ~766)
+
+TELAS (título -> arquivo; mensagens que a tela mostra)
+Cancelar NFS-e: Units/UFrmCancelar.pas. Mensagens: "Módulo NOTAS não encontrado"; "Não foi possível executar o módulo NOTAS!"; "NFSe Florianópolis exige AEDF. Cadastre nas configurações do Módulos."; "Informe um tamanho válido (Entre 15 e 255 caracteres)."
+Comprovante: Units/UFrmcomprovante.pas. Mensagens: "Falha ao enviar e-mail:"; "Nota mestre não possui NFS."; "Nota não foi enviada."
+Configurações: Units/UFrmConfig.pas. Mensagens: "É necessário reiniciar o módulo para que a alteração da opção "Usa Padrão Nacional" tenha efeito."
+Consultar via WebService: Units/UfrmConsWS.pas. Mensagens: "Protocolo não informado."; "Número RPS não informado."; "Número DPS não informado."; "Série não informado."
+Detalhes da Nota: Units/UFrmDetalhes.pas. Mensagens: "Ocorreu um erro ao abrir e filtrar as tabelas."
+Envio de NFSe: Units/UFrmEnviarNota.pas. Mensagens: "Não foram encontrados os arquivos XSD (SCHEMA)"; "Selecione uma nota para enviar"; "Erro: Nota Mestre ID:"; "Nota fiscal está cancelada."
+FLoad: Units/ULoad.pas
+FrmConfComp: Units/UFrmConfigComp.pas. Mensagens: "Formato de impressão não encontrado:"; "Arquivo INI não encontrado na tabela NFSNotas."; "Nenhuma conta de e-mail configurada para o envio de e-mail."; "E-mail do cliente não informado."
+FrmDetalhesNota: Units/UFrmDetalhesNota.pas
+Invalidar NFS-e: Units/UFrmInvalidar.pas. Mensagens: "Essa NFS-e já foi enviada."; "Essa NFS-e já foi invalidada."; "Essa NFS-e já foi cancelada."
+Pesquisa: Units/UFrmFiltro.pas
+Procurar Cliente: Units/UFrmProcCliente.pas
+Procurar NFS-e: Units/UFrmProcNFSe.pas
+Sincronizar Cancelamento: Units/UFrmSincCancelamento.pas. Mensagens: "Nota ainda não foi cancelada."; "Nota não foi enviada."; "Nota registrada na prefeitura com esse numero difere da nota registrada no sistema."; "Nota não foi cancelada."
+UNFPSEManager: Units/WS_Florianopolis/UNFPSEManager.pas. Mensagens: "Usuário não informado"; "Senha não informada"; "Falha na autenticação:"
+
+REGRAS E VALIDAÇÕES (código sem tela)
+NFsIni.pas: "Erro interno: Conteúdo do INI da NFs em branco"
+Units/MailDup.pas: "Financ não econtrado"; "Arquivo do boleto não encontrado:"; "Erro no Financ"
+Units/Vars.pas: "Empresa não autorizada a utilizar este modulo."; "Empresa não possui autorização para emissão de NFS-e."; "+Frm.ACBrNFSe.WebServices.ConsLote.
+//        RetornoNFSe.ListaNFSe.MsgRetorno.Items[i].Codigo+"

@@ -1,0 +1,295 @@
+Mapa do Cadastros (programa Delphi para Windows; raiz do repositório: Cadastros.dpr). Cada tela é um par .pas (código) + .dfm (desenho). Linhas aproximadas.
+Tela principal: "BMSoft - Cadastros" em UFrm.pas
+
+MENU E BOTÕES DA TELA PRINCIPAL
+Produtos: UFrmProdutos.pas ("Produtos")
+Pessoas: UFrmPessoas.pas ("Pessoas")
+Sair: BtnSairClick em UFrm.pas (linha ~571)
+Outros: BtnOutrosClick em UFrm.pas (linha ~678)
+Planos de Pgto.: UFrmPlanos.pas ("Planos de Pagamento")
+Classes: UFrmClasses.pas ("Classes")
+Vendedores: UFrmVendedores.pas ("Vendedores")
+Docs. Fiscais: BtnNotasClick em UFrm.pas (linha ~937)
+Recarregar: BtnConfigClick em UFrm.pas (linha ~565)
+Cardex: UFrmCardex.pas ("Cardex")
+Preços: UFrmConsultaPrecos.pas ("Consulta de Preços")
+Empresas: UFrmEmpresas.pas ("Empresas")
+Usuários: UFrmUsuarios.pas ("Usuários")
+Logs: UFrmLogs.pas ("Logs")
+Logs de Modificação › Log Modificações Pessoas: BtnConsLogModPesClick em UFrm.pas (linha ~968)
+Logs de Modificação › Log Modificações Produtos: BtnConsLogModProClick em UFrm.pas (linha ~973)
+Logs de Modificação › Log de Custos de Produtos: BtnLogCustosClick em UFrm.pas (linha ~978)
+Configurações Globais: UFrmConfigGlobais.pas ("Configurações Globais")
+Definições: BtnDefinicoesClick em UFrm.pas (linha ~887)
+Contas de E-mail: UFrmMailContas.pas ("Contas de E-mail")
+Bancos: UFrmBancos.pas ("Bancos")
+Bandeiras: UFrmBandeiras.pas ("Bandeiras")
+Contas: UFrmContas.pas ("Contas")
+Centros de Custos: UFrmCentroCustos.pas ("Centros de Custos")
+Regiões: UFrmRegioes.pas ("Regiões")
+Departamentos: UFrmDepart.pas ("Departamentos")
+Cartão › Administradoras de Cartão: UFrmCartaoAdms.pas ("Administradoras de Cartão")
+Cartão › Vendas de Cartão: UFrmCartaoMov.pas ("Vendas de Cartão")
+ECFs: UFrmECFs.pas ("ECFs")
+Configurar PAF-NFCe › Configurações PAF-NFCe: UFrmConfigBMCaixa.pas ("Configurações do PAF-NFCe")
+Configurar PAF-NFCe › Personalização PAF-NFCe: UFrmPersonalBMCaixa.pas ("Personalização do bmCaixa")
+Configurar PAF-NFCe › Fundos Caixa Mercado: BtnFundosBMCaixaClick em UFrm.pas (linha ~907)
+Manutenção ECF › Dados das Reduções Z: UFrmDadosReducoes.pas ("Dados das Reduções Z")
+Manutenção ECF › Regravar PIS/COFINS de ECF: BtnRegravaPisCofECFClick em UFrm.pas (linha ~892)
+Envio de XML do PAF › Envio FISCO-REDUÇÃO Z: BtnPAFEnvWSReducaoZClick em UFrm.pas (linha ~952)
+Envio de XML do PAF › Envio FISCO-ESTOQUE: BtnPAFEnvWSEstoqueClick em UFrm.pas (linha ~957)
+Envio de XML do PAF › Geração Manual de Arquivos: BtnPAFGerManXMLClick em UFrm.pas (linha ~963)
+Envio de XML do PAF › Manutenção de arquivos gerados: Retificararquivosgerados1Click em UFrm.pas (linha ~544)
+Exportações: UFrmExportacoes.pas ("Exportações")
+FCI - Ficha Importação: UFrmFCI.pas ("FCI - Ficha de Conteúdo de Importação")
+Liberação de Vendas: UFrmLibVendas.pas ("Liberação de Vendas")
+Liberação de Requisições: UFrmLibReqPedComp.pas ("Liberação de Requisições de Pedido de Compra")
+Séries: UFrmSeries.pas ("Séries")
+Operações: UFrmOperacoes.pas ("Operações")
+Impostos: UFrmImpostos.pas ("Impostos")
+Tributações: UFrmTributacoes.pas ("Tributações")
+Justificativas: UFrmJustificativas.pas ("Justificativas Fiscais")
+Observações: UFrmObservacoes.pas ("Observações")
+Tipos de PIS/COFINS: UFrmTiposPISCOF.pas ("Tipos de PIS/COFINS")
+Impostos por NCM: UFrmImpostoNCM.pas ("Impostos por NCM")
+Séries NFC-e: UFrmNFCeSeries.pas ("Séries NFC-e")
+CSC NFC-e: UFrmNFCeCSC.pas ("Códigos CSC para NFC-e")
+Séries CT-e: UFrmCTeSeries.pas ("Séries CT-e")
+Séries MDF-e: UFrmManSeries.pas ("Séries MDF-e")
+Veículos: UFrmVeiculos.pas ("Veículos")
+Motoristas: UFrmMotoristas.pas ("Motoristas")
+Natureza da Operação: btnNaturezadeOpera1Click em UFrm.pas (linha ~857)
+Marcas: UFrmMarcas.pas ("Marcas")
+Unidades: UFrmUnidades.pas ("Unidades de Medida")
+Locais: BtnProLocaisClick em UFrm.pas (linha ~779)
+Volumes: UFrmProVolumes.pas ("Volumes")
+Culturas: BtnCulturasClick em UFrm.pas (linha ~983)
+Cestas: UFrmProCestas.pas ("Cestas de Produtos")
+Conjuntos: UFrmConjuntos.pas ("Conjuntos de Produtos")
+Unidades Relativas: BtnProUnidadesRelativasClick em UFrm.pas (linha ~774)
+Grades Padronizadas: BtnGradesClick em UFrm.pas (linha ~769)
+Reajustar Preços: UFrmReajustePreco.pas ("Reajuste de Preço")
+Gerenciar Promoções: UFrmGerPromo.pas ("Gerenciamento de Promoções")
+Promoção para Mercado: UFrmProPromo.pas ("Produtos - Promoção para Mercado")
+Exportação para Balança: UFrmExBalanca.pas ("Exportação para Balança")
+Liberação de Preços: UFrmLibPrecos.pas ("Produtos - Liberação de Preços")
+Atualização On-Line para Caixas: UFrmProOnLine.pas ("Produtos On-Line para Caixa")
+Importar Preços de Arquivo: BtnImportPrecosTXTClick em UFrm.pas (linha ~988)
+IBPTax › Tabela IBPTax: UFrmIBPTax.pas ("Tabela IBPTax")
+IBPTax › Preencher Impostos nos Produtos: BtnRotinaProImpostosClick em UFrm.pas (linha ~1013)
+Digitação das Metas: UFrmDigMetas.pas ("Digitação das Metas")
+Índices Técnicos - Recálculo de Custos: BtnProKitRecalcCustosClick em UFrm.pas (linha ~1018)
+Código ANP: UFrmCodProdANP.pas ("Códigos Agencia Nacional de Petróleo")
+Bloqueios: BtnPesBloqueiosClick em UFrm.pas (linha ~998)
+Classificações: BtnPesClassificacoesClick em UFrm.pas (linha ~1003)
+Tipos Conjugados: BtnPesTiposConjugadosClick em UFrm.pas (linha ~1008)
+
+TELAS (título -> arquivo; mensagens que a tela mostra)
+Administradoras de Cartão: UFrmCartaoAdms.pas
+Alterar Último Número da Série: UFrmSerieAltUltNum.pas
+Alíquota Interna por UF: UFrmUFAliqInterna.pas
+Aplicar Valor Promocional a Todos os Produtos/Referências: UFrmAplicarPromoTodosProds.pas. Mensagens: "Nenhum valor definido."; "Você deve optar entre Valor ou Porcentagem."; "Preço Promocional não pode ser negativo."; "Percentual de Desconto não pode ser negativo."
+Arquivo de Estoque Bloco X: UFrmArqEstoqueXML.pas
+Autorizações AIDF - Formulário Contínuo: UFrmAIDF.pas. Mensagens: "Nenhum AIDF existente no Arquivo de Liberação"
+Bancos: UFrmBancos.pas
+Bandeiras: UFrmBandeiras.pas
+Bina To CadPes: UFrmBinaToCadPes.pas
+Cadastrar Administradora de Cartão: UFrmCadCartaoAdm.pas. Mensagens: "Nome da administradora em branco"; "Descrição da administradora em branco"; "Fornecedor em branco"; "Fornecedor inválido"
+Cadastrar Banco: UFrmCadBanco.pas. Mensagens: "Nome em branco"; "Apelido em branco"; "Pessoa não pertence a categoria de fornecedor"; "Fornecedor inválido"
+Cadastrar Bandeira: UFrmCadBandeira.pas
+Cadastrar Centro de Custos: UFrmCadCCusto.pas. Mensagens: "Especifique um código para o Centro de Custos"; "Descrição em branco"
+Cadastrar Conta: UFrmCadConta.pas. Mensagens: "Classe em branco"; "Descrição em branco"
+Cadastrar Conta de E-mail: UFrmCadMail.pas. Mensagens: "Identificação em branco"; "Remetente em branco"; "E-mail em branco"; "Servidor SMTP em branco"
+Cadastrar Departamento: UFrmCadDepart.pas. Mensagens: "Nome em branco"
+Cadastrar ECF: UFrmCadECF.pas. Mensagens: "Empresa inválida"; "Especifique o número do caixa"; "Número do caixa inválido"; "Marca em branco"
+Cadastrar Empresa: UFrmCadEmp.pas. Mensagens: "Nenhuma empresa no arquivo de liberação"; "CNPJ não encontrado no arquivo de liberação"; "Contrato da empresa não está assinado."; "Erro ao carregar o logotipo"
+Cadastrar Exportação: UFrmCadExport.pas. Mensagens: "Tipo de documento inválido"; "Número da declaração em branco"; "Data da declaração em branco"; "Naturaza da declaração inválida"
+Cadastrar Imposto: UFrmCadImposto.pas. Mensagens: "Empresas em branco"; "UFs em branco"; "Tipo do Cliente em branco"; "CFOP incompleta"
+Cadastrar Justificativa Fiscal: UFrmCadJust.pas. Mensagens: "Texto em branco"; "O uso de variáveis está condicionado apenas à justificativa tipo Geral"
+Cadastrar Marca: UFrmCadMarca.pas. Mensagens: "Marca em branco"
+Cadastrar Motorista: UFrmCadMotorista.pas. Mensagens: "Nome em branco"; "CPF em branco"; "CPF com tamanho inválido"; "Apelido em branco"
+Cadastrar Observação: UFrmCadObs.pas. Mensagens: "Conteúdo em branco"
+Cadastrar Operação: UFrmCadOper.pas. Mensagens: "Descrição em branco"; "CFOP incompleto"; "Tipo inválido"; "Fluxo inválido"
+Cadastrar Plano de Pagamento: UFrmCadPlano.pas. Mensagens: "Descrição em branco"; "Apelido em branco"; "Banco inválido"; "Plano de pagamento deve ter pelo menos 1 parcela"
+Cadastrar Série: UFrmCadSerie.pas. Mensagens: "Empresa inválida"; "Série em branco"; "Descrição em branco"; "Tipo inválido"
+Cadastrar Série CT-e: UFrmCadCTeSerie.pas. Mensagens: "Empresa inválida"; "Série em branco"; "Descrição em branco"; "Modelo inválido"
+Cadastrar Série MDF-e: UFrmCadManSerie.pas. Mensagens: "Empresa inválida"; "Série em branco"; "Descrição em branco"
+Cadastrar Tributação: UFrmCadTrib.pas. Mensagens: "Descrição em branco"; "CST inválido"; "CSOSN inválido"; "Alíquota de ICMS obrigatória quando houver Base de ICMS"
+Cadastrar Usuário: UFrmCadUser.pas. Mensagens: "Nome em branco"; "Apelido em branco"; "Login em branco"; "Vendedor inválido"
+Cadastrar Vendedor: UFrmCadVend.pas. Mensagens: "Nome em branco"; "Apelido em branco"; "Departamento inválido"
+Cadastrar Veículo: UFrmCadVeiculo.pas. Mensagens: "Identificação em branco"; "RENAVAM em branco"; "Placa em branco"; "UF em branco"
+Cadastro de Gerente: uFrmCadGerente.pas
+Cadastro de Locais: UFrmProLocais.pas. Mensagens: "Descrição em branco"
+Capturar Foto da Pessoa da WebCam: UFrmPesWebCam.pas
+Capturar Imagem da Internet: DLLFotos/UFrmWB.pas
+Capturar TXT: UFrmKitCapturaTXT.pas. Mensagens: "Especifique o arquivo"; "Arquivo não encontrado"
+Cardex: UFrmCardex.pas. Mensagens: "Confirma excluir o movimento selecionado?"
+Cardex das Reservas: UFrmReservasCardex.pas. Mensagens: "O registro deve ser Fluxo = Reserva"; "Esse registro já está desreservado!"; "Confirma efetuar a desreserva desse registro?"; "O registro deve ser Fluxo = Desreserva"
+Cardex do Lote: UFrmLoteCardex.pas
+Cardex do Produto: UFrmProCardex.pas
+Cardex dos Lotes: UFrmLotesCardex.pas. Mensagens: "O registro deve ser Fluxo = Desreserva"; "Essa operação só pode ser realizada com desreserva Manual"; "Confirma excluir essa desreserva?"
+Cardex Local Estoque: uFrmLocaisCardex.pas
+Carga Tributária Média: UFrmCargaTribMedia.pas
+Centros de Custos: UFrmCentroCustos.pas
+Certificado Digital da Empresa: UFrmCertificado.pas. Mensagens: "O certificado digital informado não pôde ser carregado!"; "O certificado especificado não contém o mesmo início do CNPJ da empresa!"; "O certificado especificado está vencido!"; "Você não pode importar um arquivo que já está na pasta de Certificados!"
+Cesta - Incluir Produto: UFrmCestaIncPro.pas. Mensagens: "Especifique o produto"; "Produto inválido"; "Especifique a quantidade"
+Cestas de Produtos: UFrmProCestas.pas. Mensagens: "Confirma aplicar desconto em todos os itens?"
+Classes: UFrmClasses.pas
+Configurações do PAF-NFCe: UFrmConfigBMCaixa.pas
+Configurações Globais: UFrmConfigGlobais.pas
+Conjunto - Incluir Produto: UFrmConjuntoIncPro.pas. Mensagens: "Produto inválido"; "Você deve definir o produto ou pelo ID Pro. ou pela Referência"; "Especifique a quantidade"; "Você deve definir apenas um tipo de desconto (Percentual ou Valor)"
+Conjuntos de Produtos: UFrmConjuntos.pas
+Consolidar Cardex: UFrmConsolidaCardex.pas. Mensagens: "Especifique a data inicial"; "Especifique a data final"
+Consulta de Preços: UFrmConsultaPrecos.pas
+Consulta Log Alteração Custos: UFrmLogCustos.pas
+Consultar Log Modificações Pessoas: UFrmConsLogModPes.pas
+Consultar Log Modificações Produtos: UFrmConsLogModPro.pas
+Consultas ao SPC: UFrmSPCCons.pas
+Conta - Provisões: UFrmContaProvisoes.pas
+Contabilista da Empresa: UFrmContab.pas. Mensagens: "Nome em branco"; "CPF em branco"; "CPF incompleto"; "CPF não é válido"
+Contas: UFrmContas.pas. Mensagens: "Nível da conta deve ser Lançamento"; "Conta deve ser do tipo Lançamento"
+Contas de E-mail: UFrmMailContas.pas
+Contatos: UFrmPesContatos.pas. Mensagens: "Nome em branco"
+Copiar Indices Tecnicos do Produto: UFrmProCopyIndicesTec.pas
+Culturas: UFrmCulturas.pas
+Códigos Agencia Nacional de Petróleo: UFrmCodProdANP.pas. Mensagens: "Descrição em branco"; "Código em branco"
+Códigos CSC para NFC-e: UFrmNFCeCSC.pas
+Códigos FCI do Produto: UFrmProCodigosFCI.pas
+Códigos Relativos: UFrmProCodRelat.pas. Mensagens: "Código em branco"; "Unidade em branco"; "Unidade Relativa inválida"
+Dados das Reduções Z: UFrmDadosReducoes.pas
+Dados do SPC: UFrmPesSPC.pas
+DDE: UFrmDDE.pas
+Definir Custos Manualmente: UFrmLogCustosSetManual.pas. Mensagens: "Digite uma justificativa"
+Definições: UFrmDefinicoes.pas
+Deletar Pessoa: UFrmDelPes.pas. Mensagens: "Essa pessoa possui movimentos. Não pode ser excluída!"
+Deletar Produto: UFrmDelPro.pas. Mensagens: "Esse produto possui movimentos. Não pode ser excluído!"
+Deletar Referência: UFrmDelRef.pas. Mensagens: "Essa referência possui movimentos. Não pode ser excluída!"
+Deletar Vendedor: UFrmDelVen.pas. Mensagens: "Esse vendedor possui movimentos. Não pode ser excluído."
+Departamentos: UFrmDepart.pas
+Digitação das Metas: UFrmDigMetas.pas. Mensagens: "Especifique os vendedores"
+ECFs: UFrmECFs.pas
+Empresas: UFrmEmpresas.pas. Mensagens: "Substituto Tributário não está habilitado no Cadastro da Empresa"
+Enviar e-mail de teste: UFrmMailTeste.pas. Mensagens: "E-mail de destino não especificado"
+Envio de mensagem WhatsApp: uFrmMsgWhats.pas. Mensagens: "Telefone inválido."; "Informe a mensagem"
+Estoque de propriedade de Terceiros: uFrmPropTercCardex.pas. Mensagens: "Confirma excluir o movimento selecionado?"
+Estoque em Posse de Terceiros: UFrmPosseTerCardex.pas. Mensagens: "Confirma excluir o movimento selecionado?"
+Estoque Máximo Excedido: UFrmValidaEstoqueMax.pas
+Estornar Movimento de Cartão: UFrmCartaoMovEstorna.pas. Mensagens: "Digite o Código de Autorização do Estorno"; "Código de Autorização inválido!"; "Especifique o motivo do estorno"; "Especifique melhor o motivo do estorno"
+Excluir Cadastro: UFrmDel.pas
+Exportação para Balança: UFrmExBalanca.pas. Mensagens: "Confirma preencher com os valores padrões ?"; "Confirma preencher com as configurações padrões da Toledo?"; "Confirma preencher com as configurações padrões da Urano?"; "Confirma preencher com as configurações padrões da Filizola?"
+Exportações: UFrmExportacoes.pas
+FCI - Capturar Arquivo de Retorno: UFrmFCIRetorno.pas. Mensagens: "Especifique o arquivo de retorno"; "Arquivo não encontrado"; "Arquivo em branco"; "Arquivo com conteúdo incompatível"
+FCI - Copiar: UFrmFCICopia.pas
+FCI - Ficha de Conteúdo de Importação: UFrmFCI.pas. Mensagens: "Confirma criar nova Ficha?"; "Essa ficha já foi gerada/transmitida/recebida, por isso não pode mais ser excluída."; "Essa ficha não pode mais ser alterada."; "Confirma excluir produto da ficha?"
+FCI - Gerar Arquivo: UFrmFCIGera.pas. Mensagens: "Especifique o diretório de destino"; "Diretório de destino inválido"
+FCI - Incluir Produto: UFrmFCIPro.pas. Mensagens: "Produto não especificado"; "Produto inválido"; "Valor de saída não especificado"; "Valor da parcela não especificada"
+Filtro por Tipos Conjugados: UFrmPesFiltroTiposConj.pas
+Foto da Pessoa: UFrmPesMakeFoto.pas. Mensagens: "Erro ao carregar a foto:"; "Confirma remover a foto da pessoa?"; "Erro ao carregar a assinatura:"; "Confirma remover a assinatura da pessoa?"
+Frame Foto Pessoa: UFrmPesFrameFoto.pas
+Frame Foto Produto: UFrmProFrameFoto.pas
+FrmPAFEnvWS: UFrmPAFEnvWS.pas
+Fundo de Combate a Pobreza por NCM/UF: UFrmFundoPob.pas
+Fundos do Caixa Mercado: UFrmFundosBMCaixa.pas. Mensagens: "Largura/Altura inválida"; "Confirma excluir a resolução selecionada?"
+Gerar Grade de Referências: UFrmGeraGrade.pas. Mensagens: "Selecione uma grade"; "Produto possuí referência(s) com estoque. As referências serão desativadas, deseja continuar?"
+Geração Manual de XML do PAF: UFrmPAFGerManXML.pas. Mensagens: "Já existe uma geração de arquivo de estoque em andamento!"
+Gerenciamento de Promoções: UFrmGerPromo.pas. Mensagens: "Confirma gravar as alterações feitas nos Produtos?"
+Gerentes: uFrmGerentes.pas
+Grades Padronizadas: UFrmProGrades.pas. Mensagens: "Descrição em branco"; "É preciso especificar pelo menos a Lista A"
+Importação de Preços de Arquivo: UFrmImportPrecosTXT.pas. Mensagens: "Especifique o arquivo"; "Arquivo não encontrado"; "Nenhuma linha no arquivo"; "Produto não encontrado"
+Imposto para Partilha de ICMS por UF: UFrmImpostoPartUF.pas. Mensagens: "NCM em branco"; "UF em branco"; "UF incompleta"; "Alíquota de ICMS em branco. Para isento digite "0""
+Impostos: UFrmImpostos.pas
+Impostos por NCM: UFrmImpostoNCM.pas. Mensagens: "Primeiro você deve cadastrar um NCM para depois inserir valores de ST nele"; "Valor de ST inválido"; "UF incompleta"; "UF inexistente"
+Incluir Cesta: UFrmCadCesta.pas. Mensagens: "Código em branco"; "Descrição em branco"
+Incluir Conjunto: UFrmCadConjunto.pas. Mensagens: "Descrição em branco"
+Incluir Consulta ao SPC: UFrmSPCConsAdd.pas. Mensagens: "Informe os detalhes da consulta"
+Incluir Código CSC: UFrmCadNFCeCSC.pas. Mensagens: "Empresa inválida"; "Identificador em branco"; "Código em branco"
+Incluir Endereço: UFrmCadEnderEntPes.pas. Mensagens: "CPF/CNPJ mal formado!"; "Cod.Cidade incompleto"; "UF incompleta"; "UF inexistente"
+Incluir Grupo de Planos de Pagamento: UFrmCadGrupoPlanos.pas. Mensagens: "O tamanho do campo dos IDs dos Planos ultrapassou o limite máximo!"; "Descrição em branco"; "Nenhum plano de pagamento marcado"
+Incluir Justificativa no Imposto: UFrmCadImpJustif.pas. Mensagens: "Justificativa em branco"; "Justificativa inválida"; "Justificativa já está incluída no imposto!"
+Incluir Matéria Prima para Produção: UFrmCadKitPro.pas. Mensagens: "Especifique o produto"; "Produto inválido"; "O produto de matéria-prima é o próprio produto final a ser produzido!"; "Especifique a quantidade"
+Incluir PIS/COFINS: UFrmCadPISCOF.pas. Mensagens: "Descrição em branco"
+Incluir Produtos na Promoção: UFrmPromoMeAddLst.pas. Mensagens: "Nenhum produto selecionado"; "Produto já está incluído na promoção"; "Preço de promoção está o mesmo que o preço normal"; "Preço de promoçao zerado"
+Incluir Série NFC-e: UFrmCadNFCeSerie.pas. Mensagens: "Empresa inválida"; "Série em branco"; "Série de Contingência em branco ou maior que o permitido, valor deve ser entre 1 e 889"; "Descrição em branco"
+Incluir Volume: UFrmCadVolume.pas. Mensagens: "Descricação em branco"; "Especifique a cubagem"
+Inserir Produto na Promoção: UFrmCadPromoPro.pas. Mensagens: "Produto não definido"; "Produto inválido"; "Nenhum valor definido"; "Deve ser optador entre Valor ou Porcentagem"
+Inserir Promoção: UFrmCadPromo.pas. Mensagens: "Data inicial em branco"; "Data final em branco"; "Intervalo de datas inválidas"; "Dever ser informado quantidade inicial e final sendo o valor maior que 0"
+Inserir Sugestão de Produto: UFrmCadSugestao.pas. Mensagens: "Especifique um produto"; "Produto inválido"
+Justificativas Fiscais: UFrmJustificativas.pas
+Legenda de Classes de Transação de Cartão: UFrmCartaoLegendaClasses.pas
+Legendas Tipo Pessoa: UFrmLegendaTipoPes.pas
+Liberação de Requisições de Pedido de Compra: UFrmLibReqPedComp.pas. Mensagens: "Você não tem permissão para Liberar ou Bloquear Requisições de Pedido de Compra."
+Liberação de Vendas: UFrmLibVendas.pas. Mensagens: "Usuário sem permissão para liberar esse valor de venda."; "Usuário sem permissão para negar esse valor de venda."; "Venda não está aguardando liberação"; "O usuário não possui as permissões necessárias conforme com os tipos de bloqueio deste registro"
+Logs: UFrmLogs.pas
+Lotes do Item: UFrmMovLote.pas. Mensagens: "Quantidade do lote inválida"; "Data de fabricação é obrigatória."; "Data de validade é obrigatória."; "Soma das quantidades dos lotes deve fechar com a quantidade do produto"
+Lotes do Produto: UFrmLotes.pas. Mensagens: "O registro deve ser Fluxo = Reserva"; "Esse registro já está desreservado!"; "Esse registro não pode ser desreservado pois já possui desreserva parcial!"; "Confirma efetuar a desreserva desse registro?"
+Marcas: UFrmMarcas.pas. Mensagens: "Confirma capturar as marcas dos produtos ?"; "Nenhuma marca encontrada nos produtos"; "Todas as marcas já estão cadastradas"
+Metas do Produto: UFrmProMetas.pas. Mensagens: "Vendedor já está na lista"; "Vendedor inválido"; "Nenhum vendedor foi especificado"
+Motivo da Liberação de Venda: UFrmLibVendaObs.pas. Mensagens: "O motivo é obrigatório"
+Motivo da Negação da Requisição de Pedido de Compra: UFrmMotivoLibReqPedComp.pas. Mensagens: "Motivo muito curto"
+Motoristas: UFrmMotoristas.pas
+Mov.Manual - Lançar Centro de Custos: UFrmMovManualCC.pas. Mensagens: "Deve haver pelo menos um lançamento"; "Total dos lançamentos deve ser igual ao total da nota"; "Valor do lançamento zerado"; "Conta inválida"
+Movimentação Manual de Lote: UFrmLoteCardexMan.pas. Mensagens: "Informe a data"; "Informe a quantidade"; "Informe o motivo"; "A Soma do saldo dos lotes é superior ao valor do estoque do produto."
+Movimento Manual: UFrmMovManual.pas. Mensagens: "Controle de Lote não habilitado nas configurações"; "Produto não definido"; "Produto inválido"; "Produto Inativo"
+Movimento Manual Estoque em Posse de Terceiros: uFrmPosseMovManual.pas. Mensagens: "Produto não definido"; "Terceiro não definido"; "Produto inválido"; "Data em branco"
+Movimento Manual Estoque Propriedade de Terceiros: uFrmPropMovManual.pas. Mensagens: "Produto não definido"; "Terceiro não definido"; "Produto inválido"; "Data em branco"
+Observações: UFrmObservacoes.pas
+Observações: UFrmPesSPCObs.pas
+Operações: UFrmOperacoes.pas
+Personalização do bmCaixa: UFrmPersonalBMCaixa.pas
+Pessoa - Endereços de Entrega/Retirada: UFrmPesEnderecoEntrega.pas. Mensagens: "Confirma excluir o endereço selecionado?"
+Pessoa - Entrega Futura: UFrmPesFutura.pas
+Pessoa - Limite de Crédito: UFrmPesLimiteCredito.pas
+Pessoa - Personalizados: UFrmPesPersonal.pas. Mensagens: "A tabela PessoasPersonal não está com campos personalizados criados"
+Pessoa - Preços Especiais: UFrmPesPrecosEsp.pas. Mensagens: "Especifique o produto"; "Produto inválido"; "Especifique o preço ou percentual"; "Não pode ser especificado Preço e Percentual ao mesmo tempo!"
+Pessoa - Transportadora: UFrmPesTransp.pas. Mensagens: "Descrição do veículo em branco"; "Motorista do veículo em branco"; "Placa do veículo em branco"; "UF da Placa do veículo em branco"
+Pessoa - Usuários: UFrmFornecUsers.pas. Mensagens: "Você deve selecionar pelo menos 1 usuário!"
+Pessoas: UFrmPessoas.pas. Mensagens: "O filtro atual não contém a pessoa selecionada."; "Esta coluna somente pode ser ordenada na opção avançada!"
+Pessoas - Tipos de Bloqueios: UFrmPesBloq.pas. Mensagens: "Descrição em branco"
+Pessoas - Tipos de Classificação: UFrmPesClassific.pas. Mensagens: "Código em branco"; "Descrição em branco"
+Planos de Pagamento: UFrmPlanos.pas
+Planos de Pagamento - Grupos: UFrmPlanosGrupos.pas. Mensagens: "Confirma excluir o grupo selecionado?"
+Produto - Entrega Futura: UFrmProFutura.pas
+Produto - Estoque Mínimo/Máximo: UFrmProEstMinMax.pas
+Produto - Foto: UFrmProMakeFoto.pas. Mensagens: "Confirma remover a foto do produto?"
+Produto - Personalizados: UFrmProPersonal.pas. Mensagens: "A tabela ProdutosPersonal não está com campos personalizados criados"
+Produto - Produtos Relacionados - Movimentação: UFrmProMovRel.pas
+Produto - Reclassificação: UFrmProReclassific.pas. Mensagens: "Produto inválido"; "Porcentagem inválida"
+Produto - Sugestão: UFrmProSugestao.pas. Mensagens: "Confirma tirar produto da sugestão?"
+Produto - Índices Técnicos - Produção: UFrmProKit.pas. Mensagens: "Retirar produto da produção?"
+Produtos: UFrmProdutos.pas. Mensagens: "O filtro atual não contém o produto selecionado."; "Usuário não tem permissão para alteração de produto inativo"; "Essa referência não pode ser excluída, pois é a ÚNICA referência do Produto."; "Essa referência não pode ser excluída, pois ainda possui estoque em uma ou mais empresas."
+Produtos - Liberação de Preços: UFrmLibPrecos.pas. Mensagens: "Confirma liberar os preços dos produtos marcados?"; "Nenhum produto foi marcado para ser liberado!"; "Novo preço é igual ao preço atual!"
+Produtos - Promoção para Mercado: UFrmProPromo.pas. Mensagens: "Primeiro você deve incluir uma nova Promoção com as datas para depois poder incluir produtos na promoção"; "Confirma tirar o produto da promoção?"; "Ainda não há produtos nesta promoção."
+Produtos - Similares: UFrmSimilares.pas. Mensagens: "Este produto já está em outro grupo. Confirma trocar de grupo?"
+Produtos - Unidades Relativas: UFrmProUnRelat.pas
+Produtos On-Line para Caixa: UFrmProOnLine.pas. Mensagens: "Colunas dos DataSets não conincidem"
+Rateio por Centro de Custos: uFrmRateioCC.pas. Mensagens: "Centro de custos obrigatório"; "Percentagem obrigatória"
+Reajuste de Preço: UFrmReajustePreco.pas
+Recebe ProdutosPrecoQtdade: UFrmRecebeDescPrecoQtd.pas
+Recálculo das Reservas: UFrmRecalcReservas.pas
+Recálculo do Cardex: UFrmRecalcCardexTudo.pas. Mensagens: "Interrompido pelo usuário!"
+Regiões: UFrmRegioes.pas
+Regravar PIS/COFINS de Vendas em ECF: UFrmRegravaPisCofECF.pas. Mensagens: "Especifique a data inicial"; "Especifique a data final"; "A data inicial precisa vir antes que a data final"
+Relacionamento DRE - Contas: uFrmDREContas.pas
+Rotina para Atualizar Imposto Aprox. nos Produtos - IBPT: UFrmRotinaProImpostos.pas. Mensagens: "A tabela do IBPTax está vazia. Você deve primeiramente importar a tabela através da rotina de Importação do Arquivo CSV do IBPTax."; "A tabela do IBPTax está desatualizada. Veja a data do fim da vigência!"; "A tabela do IBPTax que você importou ainda não entrou em vigência!"
+Substituto Tributário - Inscrições Estaduais da Empresa por UF: UFrmEmpresaSubst.pas
+Séries: UFrmSeries.pas
+Séries CT-e: UFrmCTeSeries.pas
+Séries MDF-e: UFrmManSeries.pas
+Séries NFC-e: UFrmNFCeSeries.pas
+Tabela IBPTax: UFrmIBPTax.pas. Mensagens: "Arquivo não encontrado"; "Arquivo não possui conteúdo"; "Header do arquivo icompatível"
+Tipos Conjugados: UFrmPesTiposConjugados.pas
+Tipos de PIS/COFINS: UFrmTiposPISCOF.pas
+Tributações: UFrmTributacoes.pas
+Unidades de Medida: UFrmUnidades.pas. Mensagens: "Confirma capturar as Unidades dos produtos ?"; "Nenhuma unidade encontrada nos produtos"; "Todas as unidades já estão cadastradas"
+Usuários: UFrmUsuarios.pas
+Usuários do Banco: UFrmBancoUsers.pas. Mensagens: "Tamanho do campo 'Usuarios', da tabela 'Bancos', excedido em"
+Vendas de Cartão: UFrmCartaoMov.pas. Mensagens: "Esse movimento já está estornado!"
+Vendedores: UFrmVendedores.pas
+Veículos: UFrmVeiculos.pas
+Visualizar Grade do Produto: UFrmProGradeView.pas
+Volumes: UFrmProVolumes.pas
+UDMArqEstoqueXML: UDMArqEstoqueXML.pas. Mensagens: "Existe outro processo de geração de arquivo do estoque em andamento!"; "Erro no gerador de arquivo de estoque:"; "Cadastro da Empresa não encontrado"; "O bmCaixa não foi encontrado na instalação do sistema"
+Índices Técnicos - Recálculo de Custos: UFrmKitRecalcCustos.pas
+
+REGRAS E VALIDAÇÕES (código sem tela)
+UDLLFotos.pas: "DLL FotosWeb não encontrada"; "DLL FotosWeb com versão incompatível"; "Erro ao carregar a DLL FotosWeb"

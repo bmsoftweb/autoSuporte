@@ -1,0 +1,72 @@
+Mapa do NFs (programa Delphi para Windows; raiz do repositório: NFs.dpr). Cada tela é um par .pas (código) + .dfm (desenho). Linhas aproximadas.
+Tela principal: "BMsoft - NFs" em UFrm.pas
+
+MENU E BOTÕES DA TELA PRINCIPAL
+Atualizar: BtnRefreshClick em UFrm.pas (linha ~758)
+Configurações: UFrmConfig.pas ("Configurações")
+Sair: BtnSairClick em UFrm.pas (linha ~699)
+Enviar: UFrmEnvia.pas ("Enviar NFS-e")
+Cancelar: UFrmCanc.pas ("Cancelar NFS-e")
+Comprovante: UFrmComp.pas ("Comprovante de NFS-e")
+Extras: BtnExtrasClick em UFrm.pas (linha ~1078)
+Localizar: UFrmFind.pas ("Find")
+Invalidar: UFrmInvalidar.pas ("Invalidar Nota")
+Recarregar: btnRecarregarClick em UFrm.pas (linha ~1099)
+Enviar todas partindo dessa nota [Ligue o Caps Lock para PARAR]: BtnEnviarTodasClick em UFrm.pas (linha ~1055)
+Recibo Provisório: UFrmEnvia.pas ("Enviar NFS-e")
+Detalhes da Nota: UFrmDetalhes.pas ("Detalhes da Nota")
+Consultas WebService Betha: UFrmWS.pas ("Consultas WebService Betha")
+Consulta WebService IPM: UFrmConsWSIPM.pas ("Consulta WebService IPM")
+Consulta WebService Nacional: UFrmConsWSNacional.pas ("Consultas WebService Nacional")
+Portal Betha: ItemPortalBethaClick em UFrm.pas (linha ~1136)
+Portal IPM: ItemPortalIPMClick em UFrm.pas (linha ~1148)
+Portal Nacional: ItemPortalNacionalClick em UFrm.pas (linha ~1160)
+Sincronizar Cancelamento: UFrmSincCanc.pas ("Sincronizar Cancelamento")
+Consultar Convenio Nacional: src/View/UFrmConsultaConvenioNacional.pas ("Consultar Situação Convênio Nacional")
+
+TELAS (título -> arquivo; mensagens que a tela mostra)
+Cancelar NFS-e: UFrmCanc.pas. Mensagens: "A nota mestre não possui NFs"; "Nota não foi enviada ainda"; "NFS-e já está cancelada"; "Ambiente atual difere do ambiente de envio da nota"
+Cancelar NFS-e: src/View/UFrmCancelaNFSe.pas
+Comprovante de NFS-e: UFrmComp.pas. Mensagens: "A nota mestre não possui NFs"; "A NFS-e ainda não foi autorizada"; "Nota mestre não encontrada"; "Cliente não encontrado"
+Configurações: UFrmConfig.pas. Mensagens: "Erro ao carregar o logotipo"; "Flag utilizada para casos em que o município não utiliza o total líquido da nota, exemplo Brusque."
+Consulta WebService IPM: UFrmConsWSIPM.pas
+Consultar Situação Convênio Nacional: src/View/UFrmConsultaConvenioNacional.pas. Mensagens: "O código IBGE do município da empresa logada não está informado."
+Consultas WebService Betha: UFrmWS.pas
+Consultas WebService Nacional: UFrmConsWSNacional.pas
+Dados: UFrmDados.pas
+Detalhes da Nota: UFrmDetalhes.pas. Mensagens: "Nota não encontrada"
+Email: UFrmMail.pas. Mensagens: "Conta de e-mail não configurada"
+Enviar NFS-e: UFrmEnvia.pas. Mensagens: "Cadastro da série não encontrado"; "Essa nota fiscal já foi enviada"; "Essa nota está sendo ALTERADA no momento!"; "Essa Série não está configurada para usar o NFs"
+Enviar NFS-e: src/View/UFrmEnviaNFSe.pas
+Evento: UFrmDetLog.pas
+Find: UFrmFind.pas
+FrmSincronizaNFSe: src/View/UFrmSincronizaNFSe.pas
+Invalidar Nota: UFrmInvalidar.pas. Mensagens: "Nota já autorizada. Não pode invalidar!"; "Essa nota já está cancelada"; "Essa nota não está em estágio para ser invalidada"; "Sem RPS para invalidar"
+Log: UFrmLog.pas
+Procurar NFS-e: UFrmFindNFs.pas. Mensagens: "Selecione uma nota"
+Recuperar NFS-e IPM: UFrmRecupIPM.pas. Mensagens: "Recuperação de NFS-e cancelada"; "Digite o Número da NFS-e"; "Essa nota consta no WS com situação diferente de Emitida"
+Report: UFrmRel.pas
+Selecionar Pessoa: UFrmSelCli.pas. Mensagens: "Selecione um cliente"
+Sincronizar Cancelamento: UFrmSincCanc.pas. Mensagens: "Registro NFS-e da nota inexistente"; "NFs ainda não enviada"; "NFs já cancelada"; "Nota não encontrada no WebService"
+Status: UFrmStatus.pas
+UDMTabXML: UDMTabXML.pas. Mensagens: "Erro interno: O DataModule DMTabXML já estava assignado!"
+UDMNFSeDAOBetha: src/DAO/UDMNFSeDAOBetha.pas. Mensagens: "Erro interno: Erro ao tentar localizar IDNF na tabela NFsNotas"; "Erro interno: Ao salvar o INI, o cursor não estava no registro do IDNF na tabela NFsNotas!"
+UDMNFSeDAOIPM: src/DAO/UDMNFSeDAOIPM.pas. Mensagens: "Erro interno: Ao salvar o INI, o cursor não estava no registro do IDNF na tabela NFsNotas!"; "Erro interno: Erro ao tentar localizar IDNF na tabela NFsNotas"
+UDMNFSeDAONacional: src/DAO/UDMNFSeDAONacional.pas. Mensagens: "Erro interno: Ao salvar o INI, o cursor não estava no registro do IDNF na tabela NFsNotas!"; "Erro interno: Erro ao tentar localizar IDNF na tabela NFsNotas"
+UDMNFSeDAOBase: src/DAO/Base/UDMNFSeDAOBase.pas. Mensagens: "Essa nota fiscal já foi enviada."; "Essa nota está sendo ALTERADA no momento!"; "Essa Série não está configurada para usar a NFSe."; "Empresa não encontrada."
+
+REGRAS E VALIDAÇÕES (código sem tela)
+Conversoes.pas: "Natureza da Operação inválida"
+MailDup.pas: "Financ não econtrado"; "Arquivo do boleto não encontrado"; "Erro no Financ"
+NFsIni.pas: "Erro interno: Conteúdo do INI da NFs em branco"
+NFSeComp/NFSeBethaComp.pas: "O campo Discriminação do XML ultrapassou o limite de 2000 caracteres"; "Cancelamento não efetuado"; "Tentativas esgotadas e processamento sem sucesso"
+NFSeComp/UNFSeBetha202Webservice.pas: "Cancelamento não efetuado"; "O XML de envio está vazio"; "ID do lote não pode ser vazio."
+NFSeComp/Outros/NFSeBluComp.pas: "CPF/CNPJ mal formado para converter em tag tpCPFCNPJ"; "Tamanho do campo excedido"; "CPF/CNPJ do Cliente mal formado"
+src/Builders/UNacionalBuilder.pas: "Combinação inválida de retenção PIS/COFINS/CSLL"
+src/Providers/UBethaProvider.pas: "Nenhuma Nota Fiscal encontrada na listagem."; "Tamanho da justificativa de cancelamento é menor que 15 caracteres."
+src/Providers/UIPMProvider.pas: "Nenhuma Nota Fiscal encontrada na listagem."; "Tamanho da justificativa de cancelamento é menor que 15 caracteres."
+src/Providers/UNacionalProvider.pas: "Nenhuma Nota Fiscal encontrada na listagem."
+src/Providers/UPublicaProvider.pas: "Nenhuma Nota Fiscal encontrada na listagem."; "Tamanho da justificativa de cancelamento é menor que 15 caracteres."
+src/Service/UNFSeBethaService.pas: "Código de Cancelamento está vázio."; "Motivo de Cancelamento está vázio."; "Motivo de Cancelamento deve contêr pelo menos 15 caracteres."
+src/Service/UNFSeIPMService.pas: "Código de Cancelamento está vázio."; "Motivo de Cancelamento está vázio."; "Motivo de Cancelamento deve contêr pelo menos 15 caracteres."
+src/Service/UNFSeNacionalService.pas: "Código de Cancelamento está vázio."; "Motivo de Cancelamento está vázio."; "Motivo de Cancelamento deve contêr pelo menos 15 caracteres."

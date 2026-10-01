@@ -1,0 +1,187 @@
+Mapa do PAFNFCe (programa Delphi para Windows; raiz do repositório: PAFNFCe.dpr). Cada tela é um par .pas (código) + .dfm (desenho). Linhas aproximadas.
+Tela principal: "BMsoft - PAF NFCe" em UFrmPV.pas
+
+MENU E BOTÕES DA TELA PRINCIPAL
+Pré-Vendas: UFrmPVVendas.pas ("Pré-Vendas")
+Sair: ItemSairClick em UFrmPV.pas (linha ~337)
+Fechamento: UFrmPVReducao.pas ("Fechamento")
+Manutenção: UFrmPVManutencao.pas ("Manutenção")
+Recibos: UFrmPVRecibos.pas ("Recibos")
+Impressões: UFrmPVOrc.pas ("Impressão de DAV / Conta de Cliente")
+NFC-e: UFrmLista.pas ("NFC-e's")
+Menu › Pré-Vendas: UFrmPVVendas.pas ("Pré-Vendas")
+Menu › NFC-e: UFrmLista.pas ("NFC-e's")
+Menu › Recibos: UFrmPVRecibos.pas ("Recibos")
+Menu › DAV / Conta de Cliente: UFrmPVOrc.pas ("Impressão de DAV / Conta de Cliente")
+Menu › Consulta de Vendas: UFrmPVConsultaVendas.pas ("Consulta de Vendas")
+Menu › Fechamento: UFrmPVReducao.pas ("Fechamento")
+Menu › Emitir NFC-e do DAV: BtnEmitirDAVClick em UFrmPV.pas (linha ~606)
+Menu › Emitir NFC-e da Conta de Cliente: BtnEmitirContaClienteClick em UFrmPV.pas (linha ~623)
+Menu › Financ > Receber: BtnFinancReceberClick em UFrmPV.pas (linha ~633)
+Menu › Sair: ItemSairClick em UFrmPV.pas (linha ~337)
+Operações › Suprimento: UFrmPVSuprimento.pas ("Suprimento")
+Operações › Sangria: UFrmPVSangria.pas ("Sangria")
+Operações › Situação do Caixa: UFrmPVSituacao.pas ("Situação do Caixa")
+Operações › Histórico de Movimentos: UFrmPVMovimentos.pas ("Histórico de Movimentos")
+Operações › Abrir Movimento: ItemAbrirMovClick em UFrmPV.pas (linha ~928)
+Operações › Encerrar Movimento: UFrmPVEncerra.pas ("Encerrar Movimento")
+Operações › Manutenção: UFrmPVManutencao.pas ("Manutenção")
+Operações › Gerar Pacote Mensal: UFrmPacoteMensal.pas ("Gerar Arquivo Mensal")
+Mercado › Emissão de NFC-e: UFrmCF.pas ("Cupom")
+Mercado › Receber Produtos: ItemReceberProdutosClick em UFrmPV.pas (linha ~1052)
+Mercado › Consulta de Preços: ItemConsPrecosClick em UFrmPV.pas (linha ~1059)
+Mercado › Consulta de Crédito: UFrmCred.pas ("Crediário")
+Mercado › Consulta de Vendas: UFrmConsVendas.pas ("Consulta de Vendas")
+TEF › TEF Administrativo: ItemTEFAdmClick em UFrmPV.pas (linha ~689)
+Ajuda › Informações Técnicas: BtnInfoTecClick em UFrmPV.pas (linha ~694)
+Ajuda › Sobre: ItemSobreClick em UFrmPV.pas (linha ~699)
+
+TELAS (título -> arquivo; mensagens que a tela mostra)
+Abertura de Movimento: UFrmPVAbertura.pas. Mensagens: "Erro ao executar o suprimento:"
+Alterar Duplicata: UFrmDup.pas. Mensagens: "Valor inválido"; "Valor da duplicata não pode ser maior que o total da NFC-e"; "Especifique o vencimento"; "Data não pode ser inferior a Hoje"
+Aplicar Acréscimo/Desconto em Item: UFrmMeAcreDescItem.pas. Mensagens: "Item inválido"; "Este item está cancelado"; "Este item já teve desconto aplicado"; "Este item já teve Acréscimo aplicado"
+Assinatura Digital: UFrmAssina.pas. Mensagens: "Arquivo de Chaves da BMsoft não encontrado"
+Atenção: UFrmEsc.pas
+Autorização do Gerente: UFrmAut.pas
+Barra de Status: UFrmSt.pas
+Cadastro de Cheque: UFrmCheque.pas. Mensagens: "Cliente inválido"
+Cancelar Cupom: UFrmPVCancela.pas. Mensagens: "Cupom não encontrado no sistema para o cancelamento"; "Cupom não encontrado no sistema!"; "O último cupom fiscal emitido é originado de pré-venda, por isso é necessário conexão com o servidor para o seu cancelamento!"
+Cancelar Item: UFrmMeCancItem.pas. Mensagens: "Número do item inválido"; "Item já foi cancelado"
+Cancelar NFC-e: UFrmCanc.pas
+Cancelar NFC-e: UFrmWSCanc.pas. Mensagens: "NFC-e não encontrada"; "Essa NFC-e está sendo alterado no momento"; "Essa NFC-e já está cancelada no sistema"; "Essa NFC-e já está cancelada na SEFAZ"
+Cancelar Pré-Venda: UFrmPVCancelaPV.pas
+Capturar Cupom: UFrmMeCapCupom.pas. Mensagens: "Especifique o COO do Cupom"; "Cupom não encontrado"; "Cupom sem itens"; "Confirma capturar o cupom?"
+Comprovante de Crediário: UFrmComprov.pas
+Conexão com Servidor: UFrmCheckServer.pas. Mensagens: "Pasta da Base de Dados do Servidor não encontrada"; "Parece que a conexão com o servidor foi perdida!"; "Tabela Empresas não encontrada na base de dados"
+Configurações Caixa: UFrmConf.pas. Mensagens: "Identificação do caixa não definida"; "Informe a série"; "Informe o código da empresa"; "Defina a arquitetura do seu sistema"
+Consulta de Preço: UFrmConPreco.pas
+Consulta de Vendas: UFrmConsVendas.pas
+Consulta de Vendas: UFrmPVConsultaVendas.pas
+Contingência: UFrmContingencia.pas. Mensagens: "Registro na tabela não confere com a contingência"
+Controle: UFrmRegControle.pas
+Conversor Novo bmCaixa Unido: UFrmConvMovPVUnido.pas. Mensagens: "Empresa não configurada"; "Caixa não configurado"; "Tabela inválida para obter o nome do campo da DATA"
+Crediário: UFrmCred.pas. Mensagens: "Cliente não encontrado"; "Pessoa do tipo júridica não possui IE informada no cadastros de pessoa"; "Prazo não definido no cadastro do cliente"; "Dia Fixo não definido no cadastro do cliente"
+Crediário - Pessoas: UFrmCredPessoas.pas
+Crediário - Produtos Vendidos: UFrmCredProdutos.pas
+Cupom: UFrmCF.pas. Mensagens: "Quantidade inválida"; "Confirma cancelar este NFC-e?"; "Valor total do cupom zerado"; "Há itens deste NFC-e com CFOP inválida"
+Dados: UFrmHeaderForm.pas
+Dados Cartão: UFrmDadosCartao.pas
+Dados do Cliente: UFrmDados.pas. Mensagens: "Pessoa do tipo júridica não possui IE informada no cadastros de pessoa"; "CPF/CNPJ inválido"
+Deletar Prevenda: UFrmDelPV.pas
+Desconto por quantidade: uFrmPagamentoDinheiroDesc.pas
+Destaque o Cupom: UFrmCinco.pas
+Editor de Layout CF: UFrmEditCF.pas
+Emitir Cupom de OS - Conta de Cliente: UFrmPVImpCC.pas. Mensagens: "Conta de Cliente não encontrada"; "Conta de Cliente está sendo editada no momento"; "Conta de Cliente já faturada"; "Esta conta de cliente está cancelada"
+Emitir Cupom do DAV: UFrmPVImpDAV.pas. Mensagens: "DAV não encontrado"; "Esse DAV não foi concluído para poder ser emitido!"; "A emissão de DAV tipo Orçamento está bloqueada"; "Esse DAV está cancelado"
+Encerrar Movimento: UFrmPVEncerra.pas. Mensagens: "Erro ao emitir relatório:"
+Enviando NFCe....: uFrmEnvia.pas. Mensagens: "Falha ao enviar e-mail"; "Indicador de Presença do Comprador inválido"; "CRT da Empresa inválido"; "Origem do Produto inválida"
+Enviar E-mail: UFrmEnvEmail.pas. Mensagens: "Especifique o e-mail de destino"; "Conta de e-mail não configurada"; "Nota não autorizada"; "Nota Cancelada"
+Evento: UFrmDetalhes.pas
+Fechamento: UFrmPVReducao.pas
+Filtro: UFrmFiltro.pas
+FrmAbre: UFrmAbre.pas. Mensagens: "NFC-e não encontrada"; "Essa NFC-e já está sendo alterada no momento"; "Essa NFC-e está cancelada"; "Essa NFC-e já está autorizada"
+frmDANFE: uFrmDANFE.pas. Mensagens: "NFCe não encontrado"
+FrmGrava: UFrmGrava.pas. Mensagens: "Série configurada não encontrada"
+FrmImprimir: UFrmImprimirRecibo.pas
+FrmMeCupCesta: UFrmMeCupCesta.pas. Mensagens: "Cesta: Cesta está sem itens no cadastro"; "Cesta: Quantidade de cestas deve ser inteira"; "Cesta: Quantidade de cestas zerada"; "Cesta: Item com quantidade zerada"
+FrmMeCupConj: UFrmMeCupConj.pas
+FrmMeCupHelp: UFrmMeCupHelp.pas
+FrmModalidadePgtoPIX: UFrmModalidadePgtoPIX.pas
+FrmNota: UFrmNota.pas. Mensagens: "Confirma limpar todos os itens?"; "ERRO AO CHAMAR PAGAMENTO:"
+FrmReceberDescontoFidelidade: uFrmRecebeDescontoFidelidade.pas
+FrmTEFMsg: UFrmTEFMsg.pas
+FrmUpdModulo: UFrmUpdModulo.pas. Mensagens: "Erro ao verificar atualização do módulo:"; "Pasta da bmSoft não configurada"; "Pasta da BMsoft no Servidor não encontrada"; "Pasta do PAF-NFCe não encontrada no Servidor"
+Gera Arquivão PAF: UFrmPAFFilao.pas
+Gerar Arquivo Mensal: UFrmPacoteMensal.pas. Mensagens: "Data inicial não pode ser maior que a data final"; "Nenhuma série selecionada"; "Selecione um tipo"; "Cliente inválido"
+Guardar Resto como Crédito: UFrmMeValeGuarda.pas. Mensagens: "Especifique o cliente"; "Cliente inválido"
+Histórico de Movimentos: UFrmPVMovimentos.pas
+Histórico de Sangria / Suprimento: uFrmHistSangriaSuprimento.pas
+Identificação do PAF-ECF: UFrmIdentPAF.pas
+Importação da Configuração: UFrmImportConfig.pas. Mensagens: "As configurações ainda não foram importadas do servidor."; "Erro ao importar configurações do servidor:"; "Erro ao carregar as configurações locais:"; "Erro ao copiar arquivo"
+Impressão de DAV / Conta de Cliente: UFrmPVOrc.pas. Mensagens: "Confirma excluir pré-impressão de orçamento selecionado?"
+Imprimir: UFrmPrint.pas. Mensagens: "NFC-e não encontrada"; "NFC-e ainda não foi autorizada"; "Especifique o endereço de e-mail do destinatário"
+Imprimir Cupom: UFrmPVImp.pas. Mensagens: "Erros encontrados na pré-venda!"; "Diferença muito grande entre o total original e o calculado na ECF"; "Registro mestre não encontrado"; "*** Registro pertence a outra empresa !!!"
+Incluir Produto: UFrmPro.pas. Mensagens: "Produto não definido"; "Produto inválido"; "Produto está desativado"; "Referência do produto está desativada"
+Informações Adicionais: UFrmInfAdicionais.pas
+Informações da Transportadora: UFrmInfoTransportador.pas. Mensagens: "Informe o documento"; "Documento inválido"; "Informe o identificador"
+Informações do Intermediador da Transação: UFrmInfoIntermediador.pas. Mensagens: "Informe o documento"; "Documento inválido"; "Informe o identificador"
+Informações Técnicas: UFrmInfoTec.pas
+Inutilização: UFrmInutilizacao.pas. Mensagens: "Espeficique o número inicial"; "Espeficique o número final"; "Os número inicial e final não estão corretos"; "ATENÇÃO! Você está inutilizando um intervalo grande de numeração. Está certo disso?"
+IOContingencia: UFrmIOCont.pas. Mensagens: "Selecione o modo de contingência"; "Digito o motivo"; "Motivo deve ter pelo menos 15 caracteres"
+Lançamentos Contas Lanc: UFrmContasLanc.pas
+Lançar Cheque Recebido: UFrmPVCheque.pas. Mensagens: "Código do Banco em branco"; "Agência em branco"; "Conta em branco"; "Digite o número do cheque"
+Liberar Venda Crediário: UFrmCredLibera.pas. Mensagens: "Venda NEGADA pelo gerente!"
+Localizar Identificador: UFrmLocateIdent.pas. Mensagens: "Digite o identificador"; "Identificador NÃO encontrado"
+Login de Operador: UFrmLogin.pas. Mensagens: "Login inválido"; "Login não encontrado"; "Digite o login do operador"; "Operador não econtrado"
+Logs em Tempo Real: UFrmLogsRealTime.pas
+Mail: UFrmMail.pas. Mensagens: "Conta de e-mail não configurada"
+Manutenção: UFrmPVManutencao.pas
+Manutenção da Base de Dados Local: UFrmConversor.pas. Mensagens: "Pasta do XDEMO não encontrada no diretório"; "Erro ao obter versão da base XDEMO:"; "Erro ao obter versão da base DADOS:"; "Base de Dados está sem tabelas!"
+Menu Fiscal: UFrmMenuFiscal.pas
+NFC-e's: UFrmLista.pas. Mensagens: "Esta NFC-e já foi enviada."; "Ocorreu o erro:"; "Não foi possível cancelar NFC-e. Sem acesso ao servidor."; "Banco local não configurado"
+PAF - Vendas Identificadas pelo CPF/CNPJ: UFrmPAFVendasIdentif.pas. Mensagens: "Erro ao gerar arquivos Z:"
+PAF > Contas de Clientes Abertas: UFrmPAFContasCliAbertas.pas. Mensagens: "Erro ao gerar arquivos V:"
+Pagamento: UFrmPgto.pas. Mensagens: "NFC-e não encontrada"; "Essa NFC-e está sendo alterada no momento"; "Essa NFC-e está cancelada"; "Essa NFC-e já está autorizada"
+Pagar com Créditos Disponíveis: UFrmMeValeCredito.pas. Mensagens: "Especifique o cliente"; "Cliente inválido"; "Nenhum crédito para o cliente"
+Pesquisa de Clientes: UFrmClientes.pas. Mensagens: "Pessoa do tipo júridica não possui IE informada no cadastros de pessoa"
+Pesquisa de Produtos: UFrmPesq.pas
+Print TEF: UFrmPrintTEF.pas
+Produtos Sem Benefício Fiscal: UFrmListaProdsSemBenef.pas
+Pré-Venda travada: UFrmPVDestravarPV.pas
+Pré-Vendas: UFrmPVVendas.pas
+Re Registradas Pelo PAF-NFC-e ou Sistema De Gestão: UFrmRegistradaPAFNFCe.pas. Mensagens: "Erro ao gerar arquivos W:"
+Recalc Caixa: UFrmRecalcLan.pas
+Recebe Cestas: UFrmRecebeCestas.pas
+Recebe Conjuntos: UFrmRecebeConjuntos.pas
+Recebe ProdutosPrecoQtdade: UFrmRecebeDescPrecoQtd.pas
+Receber Produtos: UFrmRecebe.pas. Mensagens: "Há produtos sem o Código do Benefício Fiscal definido na Tributação. Favor corrigir no Cadastros, para então usar o PAF NFC-e."
+Recibos: UFrmPVRecibos.pas. Mensagens: "Confirma excluir recibo selecionado?"
+Registra Mov Cartão: UFrmRegCartaoMov.pas
+Registros de Inutilização: UFrmRegInutiliz.pas
+Registros do PAF-ECF: UFrmPAFRegistros.pas. Mensagens: "Especifique a data inicial"; "Especifique a data final"; "Para estoque parcial é necessário especificar os produtos"; "Especifique o arquivo de destino"
+Relatório Gerencial: UFrmRelGerencial.pas
+Salva XML do Cupom: UFrmMeCupXML.pas. Mensagens: "O CUPOM FISCAL ABERTO SERÁ RECUPERADO!"; "Erro no carregamento da recuperação do cupom!"; "Root do XML não é "Cupom""
+Sangria: UFrmPVSangria.pas. Mensagens: "Valor deve ser maior que zero"; "Valor a ser efetuado a sangria maior que o valor em caixa"; "O banco para sangria/suprimento não está definido nas Configurações do PAF_NFCe"; "O banco para sangria/suprimento é o mesmo banco do operador atual"
+Selecionar Banco: UFrmSelBanco.pas
+Selecionar Cliente: UFrmPVSelCli.pas. Mensagens: "Selecione um cliente"
+Selecionar DAV: UFrmSelDAV.pas. Mensagens: "Selecione um DAV"
+Selecionar Empresa: UFrmSelEmp.pas
+Selecionar Gerenciador de Cartão: UFrmCartao.pas
+Selecionar OS: UFrmSelOS.pas. Mensagens: "Selecione uma OS"
+Selecionar Produto: UFrmSelPro.pas. Mensagens: "Selecione um produto"
+Sincronização de Dados: UFrmSyncErro.pas
+Situação do Caixa: UFrmPVSituacao.pas
+Sobre: UFrmSobre.pas
+Splash: UFrmSplash.pas
+Suprimento: UFrmPVSuprimento.pas. Mensagens: "Valor deve ser maior que zero"; "O banco para sangria/suprimento não está definido nas Configurações do PAF_NFCe"; "O banco para sangria/suprimento é o mesmo banco do operador atual"
+Tabela de Produtos da Pré-Venda: UFrmPVTabTempPV.pas
+Totalizar Cupom: UFrmMeCupTot.pas. Mensagens: "Falha ao emitir NFCe: Acesse a tela de manutenção de NFC-e para corrigir e enviar o documento novamente."; "Confirma cancelar este NFC-e?"; "Valor muito elevado"; "Nenhum Gerenciador TEF ou POS configurado"
+Transação TEF Cancelada: UFrmTEFCan.pas
+Transações TEF Já Confirmadas: UFrmTrTEFJaConf.pas
+Troco de Crédito: UFrmMeValeTroco.pas
+Valor Excedido na Gaveta: UFrmPVCheckDinheiroMaxGaveta.pas
+Venda Cartão POS: UFrmRegCartaoPOS.pas. Mensagens: "Administradora não selecionada"
+Verificando desconto por quantidade.: uFrmDescFidelidade.pas
+Verificando desconto por quantidade.: UFrmDescQtdPreco.pas
+Visualizar NFC-e: UFrmVisualizarImposto.pas. Mensagens: "Código do item ou quantidade inválidos"
+UDM: UDM.pas. Mensagens: "Arquitetura do Sistema não especificada em: PAFNFCe CONFIG/Geral/Arquitetura..."; "Identificação do Caixa não definida"; "A base no servidor está configurada em modo Client/Server, por isso no bmCaixa também deve ser configurada nesse modo!"
+UDMCertificado: UDMCertificado.pas. Mensagens: "Empresa não encontrada para carga do certificado digital"; "Certificado Digital vencido!"
+UDMCliente: UDMCliente.pas
+UDMEnviaCont: UDMEnviaCont.pas. Mensagens: "Erro ao tentar reenviar Nota em Contingência"
+UDMItens: UDMItens.pas
+UDMNFCe: UDMNFCe.pas
+UDMSync: UDMSync.pas
+UDMTabXML: UDMTabXML.pas. Mensagens: "Erro na função LoadXML: Conteúdo do XML a carregar está em branco na tabela!"; "Erro interno: Não existe NF-e carregada no componente"; "Erro interno: A NF-e carregada no componente está divergente"
+UDM_DDE: UDM_DDE.pas
+UDM_PAF: UDM_PAF.pas
+UFrmPAFFilaoWait: UFrmPAFFilaoWait.pas
+UFrmPrintingWait: UFrmPrintingWait.pas
+UFrmSyncWait: UFrmSyncWait.pas
+UImprimirSituacaoCaixa: UImprimirSituacaoCaixa.pas
+
+REGRAS E VALIDAÇÕES (código sem tela)
+UTEFComp.pas: "Transação TEF efetuada. Favor reimprimir último cupom. NSU:"; "Gerenciador TEF não responde!"; "TEF: Erro ao ler dados das parcelas."
+UThPAFTabSrv.pas: "Erro ao realizar operações na tabela PAF do servidor:"; "SISTEMÁTICA DE HASHS DO PAF: OS HASHS DAS TABELAS NÃO ESTÃO NA VERSÃO ESPERADA!"
+UThSync.pas: "Erro na Conexão:"; "Base de Dados do Servidor não encontrada"; "Parece que a conexão com o servidor foi perdida!"
+UtilsNFe.pas: "GetURLConsultaNFCe: Versão incompatível"
+Vars.pas: "Não foi possível executar a operação"; "Nome do arquivo de formato não informado."; "Não existe venda pendente para cancelar"

@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Columns3, Eye, EyeOff, Loader2, Move, RotateCcw, Save, Scaling, Search, Wand2, X } from 'lucide-react';
-import { chamar, fetchLigados, listRecords } from '../api';
+import { chamar, fetchLigados, fetchSugestoes, listRecords } from '../api';
 import { FieldDef, RegistroCrud, ResourceDef } from '../types';
 import type { TamanhoCampo } from '../utils/configListas';
 import { FIELD_CLASS, HINT_CLASS, INPUT_CLASS, LABEL_CLASS } from '../utils/formStyles';
 import { AvisoErro } from './AvisoErro';
+import { ComboDigitavel } from './ComboDigitavel';
 import { ConfirmDialog } from './ConfirmDialog';
 import { Toggle } from './Toggle';
 
@@ -103,6 +104,20 @@ export const RecordForm: React.FC<RecordFormProps> = ({
   onSalvarLayout,
 }) => {
   const isEdit = Boolean(record);
+
+  /** Campos com lista digitável: valores já usados (ex.: grupos dos sistemas), carregados ao abrir */
+  const [sugestoes, setSugestoes] = useState<Record<string, string[]>>({});
+  useEffect(() => {
+    let vivo = true;
+    for (const f of resource.fields.filter((x) => x.sugestoes)) {
+      fetchSugestoes(resource.name, f.name)
+        .then((l) => vivo && setSugestoes((s) => ({ ...s, [f.name]: l })))
+        .catch(() => {}); // sem sugestões o campo continua de digitar
+    }
+    return () => {
+      vivo = false;
+    };
+  }, [resource]);
   const formRef = useRef<HTMLFormElement>(null);
   // Inclusão: o foco já vem no primeiro campo vazio (os que já vêm com o padrão ficam para trás)
   useEffect(() => {
@@ -423,6 +438,21 @@ export const RecordForm: React.FC<RecordFormProps> = ({
         );
 
       default:
+        // Lista digitável: os valores já usados; dá para escolher ou escrever um novo
+        if (field.sugestoes) {
+          return (
+            <ComboDigitavel
+              id={inputId}
+              value={String(value ?? '')}
+              onChange={(v) => setValue(field.name, v)}
+              opcoes={sugestoes[field.name] ?? []}
+              maxLength={field.maxLength}
+              placeholder={field.placeholder}
+              required={Boolean(field.required)}
+              className={inputClass}
+            />
+          );
+        }
         return (
           <input
             id={inputId}

@@ -1,0 +1,47 @@
+Mapa do XMLManager (programa Delphi para Windows; raiz do repositório: Manager.dpr). Cada tela é um par .pas (código) + .dfm (desenho). Linhas aproximadas.
+Tela principal: "BMsoft - XML Manager" em UFrm.pas
+
+MENU E BOTÕES DA TELA PRINCIPAL
+Download: UFrmDownloadWS.pas ("Download - WebService")
+Fechar: BtnFecharClick em UFrm.pas (linha ~391)
+Importar: UFrmImportar.pas ("Importar")
+Exportar: UFrmExportar.pas ("Exportar")
+Visualizar: BtnPreviewClick em UFrm.pas (linha ~447)
+Excluir: UFrmExcluir.pas ("Excluir")
+Configurações: UFrmConfig.pas ("Configurações")
+Marcar: BtnMarcarClick em UFrm.pas (linha ~420)
+Atualizar: BtnRefreshClick em UFrm.pas (linha ~407)
+Chave: BtnChaveClick em UFrm.pas (linha ~429)
+Consultar: UFrmConsulta.pas ("Consultar")
+E-mail: UFrmMail.pas ("Receber XMLs de E-mail")
+Ler SEFAZ: UFrmDestinadas.pas ("Baixar Notas Destinadas")
+Manifestar: UFrmManifestar.pas ("Manifestar Nota")
+Selecionar: BtnSelecionarClick em UFrm.pas (linha ~573)
+Gerar Pacote de XMLs: UFrmGerarPacote.pas ("Gerar Pacote de XMLs")
+Consultar Chave - WebService: UFrmWSConsulta.pas ("Consultar Chave - WebService")
+Status do WebService: BtnWSStatusClick em UFrm.pas (linha ~557)
+Consultar Chave - Portal: BtnConsultaChavePortalClick em UFrm.pas (linha ~563)
+Portal da NFe: BtnPortalClick em UFrm.pas (linha ~568)
+Download Automatizado: btnDownloadAutomatizadoClick em UFrm.pas (linha ~504)
+
+TELAS (título -> arquivo; mensagens que a tela mostra)
+Baixar Notas Destinadas: UFrmDestinadas.pas
+Configurações: UFrmConfig.pas
+Consultar: UFrmConsulta.pas
+Consultar Chave - WebService: UFrmWSConsulta.pas. Mensagens: "Digite a chave da NFe"; "Chave inválida"
+Dados: UFrmDados.pas
+Download - WebService: UFrmDownloadWS.pas
+Excluir: UFrmExcluir.pas
+Exportar: UFrmExportar.pas. Mensagens: "Especifique a pasta de destino"; "Pasta de destino inválida"; "Arquivo já existe no destino. Deseja substituir?"
+Find: UFrmFind.pas
+Gerar Pacote de XMLs: UFrmGerarPacote.pas. Mensagens: "Data inicial em branco"; "Data final em branco"; "As datas não estão corretas"; "Especifique o destino"
+Importar: UFrmImportar.pas. Mensagens: "Nenhum arquivo especificado para importar"
+Lista: UFrmLista.pas
+Log: UFrmLog.pas
+Manifestar Nota: UFrmManifestar.pas. Mensagens: "Digite uma justificativa"; "Digite uma observação"
+Receber XMLs de E-mail: UFrmMail.pas. Mensagens: "NENHUMA MENSAGEM NA CAIXA DE ENTRADA"
+Visualizar: UFrmPreview.pas
+UDMTabXML: UDMTabXML.pas. Mensagens: "Erro interno: ID não encontrado na tabela para pegar o XML"; "Erro interno: Não há conteúdo XML na tabela"; "O XML não contém a tag NFe/CTe"; "Erro ao abrir tags do XML"
+
+REGRAS E VALIDAÇÕES (código sem tela)
+UDLLDownloads.pas: "DLL de Download não encontrada"; "Versão da DLL de Download incompatível"; "Erro ao carregar a DLL de Download"

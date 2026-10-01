@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Boxes, ChevronLeft, ChevronRight, Headset, History, KeyRound, Network, LockKeyhole, LogOut, MessageSquareText, MessagesSquare, Settings, User, Wallet, X, type LucideIcon } from 'lucide-react';
+import { Boxes, ChevronDown, ChevronLeft, ChevronRight, Headset, History, KeyRound, Network, LockKeyhole, LogOut, MessageSquareText, MessagesSquare, Settings, User, Wallet, X, type LucideIcon } from 'lucide-react';
 import { Creditos, fetchCreditos, Sistema, trocarMinhaSenha } from '../api';
 import { FIELD_CLASS, INPUT_CLASS, LABEL_CLASS } from '../utils/formStyles';
 import { Usuario } from '../utils/session';
@@ -7,6 +7,7 @@ import { EVENTO_CREDITOS } from './ConfigCreditos';
 import { ConfirmDialog } from './ConfirmDialog';
 
 const CHAVE_RECOLHIDO = 'autosuporte_menu_recolhido';
+const CHAVE_GRUPOS = 'autosuporte_menu_grupos_fechados';
 
 /** Opções de cadastro do menu (só administradores); o id é o nome do recurso em server/schema.ts */
 const CADASTROS: { id: string; label: string; icone: LucideIcon }[] = [
@@ -45,6 +46,28 @@ export const Sidebar: React.FC<SidebarProps> = ({ sistemas, ativo, onAbrir, usua
       }
       return !r;
     });
+
+  // Grupos de sistemas fechados no menu, lembrados neste navegador
+  const [fechados, setFechados] = useState<string[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem(CHAVE_GRUPOS) || '[]');
+    } catch {
+      return [];
+    }
+  });
+  const alternarGrupo = (g: string) =>
+    setFechados((f) => {
+      const novo = f.includes(g) ? f.filter((x) => x !== g) : [...f, g];
+      try {
+        localStorage.setItem(CHAVE_GRUPOS, JSON.stringify(novo));
+      } catch {
+        // sem storage: vale só até recarregar
+      }
+      return novo;
+    });
+  /** Sem grupo primeiro; depois cada grupo em ordem alfabética */
+  const semGrupo = sistemas.filter((s) => !s.grupo);
+  const grupos = [...new Set(sistemas.filter((s) => s.grupo).map((s) => s.grupo!))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
 
   const [trocandoSenha, setTrocandoSenha] = useState(false);
   const [senhaOk, setSenhaOk] = useState(false);
@@ -107,7 +130,33 @@ export const Sidebar: React.FC<SidebarProps> = ({ sistemas, ativo, onAbrir, usua
       {/* Navegação: os sistemas que o cliente contratou */}
       <div className="flex-1 overflow-y-auto py-4">
         {!rec && <div className="px-4 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-stone-400 dark:text-stone-400">Sistemas</div>}
-        {sistemas.map((s) => botao(`chat:${s.id}`, s.nome, MessagesSquare, rec))}
+        {rec
+          ? sistemas.map((s) => botao(`chat:${s.id}`, s.nome, MessagesSquare, rec))
+          : (
+            <>
+              {semGrupo.map((s) => botao(`chat:${s.id}`, s.nome, MessagesSquare, rec))}
+              {grupos.map((g) => {
+                const doGrupo = sistemas.filter((s) => s.grupo === g);
+                // O grupo do sistema aberto fica sempre visível
+                const aberto = !fechados.includes(g) || doGrupo.some((s) => ativo === `chat:${s.id}`);
+                return (
+                  <div key={g}>
+                    <button
+                      type="button"
+                      onClick={() => alternarGrupo(g)}
+                      aria-expanded={aberto}
+                      className="w-full flex items-center gap-1.5 px-4 pt-2.5 pb-1 text-[11px] font-semibold text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-white cursor-pointer"
+                    >
+                      <ChevronDown className={`w-3.5 h-3.5 shrink-0 transition-transform ${aberto ? '' : '-rotate-90'}`} />
+                      <span className="truncate">{g}</span>
+                      <span className="ml-auto text-[10px] font-normal text-stone-400">{doGrupo.length}</span>
+                    </button>
+                    {aberto && <div className="pl-3">{doGrupo.map((s) => botao(`chat:${s.id}`, s.nome, MessagesSquare, rec))}</div>}
+                  </div>
+                );
+              })}
+            </>
+          )}
         {!sistemas.length && !rec && <p className="px-4 text-xs text-stone-400">Nenhum sistema liberado para o seu acesso.</p>}
         {sistemas.length > 0 && botao('historico', 'Minhas conversas', History, rec)}
 

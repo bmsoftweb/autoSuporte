@@ -1,0 +1,62 @@
+Mapa do DAV (programa Delphi para Windows; raiz do repositório: DAV.dpr). Cada tela é um par .pas (código) + .dfm (desenho). Linhas aproximadas.
+Tela principal: "BMsoft - DAV" em UFrm.pas
+
+MENU E BOTÕES DA TELA PRINCIPAL
+Incluir: UFrmDav.pas ("Novo DAV")
+Editar: UFrmAbre.pas ("Abre")
+Cancelar: UFrmCanc.pas ("Cancelar DAV")
+Imprimir: BtnImprimirClick em UFrm.pas (linha ~384)
+Atualizar: BtnAtualizarClick em UFrm.pas (linha ~400)
+Sair: BtnSairClick em UFrm.pas (linha ~308)
+Confirmar: UFrmAbre.pas ("Abre")
+Recarregar: BtnConfigClick em UFrm.pas (linha ~302)
+Manutenção: UFrmManut.pas ("Manutenção")
+Ocorrência: BtnOcorrenciaClick em UFrm.pas (linha ~416)
+Imprimir Todos: BtnImprimirTodosClick em UFrm.pas (linha ~393)
+Requisições Pedido Compra: MenuReqPedClick em UFrm.pas (linha ~248)
+
+TELAS (título -> arquivo; mensagens que a tela mostra)
+Abre: UFrmAbre.pas. Mensagens: "DAV não encontrado"; "DAV pertence a outra empresa"; "Esse DAV já está sendo alterado"; "Esse DAV já está confirmado"
+Adicionar objeto na OS.: UFrmCadObjeto.pas. Mensagens: "Falha ao inserir dados na tabela OrcamentoOBJPersonal. Detalhes:"
+Alterar Conta: UFrmModConta.pas. Mensagens: "Conta inválida"; "Fluxo da conta incompatível"; "Conta deve ser de nível "Lançamento""
+Alterar Lista de Preço: uFrmAlterListaPreco.pas. Mensagens: "Informe a lista de preço"
+Append: UFrmAppend.pas. Mensagens: "DAV não encontrado na tabela"; "Item do DAV não encontrado na tabela"
+Cadastrar Formato: UFrmFmtCad.pas. Mensagens: "Nome do formato em branco"; "Arquivo do formato em branco"; "Arquivo do formato não encontrado"; "Esse nome já existe para outro formato"
+Cadastro de objeto: UFrmCadObjetoCad.pas. Mensagens: "Objeto não encontrado."
+Cadastro Objeto Cliente: UFrmCadObjetoCli.pas. Mensagens: "Falha ao inserir dados na tabela ORCAMENTOOBJPersonal. Detalhes:"; "Objeto não encontrado."
+Cancelar DAV: UFrmCanc.pas. Mensagens: "Esse DAV não existe mais"; "Esse DAV já está cancelado"; "Esse DAV está sendo alterado no momento"; "Esse DAV já foi transformado em Cupom Fiscal, portanto não pode mais ser cancelado"
+Capturar: UFrmCaptura.pas. Mensagens: "Informe o número do DAV"; "DAV não encontrado"; "Você não pode capturar o DAV para ele mesmo!"; "Você já capturou esse DAV"
+Capturar TXT: UFrmCapturaTXT.pas. Mensagens: "Especifique o arquivo"; "Arquivo não encontrado"
+DAV's: UFrmLista.pas. Mensagens: "DAV já está com flag de captura!"; "Confirma marcar DAV como capturado?"
+Design ECF: UFrmDesignECF.pas
+Diminuir Item: UFrmDiminuirItem.pas. Mensagens: "Passe o código"; "Código não encontrado"; "Essa função só funciona com itens com quantidade inteira"
+Editar Duplicata: UFrmDup.pas. Mensagens: "Valor inválido"; "Valor da duplicata não pode ser maior que o total do DAV"; "Especifique o vencimento"; "Data não pode ser inferior a Hoje"
+Enviar DAV por E-mail: UFrmSendMail.pas. Mensagens: "Especifique o e-mail de destino"; "O e-mail não parece ser válido"
+Find: UFrmFind.pas
+FrmObjeto: UFrmObjeto.pas. Mensagens: "Falha ao salvar Objetos. Detalhes:"; "Falha ao inserir dados na tabela ORCAMENTOOBJPersonal. Detalhes:"
+FrmProVlBruto: UFrmProVlBruto.pas
+Grava Centro Custos: UFrmWrCentroCustos.pas
+Importação de XML - Software KP: UFrmImportKP.pas. Mensagens: "Especifique a pasta"; "Pasta não encontrada"; "Digite o número do ticket"; "A tag inicial do XML não é a esparada (SyncShipmentSchedule)"
+Imprimir DAV: UFrmImprimir.pas. Mensagens: "DAV não encontrado"; "DAV não Validado"; "DAV já impresso em ECF não pode mais ser impresso"; "Já foi emitido o Cupom Fiscal desse DAV, portanto não pode mais ser impresso"
+Incluir Ocorrência: UFrmOcorrencia.pas. Mensagens: "Digite o descritivo da ocorrência"
+Incluir Produto: UFrmPro.pas. Mensagens: "Prezado usuário, este tipo de produto está bloqueado para venda."; "Produto não definido"; "Produto inválido"; "Produto está desativado"
+Ir Para: UFrmIrPara.pas. Mensagens: "Nenhum item selecionado"
+Lista de objetos do cliente: UFrmObjetoCli.pas. Mensagens: "Confirma deletar o objeto"; "Falha ao inserir dados na tabela ORCAMENTOOBJPersonal. Detalhes:"; "Objeto não está ativo."
+Lotes do Item: UFrmLote.pas. Mensagens: "Não foi possível carregar a tabela de configurações do módulo Receita (Rec_Config), verifique as tabelas do módulo."; "Informe o número da receita"; "Quantidade do lote inválida"; "Quantidade disponível insuficiente"
+Manutenção: UFrmManut.pas. Mensagens: "DAV não encontrado ou DAV não está com flag de alterando"
+Manutenção de Formatos: UFrmFmtMan.pas
+Mesclar DAVs: UFrmCapVarios.pas. Mensagens: "Nenhum DAV encontrado"; "Você deve primeiro localizar um conjunto de DAVs, depois marcá-los para captura"; "Nenhum DAV foi marcado para captura"; "Você não pode capturar um DAV para ele mesmo!"
+Novo DAV: UFrmDav.pas. Mensagens: "Prezado cliente, devido legislação do PAF, mesmo clicando em Cancelar as alterações serão gravadas"; "Confirma excluir item selecionado?"; "Deseja zerar os valores de desconto e acréscimo?"; "Deseja aplicar o acréscimo"
+Objetos Cadastrados: UFrmObjetoCad.pas. Mensagens: "Confirma deletar o objeto"
+Observações das Duplicatas: UFrmObsDuplicatas.pas
+Pedidos Pendentes do Cliente: UFrmPendentes.pas
+Preview ECF: UFrmPreviewECF.pas
+Print: UFrmPrint.pas
+Recusar: UFrmRecusar.pas. Mensagens: "Confirma RECUSAR TODOS OS ITENS do Pedido?"; "Você só pode fazer isso com Pedidos"; "Você só poderá recusar itens depois do DAV já capturado"; "Esse DAV já está cancelado"
+Similares ao Produto: UFrmSimilar.pas
+Sugestões do Produto: UFrmSugestao.pas
+Transformar Valor em Acréscimo/Desconto: UFrmModValorToAD.pas
+UFrmLstPanObs: UFrmLstPanObs.pas
+
+REGRAS E VALIDAÇÕES (código sem tela)
+UFuncoes.pas: "Registro ID"

@@ -1,0 +1,59 @@
+Mapa do NFCe (programa Delphi para Windows; raiz do repositório: NFCe.dpr). Cada tela é um par .pas (código) + .dfm (desenho). Linhas aproximadas.
+Tela principal: "BMsoft - NFCe" em UFrm.pas
+
+MENU E BOTÕES DA TELA PRINCIPAL
+Recarregar: BtnRecarregarClick em UFrm.pas (linha ~402)
+Sair: BtnSairClick em UFrm.pas (linha ~408)
+Nova [F8]: UFrmNota.pas ("FrmNota")
+Editar: BtnEditarClick em UFrm.pas (linha ~479)
+Imprimir: BtnImprimirClick em UFrm.pas (linha ~499)
+Atualizar: BtnAtualizarClick em UFrm.pas (linha ~467)
+Configurações: UFrmConfig.pas ("Configurações")
+Cancelar: BtnCancelarClick em UFrm.pas (linha ~508)
+Transmitir [F9]: UFrmEnv.pas ("Transmitir NFC-e")
+Pagamento [F6]: BtnPagamentoClick em UFrm.pas (linha ~541)
+Gerar Pacote XML: BtnPacoteXMLClick em UFrm.pas (linha ~536)
+Inutilização: BtnInutilizacaoClick em UFrm.pas (linha ~531)
+Consultar Chave: BtnConsultaChaveClick em UFrm.pas (linha ~526)
+Status do WebService: BtnStatusWSClick em UFrm.pas (linha ~413)
+TEF Administrativo: BtnTEFAdminClick em UFrm.pas (linha ~569)
+
+TELAS (título -> arquivo; mensagens que a tela mostra)
+Alterar Duplicata: UFrmDup.pas. Mensagens: "Valor inválido"; "Valor da duplicata não pode ser maior que o total da NFC-e"; "Especifique o vencimento"; "Data não pode ser inferior a Hoje"
+Cancelar NFC-e: UFrmCanc.pas
+Cancelar NFC-e: UFrmWSCanc.pas. Mensagens: "NFC-e não encontrada"; "Essa NFC-e está sendo alterado no momento"; "Essa NFC-e já está cancelada no sistema"; "Essa NFC-e já está cancelada na SEFAZ"
+Capturar: UFrmCaptura.pas. Mensagens: "Número do DAV em branco"; "DAV inválido"; "Este DAV já está capturado nesta nota"; "Este DAV está cancelado"
+Comprovante de Crediário: UFrmComprov.pas
+Configurações: UFrmConfig.pas. Mensagens: "Arquivo não encontrado"
+Consulta Chave NFC-e: UFrmConsultaChave.pas. Mensagens: "Digite a chave da NFC-e"; "Chave inválida"
+Dados: UFrmDados.pas
+DANFe: UFrmDANFe.pas
+Detalhamento do Cancelamento: UFrmInfoCanc.pas
+Detalhamento do Log: UFrmLogInfo.pas
+FrmAbre: UFrmAbre.pas. Mensagens: "NFC-e não encontrada"; "Essa NFC-e já está sendo alterada no momento"; "Essa NFC-e está cancelada"; "Essa NFC-e já está autorizada"
+FrmBxDups: UFrmBxDups.pas
+FrmComboPla: UFrmComboPla.pas
+FrmFind: UFrmFind.pas
+FrmGrava: UFrmGrava.pas. Mensagens: "Série configurada não encontrada"
+FrmLog: UFrmLog.pas
+FrmNota: UFrmNota.pas. Mensagens: "Confirma limpar todos os itens?"; "ERRO AO CHAMAR PAGAMENTO:"
+Gerar Pacote ZIP com os XML's: UFrmPacoteXML.pas. Mensagens: "Especifique a data inicial"; "Especifique a data final"; "Data inicial maior que a data final"; "Especifique a pasta de destino"
+Imprimir: UFrmPrint.pas. Mensagens: "NFC-e não encontrada"; "NFC-e ainda não foi autorizada"; "Especifique o endereço de e-mail do destinatário"
+Incluir Produto: UFrmPro.pas. Mensagens: "Produto não definido"; "Produto inválido"; "Produto está desativado"; "Referência do produto está desativada"
+Informações do Intermediador da Transação: uFrmInfoIntermediador.pas. Mensagens: "Informe o documento"; "Documento inválido"; "Informe o identificador"
+Inutilização: UFrmInutilizacao.pas. Mensagens: "Série inválida"; "Espeficique o número inicial"; "Espeficique o número final"; "Os número inicial e final não estão corretos"
+Lançar Cheque Recebido: UFrmCheque.pas. Mensagens: "Código do Banco em branco"; "Agência em branco"; "Conta em branco"; "Digite o número do cheque"
+Mail: UFrmMail.pas. Mensagens: "Conta de e-mail não configurada"
+Notas de Consumidor: UFrmLista.pas
+Pagamento: UFrmPgto.pas. Mensagens: "NFC-e não encontrada"; "Essa NFC-e está sendo alterada no momento"; "Essa NFC-e está cancelada"; "Essa NFC-e já está autorizada"
+Print TEF: UFrmPrintTEF.pas
+Registra Mov Cartão: UFrmRegCartaoMov.pas
+Registros de Inutilização: UFrmRegInutiliz.pas
+Relatório Gerencial: UFrmRelGerencial.pas
+Status do WebService: UFrmStatusWS.pas
+Transmitir NFC-e: UFrmEnv.pas. Mensagens: "Indicador de Pagamento inválido"; "NFC-e não encontrada"; "NFC-e pertence a outra empresa"; "Essa NFC-e está cancelada no sistema"
+Venda Cartão POS: UFrmRegCartaoPOS.pas. Mensagens: "Administradora não selecionada"
+UFrmCheckPre: UFrmCheckPre.pas. Mensagens: "Certificado Digital não está carregado para consultar!"; "Essa NFC-e parece já estar no WebService. Tente transmití-la novamente."
+
+REGRAS E VALIDAÇÕES (código sem tela)
+UtilsNFe.pas: "GetURLConsultaNFCe: Versão incompatível"
