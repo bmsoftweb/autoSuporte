@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Background,
   ConnectionMode,
@@ -11,8 +11,12 @@ import {
   useEdgesState,
   useNodesState,
   useReactFlow,
+  BaseEdge,
+  getSmoothStepPath,
+  useNodes,
   type Connection,
   type Edge,
+  type EdgeProps,
   type Node,
   type NodeProps,
 } from '@xyflow/react';
@@ -20,6 +24,7 @@ import '@xyflow/react/dist/style.css';
 import { Boxes, Loader2, Map, Save } from 'lucide-react';
 import { chamar } from '../api';
 import { HINT_CLASS } from '../utils/formStyles';
+import { caminhoSvg, rotaDesvio } from '../utils/rotaDesvio';
 import { AvisoErro } from './AvisoErro';
 import { ConfirmDialog } from './ConfirmDialog';
 
@@ -83,7 +88,28 @@ const PONTOS: { id: string; lado: Position; estilo?: React.CSSProperties }[] = [
 const PONTO_VALIDO = new Set(PONTOS.map((p) => p.id));
 
 const TIPOS_RF = { sistema: CardSistema };
-const LINHA = { style: { strokeWidth: 2 } };
+
+/** Ligação em ângulo reto que contorna os quadros (sem passar por trás de nenhum) */
+const SAIDA = 20; // a linha sai reto do ponto de contato antes de virar
+const DIR: Record<Position, number> = { [Position.Right]: 0, [Position.Left]: 1, [Position.Bottom]: 2, [Position.Top]: 3 };
+const afasta = (x: number, y: number, lado: Position) =>
+  lado === Position.Top ? { x, y: y - SAIDA } : lado === Position.Bottom ? { x, y: y + SAIDA } : lado === Position.Left ? { x: x - SAIDA, y } : { x: x + SAIDA, y };
+
+const LigacaoDesvio: React.FC<EdgeProps> = ({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, style }) => {
+  const nodes = useNodes();
+  const caminho = useMemo(() => {
+    const quadros = nodes.map((n) => ({ x: n.position.x, y: n.position.y, w: n.measured?.width ?? 224, h: n.measured?.height ?? 60 }));
+    const a = afasta(sourceX, sourceY, sourcePosition);
+    const b = afasta(targetX, targetY, targetPosition);
+    const pts = rotaDesvio(a, b, quadros, DIR[sourcePosition]);
+    if (!pts) return getSmoothStepPath({ sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition })[0];
+    return caminhoSvg([{ x: sourceX, y: sourceY }, ...pts, { x: targetX, y: targetY }]);
+  }, [nodes, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition]);
+  return <BaseEdge id={id} path={caminho} style={style} interactionWidth={16} />;
+};
+
+const TIPOS_LIGACAO = { desvio: LigacaoDesvio };
+const LINHA = { type: 'desvio', style: { strokeWidth: 2 } };
 const idLigacao = (de: string, para: string) => `${de}>${para}`;
 
 const Editor: React.FC<{ onToast: (msg: string) => void }> = ({ onToast }) => {
@@ -230,6 +256,7 @@ const Editor: React.FC<{ onToast: (msg: string) => void }> = ({ onToast }) => {
             nodes={nodes}
             edges={edges}
             nodeTypes={TIPOS_RF}
+            edgeTypes={TIPOS_LIGACAO}
             onNodesChange={(ch) => {
               onNodesChange(ch);
               if (ch.some((c) => c.type === 'position' && c.dragging === false)) setAlterado(true);

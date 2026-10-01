@@ -2,6 +2,11 @@
 
 Mais recente primeiro. PATCH a cada envio ao GitHub; MAJOR/MINOR só quando pedido.
 
+## 0.0.5 — 2026-10-01
+
+- Ecossistema: as ligações são desenhadas em ângulo reto e contornam os quadros (não passam por trás de nenhum).
+- Cadastro de Sistemas: saiu a seção "Sistemas relacionados"; as ligações entre sistemas ficam só no Ecossistema.
+
 ## 0.0.4 — 2026-10-01
 
 - Aviso quando o token do GitHub não lê o repositório (ou a branch não existe, ou o token expirou), antes de abrir a conversa ou montar o mapa, sem gastar créditos.

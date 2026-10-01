@@ -60,13 +60,8 @@ const ALCAS: { dir: string; className: string }[] = [
 ];
 
 /** Sistemas ligados a cada cadastro (bloco de interruptores no formulário) */
-const LIGACOES: Record<string, { campo: string; rotulo: string; dica?: string }> = {
+const LIGACOES: Record<string, { campo: string; rotulo: string }> = {
   usuarios: { campo: 'sistemas', rotulo: 'Sistemas liberados' },
-  sistemas: {
-    campo: 'relacionados',
-    rotulo: 'Sistemas relacionados',
-    dica: 'Módulos ligados a este (ex.: transmissão da NF-e, financeiro). A ligação vale para os dois lados: nas conversas de um, o repositório do outro abre junto. Também dá para ligar em Cadastros › Ecossistema.',
-  },
 };
 
 /** Valor inicial de cada campo ao abrir o formulário */
@@ -125,7 +120,7 @@ export const RecordForm: React.FC<RecordFormProps> = ({
 
   /**
    * Sistemas ligados, editados no próprio cadastro e gravados junto no Salvar (null = carregando):
-   * usuário -> sistemas liberados no chat; sistema -> sistemas relacionados (abertos junto na conversa)
+   * usuário -> sistemas liberados no chat (as ligações entre sistemas ficam em Cadastros › Ecossistema)
    */
   const ligacao = LIGACOES[resource.name];
   const comSistemas = Boolean(ligacao);
@@ -586,11 +581,10 @@ export const RecordForm: React.FC<RecordFormProps> = ({
             ))}
           </div>
 
-          {/* Usuário: sistemas que ele pode consultar no chat. Sistema: os relacionados, abertos junto na conversa */}
+          {/* Usuário: sistemas que ele pode consultar no chat */}
           {ligacao && (
             <div className="pt-3 border-t border-stone-200 dark:border-stone-800">
               <div className="text-[10px] font-semibold uppercase tracking-wider text-stone-400 mb-2">{ligacao.rotulo}</div>
-              {ligacao.dica && <p className={`${HINT_CLASS} mb-2`}>{ligacao.dica}</p>}
               {todosSistemas === null || liberados === null ? (
                 <div className="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400">
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -600,9 +594,7 @@ export const RecordForm: React.FC<RecordFormProps> = ({
                 <p className={HINT_CLASS}>Nenhum sistema cadastrado ainda.</p>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                  {todosSistemas
-                    .filter((s) => resource.name !== 'sistemas' || !record || s.id !== Number(record.id))
-                    .map((s) => (
+                  {todosSistemas.map((s) => (
                     <Toggle
                       key={s.id}
                       id={`form-${resource.name}-ligado-${s.id}`}

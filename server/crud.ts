@@ -89,11 +89,10 @@ function antesDeGravar(resource: ResourceDef, payload: Record<string, any>, isUp
 
 /**
  * Sistemas ligados a um registro, editados no próprio formulário e gravados junto no Salvar:
- * usuário -> sistemas liberados no chat; sistema -> sistemas relacionados (repositórios abertos junto na conversa)
+ * usuário -> sistemas liberados no chat. (As ligações entre sistemas ficam no quadro, em server/ecossistema.ts)
  */
 const LIGACOES: Record<string, { campo: string; tabela: string; dono: string; alvo: string; rotulo: string }> = {
   usuarios: { campo: 'sistemas', tabela: 'usuario_sistemas', dono: 'usuario_id', alvo: 'sistema_id', rotulo: 'Sistemas liberados' },
-  sistemas: { campo: 'relacionados', tabela: 'sistema_relacionados', dono: 'sistema_id', alvo: 'relacionado_id', rotulo: 'Sistemas relacionados' },
 };
 
 /** Ids ligados vindos do formulário (null = a lista não veio) */
@@ -109,19 +108,10 @@ async function gravarLigados(resource: ResourceDef, donoId: string, ids: number[
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
-    // Relacionados são mútuos (A-B vale para os dois): saem e entram nos dois sentidos
-    const mutuo = resource.name === 'sistemas';
-    await conn.query(`DELETE FROM ${lig.tabela} WHERE ${lig.dono} = ?${mutuo ? ` OR ${lig.alvo} = ?` : ''}`, [donoId, donoId]);
+    await conn.query(`DELETE FROM ${lig.tabela} WHERE ${lig.dono} = ?`, [donoId]);
     if (ids.length) {
-      // Só ids que existem (o SELECT descarta os inválidos); um sistema não se relaciona com ele mesmo
-      await conn.query(`INSERT INTO ${lig.tabela} (${lig.dono}, ${lig.alvo}) SELECT ?, id FROM sistemas WHERE id IN (?) AND id <> ?`, [
-        donoId,
-        ids,
-        mutuo ? donoId : 0,
-      ]);
-      if (mutuo) {
-        await conn.query(`INSERT IGNORE INTO ${lig.tabela} (${lig.dono}, ${lig.alvo}) SELECT id, ? FROM sistemas WHERE id IN (?) AND id <> ?`, [donoId, ids, donoId]);
-      }
+      // Só ids que existem: o SELECT descarta os inválidos
+      await conn.query(`INSERT INTO ${lig.tabela} (${lig.dono}, ${lig.alvo}) SELECT ?, id FROM sistemas WHERE id IN (?)`, [donoId, ids]);
     }
     await conn.commit();
   } catch (err) {
@@ -182,7 +172,7 @@ export function createCrudRouter() {
     );
   });
 
-  /** Sistemas ligados a um registro (formulário): liberados do usuário ou relacionados do sistema */
+  /** Sistemas ligados a um registro (formulário): os liberados do usuário */
   router.get('/ligados/:resource/:id', async (req: Request, res: Response) => {
     try {
       const lig = LIGACOES[req.params.resource];
