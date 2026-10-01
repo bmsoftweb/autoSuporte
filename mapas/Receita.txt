@@ -1,0 +1,48 @@
+Mapa do Receita (programa Delphi para Windows; raiz do repositório: Receita.dpr). Cada tela é um par .pas (código) + .dfm (desenho). Linhas aproximadas.
+Tela principal: "BMsoft :: Receituário Agronômico ::" em uFrmMain.pas
+
+MENU E BOTÕES DA TELA PRINCIPAL
+Sair: btnSairClick em uFrmMain.pas (linha ~134)
+Receitas: ufrmReceitas.pas ("Receitas")
+Defensivos: ufrmDefensivosNovo.pas ("Defensivos")
+Culturas: ufrmCulturas.pas ("Culturas")
+Pragas: ufrmPragasNovo.pas ("Pragas")
+Profissionais: ufrmProf.pas ("Profissionais")
+Observações: ufrmObs.pas ("Observações Gerais")
+TRT´s: ufrmArts.pas ("ARTs/TRTs")
+Clientes: ufrmClientes.pas ("Clientes")
+SIGEN: abre o programa receita_e.exe (outro módulo)
+Compêndio: ufrmGerarDados.pas ("Gerar Dados")
+
+TELAS (título -> arquivo; mensagens que a tela mostra)
+api: uAPI.pas
+ARTs/TRTs: ufrmArts.pas. Mensagens: "Confirma ativar/desativar a TRT ?"; "Numero da ART inválido! (exemplo: 1122333-9)"; "ART/TRT já tem receita, número não pode ser alterado!"
+Atualizar: ufrmAtualizar.pas
+Capturar Produtos da NF: ufrmBMnf.pas
+Clientes: ufrmClientes.pas
+Compêndio: ufrmCompendio.pas
+Culturas: ufrmCulturas.pas
+Culturas: ufrmCulturasNovo.pas
+Culturas - CIDASC: ufrmCulturasNovoCIDASC.pas
+Defensivos: ufrmDefensivos.pas. Mensagens: "Confirma a atualização?"; "Confirma duplicar os dados do defensivo ?"; "Deletando..."; "Confirma limpar os anexos ?"
+Defensivos: ufrmDefensivosNovo.pas. Mensagens: "Produto do BM id:"; "Confirma duplicar os dados do defensivo ?"; "Confirma zerar o estoque dos defensivos?"; "Confirma limpar os tratamentos?"
+Diagnósticos: ufrmDiagnosticos.pas. Mensagens: "Diagnóstico deve ter no mínimo 10 caracteres"
+Formação do Preço: ufrmFormacaoPreco.pas
+Gerar Dados: ufrmGerarDados.pas
+Matéria-Prima: ufrmMP.pas
+Memo: ufrmMemo.pas
+Observações Gerais: ufrmObs.pas. Mensagens: "Observação não pode ficar em branco!"
+Pesquisa de Clientes: ufrmPesqCli.pas
+Pesquisa Defensivos: ufrmPesqDef.pas
+Pesquisa Pragas: ufrmPesqPraga.pas
+Pragas: ufrmPragasNovo.pas
+Pragas - CIDASC: ufrmPragasNovoCIDASC.pas
+Pragas / Doenças: ufrmPragas.pas
+Produtos BMsoft: ufrmProBM.pas
+Profissionais: ufrmProf.pas
+Receitas: ufrmReceitas.pas. Mensagens: "Erro ao obter a elevação:"; "Existe algum produto sem o código da cidasc/mapa. Acerte antes de enviar"; "Confirma excluir/cancelar a receita?"; "achou cliente"
+Relacionar Defensivo CIDASC: ufrmProCIDASC.pas
+uD: uD.pas
+
+REGRAS E VALIDAÇÕES (código sem tela)
+uAssinaturaDigital.pas: "Certificado não encontrado com esse nome"; "ATENÇÃO!!! SEU CERTIFICADO VAI VENCER EM:"; "Certificado expirado!"

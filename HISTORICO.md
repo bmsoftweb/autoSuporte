@@ -2,6 +2,10 @@
 
 Mais recente primeiro. PATCH a cada envio ao GitHub; MAJOR/MINOR só quando pedido.
 
+## 0.0.8 — 2026-10-01
+
+- Mapa do Receita (mapas/Receita.txt), montado a partir da cópia local D:msoft\Receita; mapa do Cadastros gravado no cadastro (repositório corrigido para bmsoftsistemas/Cadastros).
+
 ## 0.0.7 — 2026-10-01
 
 - Sistemas: campo Grupo (coluna nova `sistemas.grupo`), com lista digitável dos grupos já usados; a lista de Sistemas mostra o Grupo antes do Nome e ordena por grupo + nome.
