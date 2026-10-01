@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { abrirSessao, perguntar } from './agente.js';
 import { pool } from './db.js';
 import { PROMPT_MAPA } from './prompt.js';
+import { cifrar, decifrar } from './segredo.js';
 import { FieldDef, ResourceDef, RESOURCES, getResource, writableFields, columnNames, colunaSql } from './schema.js';
 
 /** Teto de gasto da montagem do mapa: percorrer o repositório custa mais que uma pergunta */
@@ -44,7 +45,7 @@ function buildWritePayload(resource: ResourceDef, body: Record<string, any>, isU
         if (!isUpdate) payload[field.name] = '';
         continue;
       }
-      payload[field.name] = bcrypt.hashSync(plain, 10);
+      payload[field.name] = field.cifrado ? cifrar(plain.trim()) : bcrypt.hashSync(plain, 10);
       continue;
     }
     payload[field.name] = coerceValue(field, body[field.name]);
@@ -197,7 +198,13 @@ export function createCrudRouter() {
     try {
       const repo_url = normalizarRepo(req.body?.repo_url);
       const branch = String(req.body?.branch || '').trim() || null;
-      const sessao = await abrirSessao({ nome: 'Mapa', repo_url, branch }, String(res.locals.usuario.nome), {
+      // Token: o digitado no formulário; senão o gravado no sistema (se já salvo); senão o padrão
+      let github_token = String(req.body?.github_token || '').trim() || null;
+      if (!github_token && req.body?.id) {
+        const [s] = await pool.query<any[]>('SELECT github_token FROM sistemas WHERE id = ?', [req.body.id]);
+        github_token = s[0]?.github_token ? decifrar(s[0].github_token, 'Cadastros › Sistemas') : null;
+      }
+      const sessao = await abrirSessao({ nome: 'Mapa', repo_url, branch, github_token }, String(res.locals.usuario.nome), {
         system: PROMPT_MAPA,
         tetoCentavos: TETO_MAPA_CENTAVOS,
       });
@@ -227,7 +234,9 @@ export function createCrudRouter() {
     try {
       const [rows] = await pool.query<any[]>(
         `SELECT p.id, p.criado_em, p.pergunta, p.resposta, p.com_imagem, u.nome AS cliente, s.nome AS sistema,
-                (SELECT c.titulo FROM conversas c WHERE c.sessao_id = p.sessao_id) AS titulo
+                (SELECT c.titulo FROM conversas c WHERE c.sessao_id = p.sessao_id) AS titulo,
+                (SELECT c.resposta_faq FROM conversas c WHERE c.sessao_id = p.sessao_id) AS resposta_faq,
+                COALESCE((SELECT c.visibilidade FROM conversas c WHERE c.sessao_id = p.sessao_id), 'privado') AS visibilidade
            FROM perguntas p
            LEFT JOIN usuarios u ON u.id = p.usuario_id
            LEFT JOIN sistemas s ON s.id = p.sistema_id

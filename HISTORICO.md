@@ -2,6 +2,14 @@
 
 Mais recente primeiro. PATCH a cada envio ao GitHub; MAJOR/MINOR só quando pedido.
 
+## 0.0.3 — 2026-10-01
+
+- Sistemas: token do GitHub próprio por sistema (repositório de outra conta), gravado cifrado; em branco usa o GITHUB_TOKEN. Coluna nova `sistemas.github_token`.
+- Conversas: visibilidade Privada (padrão) ou Pública, no chat e na tela Conversas; coluna Visibilidade nas listas e na busca avançada. Colunas novas `conversas.visibilidade` e `titulo` aceitando vazio.
+- Botão "Compactar" no chat e na tela Conversas: a IA resume a conversa em uma pergunta e uma resposta (FAQ); revisa e salva (a pergunta vira o nome da conversa). Coluna nova `conversas.resposta_faq`.
+- Listas: a linha clicada fica marcada (fundo azul e seta), como no crmWeb.
+- Mapa do NFe montado (mapas/NFe.txt).
+
 ## 0.0.2 — 2026-10-01
 
 - Primeira versão no GitHub.

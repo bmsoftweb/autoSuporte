@@ -38,12 +38,32 @@ export const trocarMinhaSenha = (atual: string, nova: string) => chamar('POST', 
 
 /** Conversa do próprio usuário, para reabrir no chat (a lista "Minhas conversas" é a grade do recurso minhas_conversas) */
 export const fetchMinhaConversa = (sessao: string) =>
-  get<{ titulo: string | null; mensagens: { id: number; pergunta: string; resposta: string; com_imagem: number }[] }>(
-    `/api/minhas-conversas/${encodeURIComponent(sessao)}`,
-  );
-/** Dá nome a uma conversa do próprio usuário; em branco volta ao padrão (a primeira pergunta) */
-export const renomearConversa = async (sessao: string, titulo: string): Promise<string | null> =>
-  (await (await chamar('PUT', `/api/minhas-conversas/${encodeURIComponent(sessao)}`, { titulo })).json()).titulo;
+  get<{
+    titulo: string | null;
+    visibilidade: Visibilidade;
+    resposta_faq: string | null;
+    mensagens: { id: number; pergunta: string; resposta: string; com_imagem: number }[];
+  }>(`/api/minhas-conversas/${encodeURIComponent(sessao)}`);
+
+/** 'privado' (padrão) ou 'publico': a pública poderá ser liberada aos usuários finais */
+export type Visibilidade = 'privado' | 'publico';
+/** Grava o nome e/ou a visibilidade de uma conversa (do próprio usuário, ou qualquer uma se administrador) */
+export const salvarConversa = async (sessao: string, campos: { titulo?: string; visibilidade?: Visibilidade; resposta_faq?: string }) =>
+  (await chamar('PUT', `/api/minhas-conversas/${encodeURIComponent(sessao)}`, campos)).json() as Promise<{
+    titulo: string | null;
+    visibilidade: Visibilidade;
+    resposta_faq: string | null;
+  }>;
+/** A IA resume a conversa em uma pergunta e uma resposta (FAQ); não grava */
+export const compactarConversa = async (sessao: string) =>
+  (await chamar('POST', `/api/minhas-conversas/${encodeURIComponent(sessao)}/compactar`)).json() as Promise<{
+    pergunta: string;
+    resposta: string;
+  }>;
+/** Dá nome a uma conversa; em branco volta ao padrão (a primeira pergunta) */
+export const renomearConversa = async (sessao: string, titulo: string) => (await salvarConversa(sessao, { titulo })).titulo;
+export const mudarVisibilidade = async (sessao: string, visibilidade: Visibilidade) =>
+  (await salvarConversa(sessao, { visibilidade })).visibilidade;
 
 // ------------------------------------------------------------
 // Cadastros (só administradores)
@@ -114,6 +134,9 @@ export interface MensagemConversa {
   sistema: string | null;
   /** Nome dado pelo cliente; null = sem nome */
   titulo: string | null;
+  visibilidade: Visibilidade;
+  /** Resposta compactada (FAQ); a pergunta compactada fica no titulo */
+  resposta_faq: string | null;
 }
 /** Conversa inteira: todas as perguntas da mesma sessão do agente */
 export const fetchConversa = (sessao: string) => get<MensagemConversa[]>(`/api/conversas/${encodeURIComponent(sessao)}`);

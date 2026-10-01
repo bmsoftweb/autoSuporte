@@ -1,11 +1,12 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import express, { NextFunction, Request, Response } from 'express';
-import { abrirSessao, Imagem, perguntar } from './agente.js';
+import { abrirSessao, compactarConversa, Imagem, perguntar } from './agente.js';
 import { createConfigRouter } from './config.js';
 import { createCreditosRouter } from './creditos.js';
 import { createCrudRouter } from './crud.js';
 import { pool } from './db.js';
+import { decifrar } from './segredo.js';
 
 // ==========================================================
 // Sessão: token "usuarioId.expiracao.assinatura" (HMAC-SHA256), igual ao crmWeb
@@ -150,33 +151,65 @@ export function createApp() {
         [req.params.sessao, res.locals.usuario.id],
       );
       if (!rows.length) return res.status(404).json({ error: 'Conversa não encontrada.' });
-      const [[c]] = await pool.query<any[]>('SELECT titulo FROM conversas WHERE sessao_id = ?', [req.params.sessao]);
-      res.json({ titulo: c?.titulo ?? null, mensagens: rows });
+      const [[c]] = await pool.query<any[]>('SELECT titulo, visibilidade, resposta_faq FROM conversas WHERE sessao_id = ?', [req.params.sessao]);
+      res.json({ titulo: c?.titulo ?? null, visibilidade: c?.visibilidade ?? 'privado', resposta_faq: c?.resposta_faq ?? null, mensagens: rows });
     } catch (err: any) {
       res.status(503).json({ error: err.message });
     }
   });
 
-  /** Dá (ou troca) o nome de uma conversa do próprio usuário; nome em branco volta ao padrão (a primeira pergunta) */
+  /** Dono da conversa (usuario_id), se quem pede é ele ou um administrador; senão null */
+  async function donoDaConversa(sessao: string, usuario: any): Promise<number | null> {
+    const [d] = await pool.query<any[]>('SELECT usuario_id FROM perguntas WHERE sessao_id = ? LIMIT 1', [sessao]);
+    if (!d.length || (usuario.tipo !== 'admin' && d[0].usuario_id !== usuario.id)) return null;
+    return d[0].usuario_id;
+  }
+
+  /**
+   * Nome, visibilidade e/ou resposta compactada (FAQ) de uma conversa: só os campos enviados mudam.
+   * Nome em branco volta ao padrão (a primeira pergunta). Visibilidade: 'privado' (padrão) ou 'publico'.
+   * Quem pode: o dono da conversa ou um administrador.
+   */
   app.put('/api/minhas-conversas/:sessao', async (req: Request, res: Response) => {
     try {
       const sessao = String(req.params.sessao);
-      const titulo = String(req.body?.titulo ?? '').trim().replace(/\s+/g, ' ');
-      if (titulo.length > 120) return res.status(400).json({ error: 'O nome pode ter até 120 caracteres.' });
-      const [dono] = await pool.query<any[]>('SELECT 1 FROM perguntas WHERE sessao_id = ? AND usuario_id = ? LIMIT 1', [sessao, res.locals.usuario.id]);
-      if (!dono.length) return res.status(404).json({ error: 'Conversa não encontrada.' });
-      if (titulo) {
-        await pool.query('INSERT INTO conversas (sessao_id, usuario_id, titulo) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE titulo = VALUES(titulo)', [
-          sessao,
-          res.locals.usuario.id,
-          titulo,
-        ]);
-      } else {
-        await pool.query('DELETE FROM conversas WHERE sessao_id = ?', [sessao]);
-      }
-      res.json({ success: true, titulo: titulo || null });
+      const b = req.body || {};
+      const titulo = String(b.titulo ?? '').trim().replace(/\s+/g, ' ') || null;
+      const visibilidade = String(b.visibilidade ?? '');
+      const resposta_faq = String(b.resposta_faq ?? '').trim() || null;
+      if (titulo && titulo.length > 120) return res.status(400).json({ error: 'O nome pode ter até 120 caracteres.' });
+      if ('visibilidade' in b && !['privado', 'publico'].includes(visibilidade)) return res.status(400).json({ error: 'Visibilidade inválida.' });
+      if (resposta_faq && resposta_faq.length > 20000) return res.status(400).json({ error: 'A resposta pode ter até 20.000 caracteres.' });
+
+      const dono = await donoDaConversa(sessao, res.locals.usuario);
+      if (dono === null) return res.status(404).json({ error: 'Conversa não encontrada.' });
+      const muda = ['titulo', 'visibilidade', 'resposta_faq'].filter((k) => k in b);
+      await pool.query(
+        `INSERT INTO conversas (sessao_id, usuario_id, titulo, visibilidade, resposta_faq) VALUES (?, ?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE ${muda.map((k) => `${k} = VALUES(${k})`).join(', ') || 'sessao_id = sessao_id'}`,
+        [sessao, dono, titulo, 'visibilidade' in b ? visibilidade : 'privado', resposta_faq],
+      );
+      const [[c]] = await pool.query<any[]>('SELECT titulo, visibilidade, resposta_faq FROM conversas WHERE sessao_id = ?', [sessao]);
+      res.json({ success: true, ...c });
     } catch (err: any) {
       res.status(503).json({ error: err.message });
+    }
+  });
+
+  /** Botão "Compactar": a IA resume a conversa em uma pergunta e uma resposta (FAQ). Só devolve; quem grava é o PUT acima */
+  app.post('/api/minhas-conversas/:sessao/compactar', async (req: Request, res: Response) => {
+    try {
+      const sessao = String(req.params.sessao);
+      if ((await donoDaConversa(sessao, res.locals.usuario)) === null) return res.status(404).json({ error: 'Conversa não encontrada.' });
+      const [rows] = await pool.query<any[]>(
+        `SELECT p.pergunta, p.resposta, s.nome AS sistema FROM perguntas p LEFT JOIN sistemas s ON s.id = p.sistema_id
+          WHERE p.sessao_id = ? ORDER BY p.id`,
+        [sessao],
+      );
+      res.json(await compactarConversa(rows[0].sistema ?? '', rows));
+    } catch (err: any) {
+      console.error('Falha ao compactar a conversa:', err);
+      res.status(503).json({ error: 'Não foi possível compactar a conversa agora. Tente novamente.' });
     }
   });
 
@@ -200,7 +233,7 @@ export function createApp() {
     try {
       // O sistema precisa ser do cliente; a conversa, dele e desse sistema
       const [sis] = await pool.query<any[]>(
-        `SELECT s.id, s.nome, s.repo_url, s.branch, s.mapa FROM sistemas s
+        `SELECT s.id, s.nome, s.repo_url, s.branch, s.mapa, s.github_token FROM sistemas s
            JOIN usuario_sistemas us ON us.sistema_id = s.id
           WHERE s.id = ? AND us.usuario_id = ?`,
         [sistemaId, usuario.id],
@@ -216,7 +249,11 @@ export function createApp() {
       }
 
       const nova = !sessaoId;
-      if (nova) sessaoId = await abrirSessao(sis[0], usuario.nome);
+      if (nova) {
+        const s = sis[0];
+        const github_token = s.github_token ? decifrar(s.github_token, 'Cadastros › Sistemas') : null;
+        sessaoId = await abrirSessao({ ...s, github_token }, usuario.nome);
+      }
 
       res.setHeader('Content-Type', 'text/plain; charset=utf-8');
       res.setHeader('X-Sessao', sessaoId);

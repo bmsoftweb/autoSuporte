@@ -326,6 +326,9 @@ export const CrudView: React.FC<CrudViewProps> = ({ resource, refreshToken, crea
   const [buscaAvancadaAberta, setBuscaAvancadaAberta] = useState(false);
   const [filtros, setFiltros] = useState<FiltroAvancado[]>(filtroPadrao);
 
+  // Linha marcada pelo clique (só destaque na grade)
+  const [selecionadoId, setSelecionadoId] = useState<string | null>(null);
+
   // Abas abertas e aba ativa
   const [abas, setAbas] = useState<AbaRegistro[]>([]);
   const [abaAtiva, setAbaAtiva] = useState<string>(LIST_TAB);
@@ -534,18 +537,26 @@ export const CrudView: React.FC<CrudViewProps> = ({ resource, refreshToken, crea
   const linhaGrade = (row: RegistroCrud) => {
     const id = recordId(row);
     const abertaEmAba = abas.some((a) => a.key === `edit:${id}`);
+    const estaSelecionada = selecionadoId === id;
     return (
       <tr
         key={id}
+        onClick={() => setSelecionadoId(id)}
         onDoubleClick={() => podeAbrir && abrirLinha(row)}
-        className={`group transition-colors ${
-          abertaEmAba ? 'bg-blue-50 dark:bg-stone-800' : 'bg-white dark:bg-stone-900 hover:bg-stone-50 dark:hover:bg-stone-800'
+        className={`group transition-colors cursor-pointer ${
+          estaSelecionada
+            ? 'bg-blue-100 dark:bg-blue-950'
+            : abertaEmAba
+            ? 'bg-blue-50 dark:bg-stone-800'
+            : 'bg-white dark:bg-stone-900 hover:bg-stone-50 dark:hover:bg-stone-800'
         }`}
       >
         <td className={`sticky left-0 z-[5] w-[30px] min-w-[30px] max-w-[30px] px-0 text-center align-middle bg-inherit border-r border-stone-200 dark:border-stone-800 ${bordasCelula}`}>
           <ChevronRight
             className={`w-3.5 h-3.5 mx-auto ${
-              abertaEmAba ? 'text-blue-600 dark:text-blue-400' : 'text-stone-300 opacity-0 group-hover:opacity-100 dark:text-stone-600'
+              estaSelecionada || abertaEmAba
+                ? 'text-blue-600 dark:text-blue-400'
+                : 'text-stone-300 opacity-0 group-hover:opacity-100 dark:text-stone-600'
             }`}
           />
         </td>

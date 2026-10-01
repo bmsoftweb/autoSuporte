@@ -6,3 +6,6 @@ build
 versao_*
 *.log
 extras/
+
+.vercel
+.env*

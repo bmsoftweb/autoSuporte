@@ -16,6 +16,8 @@ export interface FieldDef {
   filterable?: boolean;
   options?: { value: string; label: string }[];
   maxLength?: number;
+  /** Só em password: token gravado cifrado (opcional, ao contrário da senha) */
+  cifrado?: boolean;
   /** Linhas visíveis de um textarea no formulário (padrão 3) */
   rows?: number;
   /** Chave estrangeira: a lista mostra <campo>__rotulo e a busca avançada, um combo */

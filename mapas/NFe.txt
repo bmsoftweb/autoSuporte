@@ -1,0 +1,54 @@
+Mapa do NFe - BMsoft Notas Fiscais (programa Delphi para Windows; raiz do repositório: Notas.dpr; telas em src/Presentation, regras em src/Domain/Services)
+Cada tela é um par .pas (código) + .dfm (desenho). UFrmNota.dfm é binário: procure os textos da tela no .pas. As linhas citadas são aproximadas.
+Este programa monta e grava as notas (NF-e, NFS-e, nota manual). A TRANSMISSÃO para a SEFAZ/prefeitura, o Financeiro e os Cadastros são OUTROS programas da BMsoft (NFe.exe, Financ.exe, Cadastros.exe), abertos pelos botões da barra: se a dúvida for sobre autorizar, rejeição da SEFAZ, DANFE ou XML, explique que é no módulo BMsoft NFe.
+Banco local DBISAM (componente DB em src/Presentation/UFrm.pas); configurações em src/Infrastructure/Config (Vars.pas, UConfigMod.pas).
+
+TELA PRINCIPAL (barra de botões)
+Barra: src/Presentation/UFrm.pas (botões BtnIncluir, BtnCancelar, BtnFechar, BtnImprimir, BtnNFe, BtnNFs, BtnConfig "Recarregar", BtnAbrir, BtnRefresh "Atualizar", BtnFinanc, BtnDuplicata, BtnExtras, BtnCadastros, BtnEditar, BtnGNRE); rodapé com base, empresa, usuário, CNPJ, UF e versão
+Incluir nota: BtnIncluirClick (linha ~618) -> DoNovaNota em src/Infrastructure/Persistence/UFrmAbre.pas (linha ~663); limite de notas liberadas em VerLimiteNF (UFrm.pas linha ~958)
+Editar / Abrir (só ver) nota: BtnEditarClick e BtnAbrirClick (linhas ~624 e ~710) -> DoAbreNota em UFrmAbre.pas (linha ~645). "Todas as duplicatas da nota já foram recebidas." = parâmetro que bloqueia editar nota com duplicatas baixadas (CheckDupRecebidas, linha ~688)
+NF-e / NFS-e / GNRE: GerenciarNFe e GerenciarNFs (linhas ~769 e ~796) abrem o programa NFe.exe ou NFs; "BMsoft NFe não encontrado" quando o programa não está na pasta. GNRE só aparece se a empresa usa GNRE (pubUsaGNRE)
+Financ e Cadastros: BtnFinancClick e BtnCadastrosClick (linhas ~876 e ~917) abrem Financ.exe e Cadastros.exe
+Duplicatas da nota (lançar no financeiro): BtnDuplicataClick -> DoFinancDups em src/Application/UseCases/UFrmFinancDups.pas
+Recarregar › Parâmetros Gerais: src/Presentation/UFrmParametros.pas
+Extras (menu): Requisições Pedido de Compra; Recusar itens pendentes do pedido (UFrmPedRecusa.pas); Alterar Vendedor do documento (UFrmAltVendedor.pas); Marcar como Concluído (UFrm.pas linha ~434); Alterar Classificação; Gerar arquivo .MOV (UFrmGerarMOV.pas); Cadastro de Classificações (uFrmCadClassificacao.pas)
+
+LISTA DE DOCUMENTOS
+Lista das notas (Data, Hora, Série, Número, Classificação, E/S, Operação, Cliente, totais, Plano Pgto., Vendedor, Núm.Pedido) com os Produtos e as Duplicatas da nota selecionada embaixo: src/Presentation/UFrmLista.pas; atualizar em Atualizar (linha ~601); filtro avançado (título em vermelho libera filtrar e ordenar pelas colunas) em DoFiltroAvancado (linha ~969); situação de entrega dos itens em PutSitEnt (linha ~847)
+
+NOTA (incluir / editar): src/Presentation/UFrmNota.pas (tela "Incluir Nota"; arquivo grande, ~10.800 linhas)
+Abas: Dados Gerais, Produtos e Serviços, Dados do Serviço, Impostos (Antigo e Novo, este com IBS/CBS da reforma tributária), Transporte, Dados Adicionais (Informações Gerais e para o Fisco), Financeiro, Referenciadas
+Dados Gerais (operação, cliente, série, número, plano): botão ">>" em BtnGeralNextClick (linha ~3442); atalho F3 para o cadastro do cliente em BtnJumpCadCliClick (linha ~10199); "Cliente não definido." ; número já usado em VerSeJaNumeroNota (linha ~9250); nome do consumidor em VerSeHabNomeConsumidor (linha ~10221)
+Produtos › Incluir/Editar item: BtnAddItemClick (linha ~3986) abre src/Presentation/UFrmPro.pas ("Incluir Item"). Mensagens: "Entrega Futura selecionada. Use o botão "Entrega Futura"", "Número de itens da nota esgotados", "Retorno de Demonstração detectada. Use o botão "Itens Devolvidos""
+Produtos › Excluir, Limpar, Ir Para, Rever Itens (refaz CFOP), ordenar: BtnDelItemClick, BtnLimparItemsClick, BtnIrParaItemClick, BtnRefazCFOPClick (linhas ~3505 a ~3567), UFrmOrdemPro.pas. "Não permitido excluir item que foi capturado de OS"
+Produtos › Impostos do item: BtnImpostosItemClick -> UFrmImpostos.pas; benefício fiscal uFrmBeneficioFiscal.pas; unidade de tributação UFrmUnTrib.pas; ICMS-ST cobrado anteriormente UFrmICMSSTRet.pas
+Produtos › Dados de Exportação / Importação do item: UFrmExporta.pas, UFrmImportacao.pas; importação geral UFrmImportacaoGeral.pas; conferência UFrmConfereImportacao.pas
+Produtos › Entrega Futura e Controle Entrega: UFrmFutura.pas, UFrmEntrega.pas (BtnEntregaFuturaClick linha ~3573, BtnControleEntregaClick linha ~9805)
+Produtos › Lote, FCI, Reclassificação, Diminuir item, Alterar lista de preço, Incluir cesta (F4), Referenciar item, Agrupar itens: UFrmLote.pas ("Controle de Lote não habilitado nas configurações"), UFrmFCI.pas, UFrmReclassific.pas, UFrmDiminuirItem.pas, uFrmAlterListaPreco.pas, UFrmReferItem.pas, UFrmAgrupaPro.pas
+Produtos › itens repetidos e estoque: VerificaProdutosRepetidos (linha ~9586), UFrmAlertaItensRep.pas, UFrmValidaEstoqueMax.pas ("Produtos com Quantidade Excedida!"), local de estoque e lotes em ValidaLocalEstoque/ValidaLotesProduto (linhas ~10463 a ~10536)
+Dados do Serviço (ISS retido, tributação municipal, benefício municipal, retenções): VerificaRetencoesServico e pisos de IR/INSS/CSRF (linhas ~5956 a ~6298); dedução de ISS UFrmDeducaoISS.pas; retenção automática UFrmRetencaoNFSe.pas
+Impostos e totais da nota: CalcImpostos (linha ~5560), CalcTotalNota (linha ~2205), acréscimo/desconto CalcAcreDesc (linha ~2182), Funrural CalcFunrural (linha ~2321), desoneração VerificaDesoneracao (linha ~6324); cálculo em src/Domain/Services/UCalcImposto.pas, UCalcImpostoService.pas, UCalculos.pas, UAcreDesc.pas, UCalcularICMSMonofasico.pas; desconto permitido em VerificaPodeDesconto (linha ~9616)
+Transporte (transportadora, veículo, volumes, local de entrega/retirada, reboques): veículo da transportadora UFrmTranspVeiculo.pas; veículo novo UFrmVeiculo.pas; volumes src/Domain/Services/UVolumetria.pas; endereço do cliente uFrmSelEnderecoCli.pas
+Dados Adicionais (observações): MontaObs e MontaObsFisco (linhas ~6366 e ~6701); botões Inserir Observação e Inserir Observações do Cliente (UFrmInsObsCli.pas)
+Financeiro (duplicatas e forma de pagamento): MontaDuplicatas e RefazerDuplicatasFull (linhas ~8801 e ~8795); validação em ValidaDuplicatas (linha ~8546); alterar duplicata UFrmDup.pas; ajustar parcela uFrmAjustaParcFA.pas; Pagamento UFrmPgto.pas (BtnPgtoClick linha ~6827); Observações UFrmObsDuplicatas.pas; Destravar Duplicatas BtnDupsLockClick (linha ~10210); duplicata adicional de ST BtnCriarDupAdicionalSTClick (linha ~10309)
+Referenciadas (nota/cupom referenciado, devolução): UFrmRefer.pas ("Incluir Nota Referenciada"), UFrmReferNF.pas; "Nota já possui documento referenciado.", "Documento já possui item vinculado." (linhas ~9114 e ~9165); devolução de demonstração uFrmDevolDemonstracao.pas
+Extras da nota (menu): Trocar Centro de Custos (UFrmCCustos.pas), Trocar Vendedor / Número do Pedido (uFrmTrocarVendedor.pas, uFrmTrocarNumPed.pas), Capturar arquivo MOV (UFrmCapMOV.pas) ou da área de transferência (UFrmCapClipboard.pas), Compra de Milho (UFrmCompraMilho.pas), Ressarcimento de ST (UFrmRessarcimento.pas, UFrmProRessarcimento.pas), Importar DAV Software KP (UFrmImportKP.pas), Dados do Imóvel (UFrmImovelGeral.pas), Notas em Massa (UFrmMassaCli.pas, UFrmMassaGer.pas, UFrmMassaCad.pas), Controle de Medicamentos (UFrmControleMedicamentos.pas)
+Gravar (OK): OKClick (linha ~6847) -> src/Presentation/UFrmGrava.pas (tela "Gravando..."); erros reunidos em src/Domain/Services/URecErrosValidacao.pas e UValidacoes.pas. "Número da Nota não autorizado pela AIDF" (UFrmValidaAIDF.pas); "Erro ao emitir duplicatas"
+Cancelar a edição: CancelarClick (linha ~2414)
+
+CAPTURA (trazer pedido, orçamento, pré-venda, DAV, OS ou cupom para a nota)
+Botão Capturar da nota: BtnCapturarClick (UFrmNota.pas linha ~8596) -> src/Presentation/UFrmCaptura.pas; aba de captura UFrmAbaCaptura.pas; integração UFrmIntCap.pas; fatura agrupada da OS uFrmMontarFACapInt.pas; seleção de pré-venda UFrmSelPV.pas e de cupom UFrmSelCupom.pas; captura repetida UFrmDlgRecaptura.pas
+Mensagens: "Pedido capturado parcialmente, deseja capturar os itens restantes?", "Esse pedido já está totalmente entregue", "Essa pré-venda não está concluída", "Essa pré-venda está sendo alterada", "Esse DAV está sendo ALTERADO em algum terminal no momento!", "Você não pode capturar PEDIDO de Outra Empresa, apenas ORÇAMENTO", "Na captura anterior o Plano de Pagamento era diferente (CI)", "DAV inválido", "Cupom fiscal inválido", "Cupom fiscal cancelado"
+
+CANCELAR NOTA
+Botão Cancelar da barra: DoCancelarNota em src/Presentation/UFrmCanc.pas (linha ~215). Mensagens: "Este documento já está cancelado", "NFS-e deve estar INVALIDADA para cancelar", "Essa nota possui duplicatas agrupadas. Você precisa desagrupar as duplicatas no Financ antes de cancelar a nota.", "Esse pedido não pode ser cancelado pois já foi capturado para nota", "Nota de entrega futura com produtos já entregues em outras notas", "Cancelamento de Cupom Fiscal deve ser realizado no módulo bmCaixa", "Nota Manual deve ser emitido e cancelado o cupom respectivo no bmCaixa". Baixas do documento em UFrmVerBaixasNF.pas
+
+IMPRESSÃO E E-MAIL
+Imprimir: src/Presentation/UFrmImprimir.pas; FastReport em src/Infrastructure/Printing/UFrmPrintFr.pas, matricial em UFrmPrintDot.pas; formatos de impressão em UFrmFormatos.pas e UFrmFmtCad.pas; enviar por e-mail em UFrmSendMail.pas
+
+OUTROS
+Centro de custos da fatura: UFrmLancFatCC.pas, UFrmLancaFaturaCC.pas
+INSS das notas do mês: src/Application/UseCases/UFrmObterINSSMes.pas
+Recalcular preço conforme juros do plano: src/Application/UseCases/UFrmRecalcPVJurosPlano.pas
+Permissões do usuário: src/Domain/Entities/UPermissoes.pas
+Versão do sistema: src/Domain/Services/uAppVersion.pas (aparece no rodapé da tela principal)

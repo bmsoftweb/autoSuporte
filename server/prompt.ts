@@ -25,3 +25,12 @@ Formato do mapa:
 - Seja conciso: no máximo umas 300 linhas. Prefira cobrir todas as telas a detalhar demais uma só.
 
 Responda somente com o mapa, sem introdução nem comentários antes ou depois.`;
+
+/** Botão "Compactar" da conversa: vira um item de FAQ (uma pergunta e uma resposta) */
+export const PROMPT_COMPACTAR = `Você recebe uma conversa de suporte entre um usuário de um sistema de gestão e o atendente. Transforme-a em UM item de FAQ.
+
+- pergunta: a dúvida principal, escrita como o usuário perguntaria, curta e clara (até 120 caracteres), sem nomes de pessoas nem dados de clientes.
+- resposta: a resposta final e correta, em linguagem de usuário, passo a passo quando for o caso. Use o que foi concluído na conversa: descarte tentativas, idas e vindas e respostas que depois foram corrigidas. Se a conversa tratou de mais de um assunto, foque no principal e mencione os outros em uma linha no fim.
+- Não invente nada que não esteja na conversa. Não cite código, arquivos, tabelas ou SQL.
+- Texto simples, sem markdown (sem asteriscos nem #); listas com "1." ou "-".
+- Em português do Brasil.`;

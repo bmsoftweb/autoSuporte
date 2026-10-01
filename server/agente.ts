@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { lerConfigAgente } from './config.js';
+import { PROMPT_COMPACTAR } from './prompt.js';
 
 const client = new Anthropic();
 
@@ -13,7 +14,8 @@ export interface Imagem {
  * `outra` troca as instruções e o teto só nesta sessão (ex.: montar o mapa do sistema).
  */
 export async function abrirSessao(
-  sistema: { nome: string; repo_url: string; branch: string | null },
+  /** github_token já decifrado; null = o token padrão (GITHUB_TOKEN) */
+  sistema: { nome: string; repo_url: string; branch: string | null; github_token?: string | null },
   usuario: string,
   outra?: { system: string; tetoCentavos: number },
 ) {
@@ -26,7 +28,7 @@ export async function abrirSessao(
         type: 'github_repository',
         url: sistema.repo_url,
         mount_path: '/workspace/sistema',
-        authorization_token: process.env.GITHUB_TOKEN!,
+        authorization_token: sistema.github_token || process.env.GITHUB_TOKEN!,
         ...(sistema.branch ? { checkout: { type: 'branch' as const, name: sistema.branch } } : {}),
       },
     ],
@@ -37,6 +39,36 @@ export async function abrirSessao(
     },
   });
   return s.id;
+}
+
+/**
+ * Compacta uma conversa em uma pergunta e uma resposta (formato FAQ).
+ * Chamada simples à API (sem sessão nem repositório): só o texto da conversa.
+ */
+export async function compactarConversa(sistema: string, trocas: { pergunta: string; resposta: string }[]) {
+  const cfg = await lerConfigAgente();
+  const conversa = trocas.map((t, i) => `[${i + 1}] Pergunta: ${t.pergunta || '(só um print da tela)'}\nResposta: ${t.resposta}`).join('\n\n');
+  const r = await client.messages.create({
+    model: cfg.modelo,
+    max_tokens: 4000,
+    system: PROMPT_COMPACTAR,
+    messages: [{ role: 'user', content: `Sistema: ${sistema}\n\nConversa:\n${conversa}` }],
+    output_config: {
+      effort: 'low',
+      format: {
+        type: 'json_schema',
+        schema: {
+          type: 'object',
+          properties: { pergunta: { type: 'string' }, resposta: { type: 'string' } },
+          required: ['pergunta', 'resposta'],
+          additionalProperties: false,
+        },
+      },
+    },
+  });
+  const texto = r.content.map((b) => (b.type === 'text' ? b.text : '')).join('');
+  const j = JSON.parse(texto);
+  return { pergunta: String(j.pergunta).trim().slice(0, 120), resposta: String(j.resposta).trim() };
 }
 
 /**

@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Bot, ImageIcon, Loader2, X } from 'lucide-react';
-import { fetchConversa, MensagemConversa } from '../api';
+import { fetchConversa, MensagemConversa, mudarVisibilidade, Visibilidade } from '../api';
 import { RegistroCrud } from '../types';
 import { AvisoErro } from './AvisoErro';
+import { CompactarConversa } from './CompactarConversa';
+import { VisibilidadeConversa } from './NomeConversa';
 
 /** "aaaa-mm-dd hh:mm:ss" (já em horário de Brasília) -> "dd/mm/aaaa hh:mm" */
 const dataHora = (v: string) => {
@@ -15,6 +17,10 @@ const dataHora = (v: string) => {
 export const ConversaView: React.FC<{ record: RegistroCrud; onFechar: () => void }> = ({ record, onFechar }) => {
   const [mensagens, setMensagens] = useState<MensagemConversa[] | null>(null);
   const [erro, setErro] = useState('');
+  /** Visibilidade trocada nesta tela (null = a que veio do banco) */
+  const [visibilidade, setVisibilidade] = useState<Visibilidade | null>(null);
+  /** Compactação salva nesta tela (null = a que veio do banco) */
+  const [faq, setFaq] = useState<{ titulo: string | null; resposta_faq: string | null } | null>(null);
   const destaqueRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -89,6 +95,20 @@ export const ConversaView: React.FC<{ record: RegistroCrud; onFechar: () => void
             ? `${primeira.titulo ? `“${primeira.titulo}” • ` : ''}${primeira.cliente ?? 'Cliente excluído'} • ${primeira.sistema ?? 'Sistema excluído'} • ${mensagens!.length} pergunta(s) • sessão ${record.sessao_id}`
             : `Sessão ${record.sessao_id}`}
         </span>
+        {primeira && (
+          <span className="ml-auto flex items-center gap-3">
+            <CompactarConversa
+              sessao={String(record.sessao_id)}
+              titulo={(faq ?? primeira).titulo}
+              respostaFaq={(faq ?? primeira).resposta_faq}
+              onSalvo={setFaq}
+            />
+            <VisibilidadeConversa
+              visibilidade={visibilidade ?? primeira.visibilidade}
+              onSalvar={async (v) => setVisibilidade(await mudarVisibilidade(String(record.sessao_id), v))}
+            />
+          </span>
+        )}
         <button
           type="button"
           onClick={onFechar}

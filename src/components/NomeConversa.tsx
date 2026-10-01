@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Check, Loader2, Pencil, X } from 'lucide-react';
 import { INPUT_CLASS } from '../utils/formStyles';
+import { Visibilidade } from '../api';
 import { ConfirmDialog } from './ConfirmDialog';
+import { Toggle } from './Toggle';
 
 interface NomeConversaProps {
   /** Nome dado à conversa; null = sem nome */
@@ -95,6 +97,38 @@ export const NomeConversa: React.FC<NomeConversaProps> = ({ titulo, padrao, onSa
       >
         <Pencil className="w-3.5 h-3.5" />
       </button>
+    </span>
+  );
+};
+
+/** Interruptor "Pública" da conversa (desligado = privada, o padrão); grava na hora */
+export const VisibilidadeConversa: React.FC<{
+  visibilidade: Visibilidade;
+  onSalvar: (v: Visibilidade) => Promise<void>;
+}> = ({ visibilidade, onSalvar }) => {
+  const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState('');
+  return (
+    <span className="flex items-center gap-1.5 shrink-0" title={erro || undefined}>
+      <Toggle
+        size="sm"
+        checked={visibilidade === 'publico'}
+        disabled={salvando}
+        title="Pública: poderá ser liberada aos usuários finais. Privada (padrão): só o suporte vê"
+        label={<span className={`text-xs ${erro ? 'text-rose-600' : 'text-stone-600 dark:text-stone-300'}`}>Pública</span>}
+        onChange={async (v) => {
+          setSalvando(true);
+          setErro('');
+          try {
+            await onSalvar(v ? 'publico' : 'privado');
+          } catch (err: any) {
+            setErro(err.message || 'Não foi possível gravar.');
+          } finally {
+            setSalvando(false);
+          }
+        }}
+      />
+      {salvando && <Loader2 className="w-3 h-3 animate-spin text-stone-400" />}
     </span>
   );
 };

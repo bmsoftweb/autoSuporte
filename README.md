@@ -29,7 +29,9 @@ CREATE TABLE sistemas (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(120) NOT NULL,
   repo_url VARCHAR(255) NOT NULL,     -- https://github.com/dono/repo
-  branch VARCHAR(100) NULL            -- vazio = branch padrão do repositório
+  branch VARCHAR(100) NULL,           -- vazio = branch padrão do repositório
+  mapa TEXT NULL,                     -- mapa do sistema (botão "Montar mapa")
+  github_token VARCHAR(500) NULL      -- token de outra conta do GitHub, cifrado; vazio = GITHUB_TOKEN
 );
 
 -- Sistemas que cada cliente contratou
@@ -50,6 +52,15 @@ CREATE TABLE perguntas (
   resposta MEDIUMTEXT NOT NULL,
   criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   INDEX (sessao_id)
+);
+
+-- Nome e visibilidade de cada conversa (sem linha aqui: sem nome e privada)
+CREATE TABLE conversas (
+  sessao_id VARCHAR(80) NOT NULL PRIMARY KEY,
+  usuario_id INT NOT NULL,
+  titulo VARCHAR(120) NULL,                                       -- vazio = a primeira pergunta
+  visibilidade ENUM('privado','publico') NOT NULL DEFAULT 'privado', -- pública: poderá ser liberada aos usuários finais
+  resposta_faq MEDIUMTEXT NULL                                      -- botão "Compactar": a resposta; a pergunta fica em titulo
 );
 ```
 

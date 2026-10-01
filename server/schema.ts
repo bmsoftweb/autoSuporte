@@ -38,6 +38,8 @@ export interface FieldDef {
    * Não existe na tabela e nunca é gravada; não vai para o navegador.
    */
   sql?: string;
+  /** Só em password: grava cifrado (token que o servidor precisa ler de volta) em vez de bcrypt */
+  cifrado?: boolean;
   /** Valor inicial na inclusão */
   default?: string | number | boolean;
   /** Largura sugerida da coluna na grade */
@@ -72,6 +74,12 @@ export const PERFIS = [
   { value: 'admin', label: 'Administrador' },
 ];
 
+/** Conversa privada (padrão) ou pública: a pública poderá ser liberada aos usuários finais */
+export const VISIBILIDADES = [
+  { value: 'privado', label: 'Privada' },
+  { value: 'publico', label: 'Pública' },
+];
+
 export const RESOURCES: ResourceDef[] = [
   {
     name: 'sistemas',
@@ -98,9 +106,18 @@ export const RESOURCES: ResourceDef[] = [
         searchable: true,
         maxLength: 255,
         placeholder: 'https://github.com/dono/repositorio',
-        hint: 'O token do GitHub (GITHUB_TOKEN) precisa ter acesso de leitura a este repositório',
+        hint: 'O token do GitHub precisa ter acesso de leitura a este repositório',
       },
       { name: 'branch', label: 'Branch', type: 'text', listed: true, maxLength: 100, hint: 'Em branco: a branch padrão do repositório' },
+      {
+        name: 'github_token',
+        label: 'Token do GitHub',
+        type: 'password',
+        cifrado: true,
+        maxLength: 255,
+        placeholder: 'Em branco: o token padrão (GITHUB_TOKEN)',
+        hint: 'Só para repositório de outra conta do GitHub: token fine-grained com "Contents: Read" nele. Gravado cifrado; na alteração, em branco mantém o atual',
+      },
       {
         name: 'mapa',
         label: 'Mapa do sistema',
@@ -176,6 +193,17 @@ export const RESOURCES: ResourceDef[] = [
                        (SELECT p1.pergunta FROM perguntas p1 WHERE p1.sessao_id = t.sessao_id ORDER BY p1.id LIMIT 1))`,
       },
       { name: 'pergunta', label: 'Pergunta', type: 'text', readOnly: true, listed: true, searchable: true, filterable: true },
+      {
+        name: 'visibilidade',
+        label: 'Visibilidade',
+        type: 'enum',
+        readOnly: true,
+        listed: true,
+        filterable: true,
+        options: VISIBILIDADES,
+        // Tabela conversas; sem linha lá, a conversa é privada
+        sql: `COALESCE((SELECT c.visibilidade FROM conversas c WHERE c.sessao_id = t.sessao_id), 'privado')`,
+      },
       { name: 'resposta', label: 'Resposta', type: 'textarea', readOnly: true, searchable: true },
       { name: 'com_imagem', label: 'Print', type: 'boolean', readOnly: true, listed: true, filterable: true },
       { name: 'sessao_id', label: 'Sessão', type: 'text', readOnly: true },
@@ -215,6 +243,17 @@ export const RESOURCES: ResourceDef[] = [
                        (SELECT p1.pergunta FROM perguntas p1 WHERE p1.sessao_id = t.sessao_id ORDER BY p1.id LIMIT 1))`,
       },
       { name: 'qtd', label: 'Perguntas', type: 'number', readOnly: true, listed: true, width: 'xs' },
+      {
+        name: 'visibilidade',
+        label: 'Visibilidade',
+        type: 'enum',
+        readOnly: true,
+        listed: true,
+        filterable: true,
+        options: VISIBILIDADES,
+        // Tabela conversas; sem linha lá, a conversa é privada
+        sql: `COALESCE((SELECT c.visibilidade FROM conversas c WHERE c.sessao_id = t.sessao_id), 'privado')`,
+      },
       { name: 'com_imagem', label: 'Print', type: 'boolean', readOnly: true, filterable: true },
       { name: 'sessao_id', label: 'Sessão', type: 'text', readOnly: true },
       { name: 'usuario_id', label: 'Usuário', type: 'number', readOnly: true },

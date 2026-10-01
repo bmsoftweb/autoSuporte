@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AlertCircle, Bot, ImagePlus, Loader2, MessagesSquare, SendHorizontal, X } from 'lucide-react';
-import { chamar, fetchMinhaConversa, renomearConversa, Sistema } from '../api';
+import { chamar, fetchMinhaConversa, mudarVisibilidade, renomearConversa, Sistema, Visibilidade } from '../api';
 import { INPUT_CLASS } from '../utils/formStyles';
+import { CompactarConversa } from './CompactarConversa';
 import { ConfirmDialog } from './ConfirmDialog';
-import { NomeConversa } from './NomeConversa';
+import { NomeConversa, VisibilidadeConversa } from './NomeConversa';
 
 interface Mensagem {
   autor: 'cliente' | 'suporte';
@@ -73,12 +74,17 @@ export const ChatSistema: React.FC<ChatSistemaProps> = ({ sistema, visivel, nova
     setSessaoId('');
     setMensagens([]);
     setTitulo(null);
+    setVisibilidade('privado');
+    setRespostaFaq(null);
     setErro('');
     perguntaRef.current?.focus();
   }, [novaToken]);
 
   /** Nome da conversa aberta (null = mostra a primeira pergunta) */
   const [titulo, setTitulo] = useState<string | null>(null);
+  const [visibilidade, setVisibilidade] = useState<Visibilidade>('privado');
+  /** Resposta compactada (FAQ); a pergunta compactada é o titulo */
+  const [respostaFaq, setRespostaFaq] = useState<string | null>(null);
 
   // Reabre uma conversa antiga: as próximas perguntas vão para a mesma sessão do agente
   const [carregando, setCarregando] = useState(false);
@@ -88,10 +94,12 @@ export const ChatSistema: React.FC<ChatSistemaProps> = ({ sistema, visivel, nova
     setCarregando(true);
     setErro('');
     fetchMinhaConversa(carregar.sessao)
-      .then(({ titulo, mensagens: lista }) => {
+      .then(({ titulo, visibilidade, resposta_faq, mensagens: lista }) => {
         if (!vivo) return;
         setSessaoId(carregar.sessao);
         setTitulo(titulo);
+        setVisibilidade(visibilidade);
+        setRespostaFaq(resposta_faq);
         setMensagens(
           lista.flatMap((m): Mensagem[] => [
             // O print não fica guardado: só o aviso de que foi enviado
@@ -174,6 +182,19 @@ export const ChatSistema: React.FC<ChatSistemaProps> = ({ sistema, visivel, nova
             padrao={mensagens.find((m) => m.autor === 'cliente')?.texto.replace('(print da tela enviado)\n', '') || '(só o print da tela)'}
             onSalvar={async (novo) => setTitulo(await renomearConversa(sessaoId, novo))}
             className="flex-1 font-semibold text-stone-700 dark:text-stone-200"
+          />
+          <VisibilidadeConversa
+            visibilidade={visibilidade}
+            onSalvar={async (v) => setVisibilidade(await mudarVisibilidade(sessaoId, v))}
+          />
+          <CompactarConversa
+            sessao={sessaoId}
+            titulo={titulo}
+            respostaFaq={respostaFaq}
+            onSalvo={(r) => {
+              setTitulo(r.titulo);
+              setRespostaFaq(r.resposta_faq);
+            }}
           />
         </div>
       )}

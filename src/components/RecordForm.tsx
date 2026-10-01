@@ -150,7 +150,12 @@ export const RecordForm: React.FC<RecordFormProps> = ({
     const anterior = String(values.mapa || '');
     setValues((v) => ({ ...v, mapa: '' }));
     try {
-      const r = await chamar('POST', '/api/mapa', { repo_url: values.repo_url, branch: values.branch });
+      const r = await chamar('POST', '/api/mapa', {
+        id: record?.id,
+        repo_url: values.repo_url,
+        branch: values.branch,
+        github_token: values.github_token,
+      });
       const leitor = r.body!.getReader();
       const decodificador = new TextDecoder();
       for (;;) {
@@ -391,8 +396,10 @@ export const RecordForm: React.FC<RecordFormProps> = ({
               onFocus={(e) => e.target.select()}
               autoComplete="new-password"
               // Na inclusão a senha é obrigatória (o login exige senha cadastrada)
-              required={!isEdit}
-              placeholder={isEdit ? 'Deixe em branco para manter a senha atual' : 'Defina a senha inicial'}
+              required={!isEdit && !field.cifrado}
+              placeholder={
+                isEdit ? 'Deixe em branco para manter o valor atual' : field.placeholder ?? 'Defina a senha inicial'
+              }
               className={`${inputClass} pr-10`}
             />
             <button

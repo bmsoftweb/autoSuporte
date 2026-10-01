@@ -13,6 +13,8 @@ interface ConfirmDialogProps {
   onCancelar: () => void;
   /** Conteúdo extra entre a mensagem e os botões (ex.: campo de motivo) */
   children?: React.ReactNode;
+  /** Janela larga (ex.: editar um texto longo) */
+  larga?: boolean;
 }
 
 /** Diálogo de confirmação padrão do app: toda exclusão/remoção passa por ele */
@@ -24,6 +26,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   onConfirmar,
   onCancelar,
   children,
+  larga,
 }) => {
   const [ocupado, setOcupado] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -47,7 +50,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
       <div className="fixed inset-0 bg-stone-950/70 backdrop-blur-xs" onClick={ocupado ? undefined : onCancelar} aria-hidden="true" />
-      <div role="dialog" aria-modal="true" className="relative w-full max-w-md bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl shadow-2xl z-10 p-5">
+      <div role="dialog" aria-modal="true" className={`relative w-full ${larga ? 'max-w-2xl' : 'max-w-md'} bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl shadow-2xl z-10 p-5`}>
         <div className="flex items-start gap-3">
           <div
             className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${
