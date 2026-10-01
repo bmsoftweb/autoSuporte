@@ -2,6 +2,11 @@
 
 Mais recente primeiro. PATCH a cada envio ao GitHub; MAJOR/MINOR só quando pedido.
 
+## 0.0.6 — 2026-10-01
+
+- Ecossistema passa a se chamar Fluxograma (menu, título e aviso ao salvar).
+- Fluxograma: componente Grupo, um quadrado com título para identificar áreas do quadro; redimensionável, e ao arrastá-lo os sistemas que estão dentro vão junto. Só visual, não muda as conversas.
+
 ## 0.0.5 — 2026-10-01
 
 - Ecossistema: as ligações são desenhadas em ângulo reto e contornam os quadros (não passam por trás de nenhum).

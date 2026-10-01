@@ -1,5 +1,5 @@
 /**
- * Caminho em ângulo reto entre dois pontos que contorna retângulos (os quadros do Ecossistema).
+ * Caminho em ângulo reto entre dois pontos que contorna retângulos (os quadros do Fluxograma).
  * A* numa grade de CELULA px; virar custa mais que andar, para sair poucas curvas.
  * Devolve null quando a área é grande demais (quem chama usa a linha comum).
  */

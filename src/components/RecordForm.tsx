@@ -120,7 +120,7 @@ export const RecordForm: React.FC<RecordFormProps> = ({
 
   /**
    * Sistemas ligados, editados no próprio cadastro e gravados junto no Salvar (null = carregando):
-   * usuário -> sistemas liberados no chat (as ligações entre sistemas ficam em Cadastros › Ecossistema)
+   * usuário -> sistemas liberados no chat (as ligações entre sistemas ficam em Cadastros › Fluxograma)
    */
   const ligacao = LIGACOES[resource.name];
   const comSistemas = Boolean(ligacao);

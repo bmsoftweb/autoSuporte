@@ -45,6 +45,11 @@ body {
   background-image: linear-gradient(rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.06)) !important;
 }
 
+/* Campo que não é de formulário (ex.: título do grupo no Ecossistema): sem a barra à esquerda */
+.sem-barra {
+  border-left-width: 0 !important;
+}
+
 /* Tamanho dos campos escolhido em "Customizar layout" do formulário (RecordForm) */
 @media (min-width: 64rem) {
   .campo-span {

@@ -120,7 +120,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ sistemas, ativo, onAbrir, usua
               <div className="px-4 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-stone-400 dark:text-stone-400">Cadastros</div>
             )}
             {CADASTROS.map((c) => botao(`crud:${c.id}`, c.label, c.icone, rec))}
-            {botao('ecossistema', 'Ecossistema', Network, rec)}
+            {botao('ecossistema', 'Fluxograma', Network, rec)}
             {botao('config', 'Configurações', Settings, rec)}
           </div>
         )}

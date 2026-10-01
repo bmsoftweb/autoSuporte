@@ -128,7 +128,7 @@ export default function App() {
     : ativo === 'config'
     ? ['Configurações', 'Preferências do app, por grupo']
     : ativo === 'ecossistema'
-    ? ['Ecossistema', 'Ligações entre os sistemas: nas conversas de um sistema, os repositórios ligados a ele abrem junto']
+    ? ['Fluxograma', 'Ligações entre os sistemas: nas conversas de um sistema, os repositórios ligados a ele abrem junto']
     : ['Suporte', 'Escolha uma opção no menu'];
 
   const recursoHistorico = resources.find((r) => r.name === 'minhas_conversas');

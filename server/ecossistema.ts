@@ -28,6 +28,7 @@ export function createEcossistemaRouter(): Router {
           return [{ de, para, s, t }];
         }),
         posicoes: quadro?.posicoes ?? {},
+        grupos: quadro?.grupos ?? [],
       });
     } catch (err: any) {
       res.status(400).json({ error: err.message });
@@ -43,6 +44,18 @@ export function createEcossistemaRouter(): Router {
     const ligacoes = (Array.isArray(req.body?.ligacoes) ? req.body.ligacoes : [])
       .map((l: any) => [Number(l?.de), Number(l?.para), String(l?.s ?? '').slice(0, 4), String(l?.t ?? '').slice(0, 4)])
       .filter(([de, para]: any[]) => Number.isInteger(de) && Number.isInteger(para) && de > 0 && para > 0 && de !== para);
+    // Grupos: só desenho (título e retângulo), sem efeito nas conversas
+    const grupos = (Array.isArray(req.body?.grupos) ? req.body.grupos : [])
+      .slice(0, 100)
+      .map((g: any) => ({
+        id: String(g?.id ?? '').replace(/[^\w-]/g, '').slice(0, 30),
+        titulo: String(g?.titulo ?? '').trim().slice(0, 60),
+        x: Math.round(Number(g?.x)),
+        y: Math.round(Number(g?.y)),
+        w: Math.round(Number(g?.w)),
+        h: Math.round(Number(g?.h)),
+      }))
+      .filter((g: any) => g.id && [g.x, g.y, g.w, g.h].every(Number.isFinite) && g.w > 0 && g.h > 0);
     const pontos = Object.fromEntries(ligacoes.map(([de, para, s, t]: any[]) => [`${de}>${para}`, [s, t]]));
 
     const conn = await pool.getConnection();
@@ -58,7 +71,7 @@ export function createEcossistemaRouter(): Router {
           );
         }
       }
-      await gravarConfig('ecossistema', 'quadro', { posicoes, pontos }, conn as any);
+      await gravarConfig('ecossistema', 'quadro', { posicoes, pontos, grupos }, conn as any);
       await conn.commit();
       res.json({ success: true });
     } catch (err: any) {
