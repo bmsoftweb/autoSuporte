@@ -54,6 +54,13 @@ CREATE TABLE perguntas (
   INDEX (sessao_id)
 );
 
+-- Sistemas relacionados: repositórios abertos junto nas conversas do sistema (ex.: NFe -> módulo de transmissão)
+CREATE TABLE sistema_relacionados (
+  sistema_id INT NOT NULL,
+  relacionado_id INT NOT NULL,
+  PRIMARY KEY (sistema_id, relacionado_id)
+);
+
 -- Nome e visibilidade de cada conversa (sem linha aqui: sem nome e privada)
 CREATE TABLE conversas (
   sessao_id VARCHAR(80) NOT NULL PRIMARY KEY,

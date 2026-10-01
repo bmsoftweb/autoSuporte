@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Columns3, Eye, EyeOff, Loader2, Move, RotateCcw, Save, Scaling, Search, Wand2, X } from 'lucide-react';
-import { chamar, fetchSistemasDoUsuario, listRecords } from '../api';
+import { chamar, fetchLigados, listRecords } from '../api';
 import { FieldDef, RegistroCrud, ResourceDef } from '../types';
 import type { TamanhoCampo } from '../utils/configListas';
 import { FIELD_CLASS, HINT_CLASS, INPUT_CLASS, LABEL_CLASS } from '../utils/formStyles';
@@ -59,6 +59,16 @@ const ALCAS: { dir: string; className: string }[] = [
   { dir: 'w', className: 'top-1/2 left-0 -translate-x-full -translate-y-1/2 cursor-ew-resize' },
 ];
 
+/** Sistemas ligados a cada cadastro (bloco de interruptores no formulário) */
+const LIGACOES: Record<string, { campo: string; rotulo: string; dica?: string }> = {
+  usuarios: { campo: 'sistemas', rotulo: 'Sistemas liberados' },
+  sistemas: {
+    campo: 'relacionados',
+    rotulo: 'Sistemas relacionados',
+    dica: 'Módulos ligados a este (ex.: transmissão da NF-e, financeiro). A ligação vale para os dois lados: nas conversas de um, o repositório do outro abre junto. Também dá para ligar em Cadastros › Ecossistema.',
+  },
+};
+
 /** Valor inicial de cada campo ao abrir o formulário */
 function initialValue(field: FieldDef, record: RegistroCrud | null): any {
   if (record) {
@@ -113,8 +123,12 @@ export const RecordForm: React.FC<RecordFormProps> = ({
     return () => cancelAnimationFrame(id);
   }, [record]);
 
-  /** Usuário: sistemas liberados, editados no próprio cadastro e gravados junto no Salvar (null = carregando) */
-  const comSistemas = resource.name === 'usuarios';
+  /**
+   * Sistemas ligados, editados no próprio cadastro e gravados junto no Salvar (null = carregando):
+   * usuário -> sistemas liberados no chat; sistema -> sistemas relacionados (abertos junto na conversa)
+   */
+  const ligacao = LIGACOES[resource.name];
+  const comSistemas = Boolean(ligacao);
   const [todosSistemas, setTodosSistemas] = useState<{ id: number; nome: string }[] | null>(null);
   const [liberados, setLiberados] = useState<number[] | null>(comSistemas && !record ? [] : null);
   useEffect(() => {
@@ -124,7 +138,7 @@ export const RecordForm: React.FC<RecordFormProps> = ({
       .then((d) => vivo && setTodosSistemas(d.data.map((s) => ({ id: Number(s.id), nome: String(s.nome) }))))
       .catch((err) => vivo && setError(err.message || 'Não foi possível carregar os sistemas.'));
     if (record)
-      fetchSistemasDoUsuario(String(record[resource.pk[0]]))
+      fetchLigados(resource.name, String(record[resource.pk[0]]))
         .then((ids) => vivo && setLiberados(ids))
         .catch((err) => vivo && setError(err.message || 'Não foi possível carregar os sistemas liberados.'));
     return () => {
@@ -334,7 +348,7 @@ export const RecordForm: React.FC<RecordFormProps> = ({
         payload[f.name] = v === '' ? null : v;
       }
       // Sem a lista carregada, os sistemas liberados ficam como estão
-      if (comSistemas && liberados) payload.sistemas = liberados;
+      if (ligacao && liberados) payload[ligacao.campo] = liberados;
       await onSave(payload);
     } catch (err: any) {
       setError(err.message || 'Não foi possível salvar o registro.');
@@ -572,10 +586,11 @@ export const RecordForm: React.FC<RecordFormProps> = ({
             ))}
           </div>
 
-          {/* Usuário: sistemas que ele pode consultar no chat */}
-          {comSistemas && (
+          {/* Usuário: sistemas que ele pode consultar no chat. Sistema: os relacionados, abertos junto na conversa */}
+          {ligacao && (
             <div className="pt-3 border-t border-stone-200 dark:border-stone-800">
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-stone-400 mb-2">Sistemas liberados</div>
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-stone-400 mb-2">{ligacao.rotulo}</div>
+              {ligacao.dica && <p className={`${HINT_CLASS} mb-2`}>{ligacao.dica}</p>}
               {todosSistemas === null || liberados === null ? (
                 <div className="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400">
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -585,10 +600,12 @@ export const RecordForm: React.FC<RecordFormProps> = ({
                 <p className={HINT_CLASS}>Nenhum sistema cadastrado ainda.</p>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                  {todosSistemas.map((s) => (
+                  {todosSistemas
+                    .filter((s) => resource.name !== 'sistemas' || !record || s.id !== Number(record.id))
+                    .map((s) => (
                     <Toggle
                       key={s.id}
-                      id={`form-usuarios-sistema-${s.id}`}
+                      id={`form-${resource.name}-ligado-${s.id}`}
                       checked={liberados.includes(s.id)}
                       onChange={(v) => setLiberados((l) => (v ? [...(l || []), s.id] : (l || []).filter((id) => id !== s.id)))}
                       label={s.nome}

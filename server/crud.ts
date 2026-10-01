@@ -87,21 +87,41 @@ function antesDeGravar(resource: ResourceDef, payload: Record<string, any>, isUp
   }
 }
 
-/** Ids dos sistemas liberados vindos do formulário de usuário (null = a lista não veio) */
-function sistemasDoCorpo(body: any): number[] | null {
-  if (!body || !('sistemas' in body)) return null;
-  if (!Array.isArray(body.sistemas)) throw new Error('Sistemas liberados em formato inválido.');
-  return [...new Set(body.sistemas.map(Number).filter((n: number) => Number.isInteger(n) && n > 0))] as number[];
+/**
+ * Sistemas ligados a um registro, editados no próprio formulário e gravados junto no Salvar:
+ * usuário -> sistemas liberados no chat; sistema -> sistemas relacionados (repositórios abertos junto na conversa)
+ */
+const LIGACOES: Record<string, { campo: string; tabela: string; dono: string; alvo: string; rotulo: string }> = {
+  usuarios: { campo: 'sistemas', tabela: 'usuario_sistemas', dono: 'usuario_id', alvo: 'sistema_id', rotulo: 'Sistemas liberados' },
+  sistemas: { campo: 'relacionados', tabela: 'sistema_relacionados', dono: 'sistema_id', alvo: 'relacionado_id', rotulo: 'Sistemas relacionados' },
+};
+
+/** Ids ligados vindos do formulário (null = a lista não veio) */
+function ligadosDoCorpo(resource: ResourceDef, body: any): number[] | null {
+  const lig = LIGACOES[resource.name];
+  if (!lig || !body || !(lig.campo in body)) return null;
+  if (!Array.isArray(body[lig.campo])) throw new Error(`${lig.rotulo} em formato inválido.`);
+  return [...new Set(body[lig.campo].map(Number).filter((n: number) => Number.isInteger(n) && n > 0))] as number[];
 }
 
-async function gravarSistemasDoUsuario(usuarioId: string, ids: number[]) {
+async function gravarLigados(resource: ResourceDef, donoId: string, ids: number[]) {
+  const lig = LIGACOES[resource.name];
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
-    await conn.query('DELETE FROM usuario_sistemas WHERE usuario_id = ?', [usuarioId]);
+    // Relacionados são mútuos (A-B vale para os dois): saem e entram nos dois sentidos
+    const mutuo = resource.name === 'sistemas';
+    await conn.query(`DELETE FROM ${lig.tabela} WHERE ${lig.dono} = ?${mutuo ? ` OR ${lig.alvo} = ?` : ''}`, [donoId, donoId]);
     if (ids.length) {
-      // Só ids que existem: o SELECT descarta os inválidos
-      await conn.query('INSERT INTO usuario_sistemas (usuario_id, sistema_id) SELECT ?, id FROM sistemas WHERE id IN (?)', [usuarioId, ids]);
+      // Só ids que existem (o SELECT descarta os inválidos); um sistema não se relaciona com ele mesmo
+      await conn.query(`INSERT INTO ${lig.tabela} (${lig.dono}, ${lig.alvo}) SELECT ?, id FROM sistemas WHERE id IN (?) AND id <> ?`, [
+        donoId,
+        ids,
+        mutuo ? donoId : 0,
+      ]);
+      if (mutuo) {
+        await conn.query(`INSERT IGNORE INTO ${lig.tabela} (${lig.dono}, ${lig.alvo}) SELECT id, ? FROM sistemas WHERE id IN (?) AND id <> ?`, [donoId, ids, donoId]);
+      }
     }
     await conn.commit();
   } catch (err) {
@@ -162,11 +182,13 @@ export function createCrudRouter() {
     );
   });
 
-  /** Sistemas liberados de um usuário (formulário de usuário) */
-  router.get('/usuarios/:id/sistemas', async (req: Request, res: Response) => {
+  /** Sistemas ligados a um registro (formulário): liberados do usuário ou relacionados do sistema */
+  router.get('/ligados/:resource/:id', async (req: Request, res: Response) => {
     try {
-      const [rows] = await pool.query<any[]>('SELECT sistema_id FROM usuario_sistemas WHERE usuario_id = ?', [req.params.id]);
-      res.json(rows.map((r) => Number(r.sistema_id)));
+      const lig = LIGACOES[req.params.resource];
+      if (!lig) return res.status(404).json({ error: 'Recurso sem sistemas ligados.' });
+      const [rows] = await pool.query<any[]>(`SELECT ${lig.alvo} AS id FROM ${lig.tabela} WHERE ${lig.dono} = ?`, [req.params.id]);
+      res.json(rows.map((r) => Number(r.id)));
     } catch (err: any) {
       res.status(400).json({ error: err.message });
     }
@@ -204,7 +226,7 @@ export function createCrudRouter() {
         const [s] = await pool.query<any[]>('SELECT github_token FROM sistemas WHERE id = ?', [req.body.id]);
         github_token = s[0]?.github_token ? decifrar(s[0].github_token, 'Cadastros › Sistemas') : null;
       }
-      const sessao = await abrirSessao({ nome: 'Mapa', repo_url, branch, github_token }, String(res.locals.usuario.nome), {
+      const { id: sessao } = await abrirSessao({ nome: 'Mapa', repo_url, branch, github_token }, String(res.locals.usuario.nome), {
         system: PROMPT_MAPA,
         tetoCentavos: TETO_MAPA_CENTAVOS,
       });
@@ -365,7 +387,7 @@ export function createCrudRouter() {
       const payload = buildWritePayload(resource, req.body || {}, false);
       validateRequired(resource, payload, false);
       antesDeGravar(resource, payload, false);
-      const sistemas = resource.name === 'usuarios' ? sistemasDoCorpo(req.body) : null;
+      const ligados = ligadosDoCorpo(resource, req.body);
 
       const cols = Object.keys(payload);
       const [result] = await pool.query<any>(
@@ -373,7 +395,7 @@ export function createCrudRouter() {
         cols.map((c) => payload[c]),
       );
       const newId = String(result.insertId);
-      if (sistemas) await gravarSistemasDoUsuario(newId, sistemas);
+      if (ligados) await gravarLigados(resource, newId, ligados);
       res.json({ success: true, id: newId });
     } catch (err: any) {
       res.status(err.status || 400).json({ error: friendlyDbError(err, resource?.labelSingular) });
@@ -398,10 +420,10 @@ export function createCrudRouter() {
           throw new Error('Você não pode tirar o seu próprio perfil de administrador nem se desativar.');
         }
       }
-      const sistemas = resource.name === 'usuarios' ? sistemasDoCorpo(req.body) : null;
+      const ligados = ligadosDoCorpo(resource, req.body);
 
       const cols = Object.keys(payload);
-      if (!cols.length && !sistemas) return res.status(400).json({ error: 'Nenhuma alteração foi informada.' });
+      if (!cols.length && !ligados) return res.status(400).json({ error: 'Nenhuma alteração foi informada.' });
       if (cols.length) {
         const [result] = await pool.query<any>(
           `UPDATE ${resource.table} t SET ${cols.map((c) => `t.${c} = ?`).join(', ')} WHERE t.${pkCol(resource)} = ?`,
@@ -409,7 +431,7 @@ export function createCrudRouter() {
         );
         if (result.affectedRows === 0) return res.status(404).json({ error: `${resource.labelSingular} não encontrado.` });
       }
-      if (sistemas) await gravarSistemasDoUsuario(req.params.id, sistemas);
+      if (ligados) await gravarLigados(resource, req.params.id, ligados);
       res.json({ success: true });
     } catch (err: any) {
       res.status(err.status || 400).json({ error: friendlyDbError(err, resource?.labelSingular) });
@@ -430,9 +452,12 @@ export function createCrudRouter() {
 
       const [result] = await pool.query<any>(`DELETE t FROM ${resource.table} t WHERE t.${pkCol(resource)} = ?`, [req.params.id]);
       if (result.affectedRows === 0) return res.status(404).json({ error: `${resource.labelSingular} não encontrado.` });
-      // Vínculos usuário × sistema do registro excluído (o histórico de perguntas fica)
-      const coluna = resource.name === 'usuarios' ? 'usuario_id' : 'sistema_id';
-      await pool.query(`DELETE FROM usuario_sistemas WHERE ${coluna} = ?`, [req.params.id]);
+      // Vínculos do registro excluído (o histórico de perguntas fica)
+      if (resource.name === 'usuarios') await pool.query('DELETE FROM usuario_sistemas WHERE usuario_id = ?', [req.params.id]);
+      if (resource.name === 'sistemas') {
+        await pool.query('DELETE FROM usuario_sistemas WHERE sistema_id = ?', [req.params.id]);
+        await pool.query('DELETE FROM sistema_relacionados WHERE sistema_id = ? OR relacionado_id = ?', [req.params.id, req.params.id]);
+      }
       res.json({ success: true });
     } catch (err: any) {
       res.status(err.status || 400).json({ error: friendlyDbError(err, resource?.labelSingular) });

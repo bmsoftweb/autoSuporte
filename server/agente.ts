@@ -9,36 +9,83 @@ export interface Imagem {
   base64: string;
 }
 
+/** Repositório de um sistema; github_token já decifrado (null = o token padrão GITHUB_TOKEN) */
+export interface Repo {
+  nome: string;
+  repo_url: string;
+  branch: string | null;
+  github_token?: string | null;
+  mapa?: string | null;
+}
+
+/**
+ * Confere no GitHub, antes de abrir a sessão (e gastar créditos), se o token lê o repositório e a branch.
+ * Sem isso o agente abre sem o código e responde "não encontrei o repositório". Se o GitHub não responder, segue sem conferir.
+ */
+export async function conferirAcessoRepo(repo_url: string, branch: string | null, token: string) {
+  const repo = repo_url.replace('https://github.com/', '');
+  const H = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' };
+  const r = await fetch(`https://api.github.com/repos/${repo}/contents/${branch ? `?ref=${encodeURIComponent(branch)}` : ''}`, { headers: H }).catch(
+    () => null,
+  );
+  if (!r || r.ok || r.status >= 500) return;
+
+  let msg: string;
+  const meta = await fetch(`https://api.github.com/repos/${repo}`, { headers: H }).catch(() => null);
+  if (r.status === 401) msg = `O token do GitHub do sistema é inválido ou expirou. Gere outro e cadastre em Cadastros › Sistemas.`;
+  else if (!meta?.ok) msg = `O token do GitHub não enxerga o repositório ${repo}. Inclua o repositório no token (ou cadastre o token da conta certa em Cadastros › Sistemas).`;
+  else if (r.status === 403) msg = `O token do GitHub enxerga o repositório ${repo}, mas não pode ler os arquivos. Edite o token e dê a permissão "Contents: Read-only".`;
+  else if (branch) msg = `A branch "${branch}" não existe no repositório ${repo}. Corrija em Cadastros › Sistemas (em branco usa a padrão).`;
+  else msg = `O repositório ${repo} está vazio ou não pôde ser lido (GitHub ${r.status}).`;
+  throw Object.assign(new Error(`${msg} Avise o administrador.`), { status: 400 });
+}
+
 /**
  * Abre a conversa (sessão do agente) com o repositório do sistema clonado em /workspace/sistema.
  * `outra` troca as instruções e o teto só nesta sessão (ex.: montar o mapa do sistema).
  */
 export async function abrirSessao(
-  /** github_token já decifrado; null = o token padrão (GITHUB_TOKEN) */
-  sistema: { nome: string; repo_url: string; branch: string | null; github_token?: string | null },
+  sistema: Repo,
   usuario: string,
   outra?: { system: string; tetoCentavos: number },
+  /** Sistemas relacionados: abertos em /workspace/relacionados/<pasta>; o que o token não lê fica de fora (não barra a conversa) */
+  relacionados: Repo[] = [],
 ) {
+  const token = sistema.github_token || process.env.GITHUB_TOKEN!;
+  await conferirAcessoRepo(sistema.repo_url, sistema.branch, token);
+  const abertos: (Repo & { pasta: string })[] = [];
+  const fora: { nome: string; motivo: string }[] = [];
+  for (const r of relacionados) {
+    try {
+      await conferirAcessoRepo(r.repo_url, r.branch, r.github_token || process.env.GITHUB_TOKEN!);
+      const base = r.repo_url.split('/').pop()!.replace(/[^\w.-]/g, '_');
+      let pasta = base;
+      for (let n = 2; abertos.some((a) => a.pasta === pasta); n++) pasta = `${base}_${n}`;
+      abertos.push({ ...r, pasta });
+    } catch (err: any) {
+      console.error(`Relacionado "${r.nome}" fora da conversa:`, err.message);
+      fora.push({ nome: r.nome, motivo: err.message });
+    }
+  }
+  const repositorio = (r: Repo, mount_path: string) => ({
+    type: 'github_repository' as const,
+    url: r.repo_url,
+    mount_path,
+    authorization_token: r.github_token || process.env.GITHUB_TOKEN!,
+    ...(r.branch ? { checkout: { type: 'branch' as const, name: r.branch } } : {}),
+  });
   const s = await client.beta.sessions.create({
     agent: outra ? { type: 'agent_with_overrides', id: process.env.AGENT_ID!, system: outra.system } : process.env.AGENT_ID!,
     environment_id: process.env.ENVIRONMENT_ID!,
     title: `${sistema.nome} - ${usuario}`,
-    resources: [
-      {
-        type: 'github_repository',
-        url: sistema.repo_url,
-        mount_path: '/workspace/sistema',
-        authorization_token: sistema.github_token || process.env.GITHUB_TOKEN!,
-        ...(sistema.branch ? { checkout: { type: 'branch' as const, name: sistema.branch } } : {}),
-      },
-    ],
+    resources: [repositorio(sistema, '/workspace/sistema'), ...abertos.map((r) => repositorio(r, `/workspace/relacionados/${r.pasta}`))],
     // Teto de gasto da conversa (Configurações › Agente de IA): ao atingir, o agente para e o cliente abre outra conversa
     budget: {
       type: 'limit',
       max_list_cost: { amount: String(outra?.tetoCentavos ?? Math.round((await lerConfigAgente()).orcamento * 100)), currency: 'USD' },
     },
   });
-  return s.id;
+  return { id: s.id, relacionados: abertos, fora };
 }
 
 /**

@@ -13,6 +13,8 @@ const CHAVES: Record<string, string[]> = {
   agente: ['ia'],
   // { saldo, data, alerta }: saldo visto no Console numa data; o menu mostra esse saldo menos o gasto desde então
   creditos: ['saldo'],
+  // { posicoes: { [sistemaId]: { x, y } } }: onde cada sistema está no quadro do Ecossistema (as ligações ficam em sistema_relacionados)
+  ecossistema: ['quadro'],
 };
 
 export interface ConfigCreditos {
@@ -78,6 +80,20 @@ const TAMANHO_MAX = 200_000;
 
 function validar(grupo: string, chave: string) {
   if (!CHAVES[grupo]?.includes(chave)) throw Object.assign(new Error(`Configuração desconhecida: ${grupo}.${chave}`), { status: 404 });
+}
+
+/** Grava o valor (JSON) de grupo + chave; quem chama já validou o conteúdo */
+export async function gravarConfig(grupo: string, chave: string, valor: unknown, conn: { query: typeof pool.query } = pool) {
+  validar(grupo, chave);
+  const texto = JSON.stringify(valor ?? null);
+  if (texto.length > TAMANHO_MAX) throw Object.assign(new Error('Configuração grande demais.'), { status: 413 });
+  const [existe] = await conn.query<any[]>('SELECT id FROM config WHERE grupo = ? AND chave = ? LIMIT 1', [grupo, chave]);
+  if (existe.length) {
+    await conn.query('UPDATE config SET valor = ? WHERE id = ?', [texto, existe[0].id]);
+  } else {
+    // A coluna id não é AUTO_INCREMENT: o próximo número vem do maior gravado
+    await conn.query('INSERT INTO config (id, grupo, chave, valor) SELECT COALESCE(MAX(id), 0) + 1, ?, ?, ? FROM config', [grupo, chave, texto]);
+  }
 }
 
 /** Lê o valor gravado, ou null quando ainda não foi configurado */
@@ -149,16 +165,7 @@ export function createConfigRouter(): Router {
         await aplicarNoAgente(valor);
       }
       if (grupo === 'creditos') valor = prepararCreditos(valor);
-      const texto = JSON.stringify(valor ?? null);
-      if (texto.length > TAMANHO_MAX) return res.status(413).json({ error: 'Configuração grande demais.' });
-
-      const [existe] = await pool.query<any[]>('SELECT id FROM config WHERE grupo = ? AND chave = ? LIMIT 1', [grupo, chave]);
-      if (existe.length) {
-        await pool.query('UPDATE config SET valor = ? WHERE id = ?', [texto, existe[0].id]);
-      } else {
-        // A coluna id não é AUTO_INCREMENT: o próximo número vem do maior gravado
-        await pool.query('INSERT INTO config (id, grupo, chave, valor) SELECT COALESCE(MAX(id), 0) + 1, ?, ?, ? FROM config', [grupo, chave, texto]);
-      }
+      await gravarConfig(grupo, chave, valor);
       res.json({ success: true });
     } catch (err: any) {
       res.status(err.status || 400).json({ error: err.message });

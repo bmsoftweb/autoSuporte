@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { AlertCircle, Bot, ImagePlus, Loader2, MessagesSquare, SendHorizontal, X } from 'lucide-react';
+import { AlertCircle, AlertTriangle, Bot, ImagePlus, Loader2, MessagesSquare, Network, SendHorizontal, X } from 'lucide-react';
 import { chamar, fetchMinhaConversa, mudarVisibilidade, renomearConversa, Sistema, Visibilidade } from '../api';
 import { INPUT_CLASS } from '../utils/formStyles';
 import { CompactarConversa } from './CompactarConversa';
@@ -76,6 +76,7 @@ export const ChatSistema: React.FC<ChatSistemaProps> = ({ sistema, visivel, nova
     setTitulo(null);
     setVisibilidade('privado');
     setRespostaFaq(null);
+    setModulos(null);
     setErro('');
     perguntaRef.current?.focus();
   }, [novaToken]);
@@ -85,6 +86,8 @@ export const ChatSistema: React.FC<ChatSistemaProps> = ({ sistema, visivel, nova
   const [visibilidade, setVisibilidade] = useState<Visibilidade>('privado');
   /** Resposta compactada (FAQ); a pergunta compactada é o titulo */
   const [respostaFaq, setRespostaFaq] = useState<string | null>(null);
+  /** Conversa nova: modulos relacionados que vieram junto e os que ficaram de fora (o servidor manda no cabecalho X-Relacionados) */
+  const [modulos, setModulos] = useState<{ abertos: string[]; fora: { nome: string; motivo: string }[] } | null>(null);
 
   // Reabre uma conversa antiga: as próximas perguntas vão para a mesma sessão do agente
   const [carregando, setCarregando] = useState(false);
@@ -100,6 +103,7 @@ export const ChatSistema: React.FC<ChatSistemaProps> = ({ sistema, visivel, nova
         setTitulo(titulo);
         setVisibilidade(visibilidade);
         setRespostaFaq(resposta_faq);
+        setModulos(null);
         setMensagens(
           lista.flatMap((m): Mensagem[] => [
             // O print não fica guardado: só o aviso de que foi enviado
@@ -152,6 +156,14 @@ export const ChatSistema: React.FC<ChatSistemaProps> = ({ sistema, visivel, nova
         imagem: enviada.imagem ? { tipo: enviada.imagem.tipo, base64: enviada.imagem.base64 } : undefined,
       });
       setSessaoId(r.headers.get('X-Sessao') || '');
+      const rel = r.headers.get('X-Relacionados');
+      if (rel) {
+        try {
+          setModulos(JSON.parse(decodeURIComponent(rel)));
+        } catch {
+          // cabecalho estranho: so deixa de mostrar a faixa
+        }
+      }
       const leitor = r.body!.getReader();
       const decodificador = new TextDecoder();
       for (;;) {
@@ -196,6 +208,22 @@ export const ChatSistema: React.FC<ChatSistemaProps> = ({ sistema, visivel, nova
               setRespostaFaq(r.resposta_faq);
             }}
           />
+        </div>
+      )}
+      {sessaoId && modulos && (
+        <div className="shrink-0 px-4 sm:px-6 lg:px-8 py-1.5 border-b border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950/40 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]">
+          {modulos.abertos.length > 0 && (
+            <span className="flex items-center gap-1.5 text-stone-500 dark:text-stone-400">
+              <Network className="w-3.5 h-3.5 shrink-0" />
+              Consulta também: <strong className="font-semibold text-stone-700 dark:text-stone-200">{modulos.abertos.join(', ')}</strong>
+            </span>
+          )}
+          {modulos.fora.map((f) => (
+            <span key={f.nome} title={f.motivo} className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400">
+              <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+              {f.nome} ficou de fora: {f.motivo}
+            </span>
+          ))}
         </div>
       )}
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-5">

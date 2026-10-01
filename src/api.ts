@@ -95,8 +95,8 @@ export const updateRecord = (resource: string, id: string, payload: RegistroCrud
   chamar('PUT', `/api/crud/${resource}/${encodeURIComponent(id)}`, payload);
 export const deleteRecord = (resource: string, id: string) => chamar('DELETE', `/api/crud/${resource}/${encodeURIComponent(id)}`);
 
-/** Sistemas liberados de um usuário (ids) */
-export const fetchSistemasDoUsuario = (id: string) => get<number[]>(`/api/usuarios/${encodeURIComponent(id)}/sistemas`);
+/** Sistemas ligados a um registro (ids): liberados do usuário ou relacionados do sistema */
+export const fetchLigados = (resource: string, id: string) => get<number[]>(`/api/ligados/${resource}/${encodeURIComponent(id)}`);
 
 /** Configurações (tabela config): grupo + chave */
 export const fetchConfig = <T = any>(grupo: string, chave: string) => get<{ valor: T } & Record<string, any>>(`/api/config/${grupo}/${chave}`);

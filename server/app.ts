@@ -1,9 +1,10 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import express, { NextFunction, Request, Response } from 'express';
-import { abrirSessao, compactarConversa, Imagem, perguntar } from './agente.js';
+import { abrirSessao, compactarConversa, Imagem, perguntar, Repo } from './agente.js';
 import { createConfigRouter } from './config.js';
 import { createCreditosRouter } from './creditos.js';
+import { createEcossistemaRouter } from './ecossistema.js';
 import { createCrudRouter } from './crud.js';
 import { pool } from './db.js';
 import { decifrar } from './segredo.js';
@@ -118,15 +119,16 @@ export function createApp() {
     }
   });
 
-  // Só administradores: sistemas do usuário, conversas, configurações, mapa e créditos.
+  // Só administradores: sistemas ligados (liberados/relacionados), conversas, configurações, mapa e créditos.
   // A grade (/api/crud, /api/meta, /api/options) confere recurso a recurso em server/crud.ts
-  app.use(['/api/usuarios', '/api/conversas', '/api/config', '/api/mapa', '/api/creditos'], (_req: Request, res: Response, next: NextFunction) => {
+  app.use(['/api/ligados', '/api/conversas', '/api/config', '/api/mapa', '/api/creditos', '/api/ecossistema'], (_req: Request, res: Response, next: NextFunction) => {
     if (res.locals.usuario.tipo !== 'admin') return res.status(403).json({ error: 'Somente administradores mantêm os cadastros.' });
     next();
   });
   app.use('/api', createCrudRouter());
   app.use('/api', createConfigRouter());
   app.use('/api', createCreditosRouter());
+  app.use('/api', createEcossistemaRouter());
 
   /** Sistemas que o cliente contratou */
   app.get('/api/sistemas', async (_req: Request, res: Response) => {
@@ -249,14 +251,29 @@ export function createApp() {
       }
 
       const nova = !sessaoId;
+      const comToken = (s: any) => ({ ...s, github_token: s.github_token ? decifrar(s.github_token, `Cadastros › Sistemas › ${s.nome}`) : null });
+      let relacionados: (Repo & { pasta: string })[] = [];
+      let fora: { nome: string; motivo: string }[] = [];
       if (nova) {
-        const s = sis[0];
-        const github_token = s.github_token ? decifrar(s.github_token, 'Cadastros › Sistemas') : null;
-        sessaoId = await abrirSessao({ ...s, github_token }, usuario.nome);
+        // Sistemas relacionados (ex.: módulo de transmissão da NF-e): repositórios abertos junto, cada um com o seu token
+        const [rel] = await pool.query<any[]>(
+          `SELECT s.nome, s.repo_url, s.branch, s.mapa, s.github_token FROM sistema_relacionados r
+             JOIN sistemas s ON s.id = r.relacionado_id
+            WHERE r.sistema_id = ? ORDER BY s.nome`,
+          [sistemaId],
+        );
+        const sessao = await abrirSessao(comToken(sis[0]), usuario.nome, undefined, rel.map(comToken));
+        sessaoId = sessao.id;
+        relacionados = sessao.relacionados;
+        fora = sessao.fora;
       }
 
       res.setHeader('Content-Type', 'text/plain; charset=utf-8');
       res.setHeader('X-Sessao', sessaoId);
+      // Conversa nova: módulos relacionados que vieram junto e os que ficaram de fora (o chat mostra na faixa da conversa)
+      if (nova && (relacionados.length || fora.length)) {
+        res.setHeader('X-Relacionados', encodeURIComponent(JSON.stringify({ abertos: relacionados.map((r) => r.nome), fora })));
+      }
       res.flushHeaders();
 
       // Conversa nova: o nome do sistema e, se cadastrado, o mapa (vai uma vez; fica no contexto da sessão)
@@ -264,6 +281,14 @@ export function createApp() {
       const abertura = nova
         ? `Sistema: ${sis[0].nome}\n\n` +
           (mapa ? `Mapa do sistema (onde fica cada tela e regra; use para ir direto aos arquivos certos e abrir o mínimo possível):\n${mapa}\n\n` : '') +
+          (relacionados.length
+            ? 'Sistemas relacionados (módulos ligados a este; abra o código deles só quando a dúvida passar para lá. ' +
+              'Quando a resposta envolver um deles, diga sempre ao cliente o nome do módulo e onde fica lá, ex.: "isso é feito no <módulo>, em <menu>"):\n' +
+              relacionados
+                .map((r) => `- ${r.nome}: código em /workspace/relacionados/${r.pasta}` + (String(r.mapa || '').trim() ? `\nMapa do ${r.nome}:\n${String(r.mapa).trim()}` : ''))
+                .join('\n') +
+              '\n\n'
+            : '') +
           'Pergunta do cliente:\n'
         : '';
       const texto = abertura + (pergunta || 'Veja o print da tela e me ajude.');

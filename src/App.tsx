@@ -3,6 +3,7 @@ import { MessagesSquare, Pencil } from 'lucide-react';
 import { definirAoExpirar, definirToken, fetchResources, fetchSistemas, renomearConversa, Sistema } from './api';
 import { ChatSistema } from './components/ChatSistema';
 import { ConfiguracoesView } from './components/ConfiguracoesView';
+import { EcossistemaView } from './components/EcossistemaView';
 import { ConversaView } from './components/ConversaView';
 import { RenomearConversa } from './components/NomeConversa';
 import { CrudView } from './components/CrudView';
@@ -26,7 +27,7 @@ export default function App() {
   const [erroSistemas, setErroSistemas] = useState('');
   /** Metadados dos cadastros (só administradores) */
   const [resources, setResources] = useState<ResourceDef[]>([]);
-  /** Opção na tela: 'chat:<id>', 'historico' (Minhas conversas) ou 'crud:<recurso>' */
+  /** Opção na tela: 'chat:<id>', 'historico' (Minhas conversas), 'config', 'ecossistema' ou 'crud:<recurso>' */
   const [ativo, setAtivo] = useState<string | null>(null);
   /** Chats já abertos: ficam montados para manter a conversa */
   const [abertos, setAbertos] = useState<number[]>([]);
@@ -126,6 +127,8 @@ export default function App() {
     ? ['Minhas conversas', 'Suas dúvidas anteriores; clique numa conversa para continuar']
     : ativo === 'config'
     ? ['Configurações', 'Preferências do app, por grupo']
+    : ativo === 'ecossistema'
+    ? ['Ecossistema', 'Ligações entre os sistemas: nas conversas de um sistema, os repositórios ligados a ele abrem junto']
     : ['Suporte', 'Escolha uma opção no menu'];
 
   const recursoHistorico = resources.find((r) => r.name === 'minhas_conversas');
@@ -230,8 +233,9 @@ export default function App() {
         )}
 
         {ativo === 'config' && sessao.usuario.tipo === 'admin' && <ConfiguracoesView onToast={showToast} />}
+        {ativo === 'ecossistema' && sessao.usuario.tipo === 'admin' && <EcossistemaView onToast={showToast} />}
 
-        {!sistemaAtivo && !recursoAtivo && ativo !== 'historico' && ativo !== 'config' && (
+        {!sistemaAtivo && !recursoAtivo && ativo !== 'historico' && ativo !== 'config' && ativo !== 'ecossistema' && (
           <main className="flex-1 flex flex-col items-center justify-center gap-3 p-6 text-center text-stone-500 dark:text-stone-400">
             <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-900 flex items-center justify-center">
               <MessagesSquare className="w-6 h-6 text-blue-600 dark:text-blue-400" />

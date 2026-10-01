@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Boxes, ChevronLeft, ChevronRight, Headset, History, KeyRound, LockKeyhole, LogOut, MessageSquareText, MessagesSquare, Settings, User, Wallet, X, type LucideIcon } from 'lucide-react';
+import { Boxes, ChevronLeft, ChevronRight, Headset, History, KeyRound, Network, LockKeyhole, LogOut, MessageSquareText, MessagesSquare, Settings, User, Wallet, X, type LucideIcon } from 'lucide-react';
 import { Creditos, fetchCreditos, Sistema, trocarMinhaSenha } from '../api';
 import { FIELD_CLASS, INPUT_CLASS, LABEL_CLASS } from '../utils/formStyles';
 import { Usuario } from '../utils/session';
@@ -120,6 +120,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ sistemas, ativo, onAbrir, usua
               <div className="px-4 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-stone-400 dark:text-stone-400">Cadastros</div>
             )}
             {CADASTROS.map((c) => botao(`crud:${c.id}`, c.label, c.icone, rec))}
+            {botao('ecossistema', 'Ecossistema', Network, rec)}
             {botao('config', 'Configurações', Settings, rec)}
           </div>
         )}
