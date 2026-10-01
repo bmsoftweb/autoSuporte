@@ -1,0 +1,67 @@
+CRM Web - mapa do sistema (raiz do repositório: React em src/, servidor Express em server/)
+
+GERAL
+Menu lateral (opções e grupos): src/utils/menu.ts; desenho em src/components/Sidebar.tsx; troca de tela em src/App.tsx
+Login (e-mail, senha, Lembrar neste dispositivo; no primeiro acesso a senha digitada vira a senha): src/components/LoginView.tsx; regra em server/app.ts (rota /api/login)
+Permissões por usuário (quais opções do menu cada um vê): src/components/PermissoesUsuario.tsx; regra em server/permissoes.ts
+Todas as telas de cadastro usam a mesma lista e formulário: src/components/CrudView.tsx (lista, busca, Busca avançada, colunas) e src/components/RecordForm.tsx (formulário); campos, obrigatórios e rótulos de cada cadastro em server/schema.ts; gravação em server/crud.ts
+Regras depois de gravar qualquer cadastro (recalcular totais, datas de follow-up, status): server/regras.ts
+Mensagens de erro de gravação (registro duplicado, vínculo inexistente, campo obrigatório): server/crud.ts (friendlyDbError e validações)
+
+VISÃO GERAL
+Visão Geral › Painel de Vendas: src/components/Dashboard.tsx; números calculados em server/crm.ts (rota /crm/dashboard)
+Visão Geral › Funil de Vendas (Kanban dos negócios, arrastar entre etapas, Ganho/Perdido, motivo da perda): src/components/Kanban.tsx; regras em server/regras.ts
+Visão Geral › Funil de Vendas › ficha do negócio (abre ao clicar no card): src/components/NegocioFicha.tsx; envolvidos em src/components/ParticipantesNegocio.tsx e server/participantes.ts; trocar proprietário em src/components/TrocarProprietario.tsx
+Visão Geral › Atividades/Tarefas (lista, visões Semana e Mês, Concluir, Só as minhas): src/components/CrudView.tsx + src/components/AgendaCalendario.tsx; concluir em src/components/ConcluirAtividade.tsx; quem pode excluir em server/crud.ts (só quem criou ou administrador)
+Atividade com "Quem executa = Bot" (o CRM contata a pessoa no horário): server/atividadeBot.ts; conversa do Bot em src/components/ConversaBot.tsx
+Atividades sincronizadas com o Google Agenda: server/agendaGoogle.ts; configuração em src/components/ConfigAgendaGoogle.tsx
+
+SUPORTE
+Suporte › Painel de Suporte (indicadores de chamados, WhatsApp e satisfação): src/components/PainelSuporte.tsx; cálculos em server/painelSuporte.ts
+Suporte › Whatsapp (conversas, enviar texto, arquivo, áudio, templates, assumir/devolver ao bot, transferir): src/components/ConversasView.tsx; regras em server/conversas.ts; envio pela Z-API/Evolution em server/whatsapp.ts
+Suporte › Fila de Chamados e Chamados Ativos (atender, encerrar, SLA): src/components/Chamados.tsx; regras em server/chamados.ts
+Suporte › Consulta de Chamados (todos os chamados com filtros): lista genérica (CrudView); botão Abrir leva a Chamados Ativos (src/App.tsx)
+Suporte › Pesquisa de Satisfação (sortear atendimentos, ligar e registrar retorno): src/components/PesquisasSatisfacao.tsx; regras em server/pesquisasSatisfacao.ts
+Pesquisa de satisfação do WhatsApp (nota de 1 a 5 ao encerrar): server/pesquisa.ts; aparece em Vendas › Avaliações
+Suporte pelo site (widget público, sem login): src/components/SuportePublico.tsx e public/widget.js; regras em server/suporte.ts
+Encerramento automático por falta de interação no WhatsApp: server/inatividade.ts
+Pendências criadas ao encerrar conversas (a IA procura o que ficou pendente e cria tarefas): server/pendencias.ts
+
+VENDAS
+Vendas › Negócios (lista dos negócios do funil): lista genérica; o negócio existente abre a ficha src/components/NegocioFicha.tsx
+Vendas › Histórico de Interações (notas, ligações, e-mails, WhatsApp, reuniões): lista genérica; campos em server/schema.ts
+Vendas › Avaliações (notas da pesquisa de satisfação do WhatsApp): lista genérica
+Vendas › Propostas (editor com itens, versões, imprimir, enviar, link de aceite, gerar contrato, clonar): editor em src/components/DocumentoEditor.tsx; totais, descontos e impostos em server/totais.ts; impressão em src/utils/imprimirDocumento.ts (botão em src/components/BotaoImprimir.tsx) e PDF em server/pdf.ts; envio por e-mail/WhatsApp em src/components/BotaoEnviar.tsx e server/crm.ts; nova versão em src/components/BotaoNovaVersao.tsx; link de aceite em src/components/BotaoLinkAceite.tsx, página do cliente em src/components/AceiteProposta.tsx e regra em server/aceite.ts; gerar contrato em src/components/BotaoGerarContrato.tsx; clonar em src/components/BotaoClonar.tsx
+Vendas › Pedidos de Venda (editor com itens, imprimir, enviar, clonar): mesmo editor src/components/DocumentoEditor.tsx; totais em server/totais.ts; envio em server/crm.ts
+Vendas › Contratos (vigência, valores, renovação, documentos, assinatura eletrônica): lista genérica; documentos em src/components/ContratoDocumentos.tsx; cálculos, PDF e trava do contrato assinado em server/contratos.ts; assinatura pela D4Sign em server/d4sign.ts; modelos em src/components/ModelosContrato.tsx
+
+MARKETING
+Marketing › Campanhas (público por critérios, mensagem com variáveis, gerar e enviar disparos): lista genérica; critérios em src/components/CriteriosSegmento.tsx; ações em src/components/AcoesCampanha.tsx; regras em server/campanhas.ts
+Marketing › Disparos (uma mensagem por pessoa, situação do envio, reenviar): lista genérica; envio em server/campanhas.ts e server/whatsapp.ts
+
+CADASTROS
+Cadastros › Minha Empresa (dados impressos nas propostas e pedidos): lista genérica; campos em server/schema.ts
+Cadastros › Pessoas (leads e clientes, contatos, endereços, campos personalizados, importar arquivo, importar do bmsoft, botão WhatsApp): lista genérica; endereços em src/components/EnderecosPessoa.tsx e server/enderecos.ts; campos personalizados em src/components/CamposPersonalizados.tsx; importar CSV/Excel/PDF em src/components/ImportarArquivoModal.tsx e server/importarquivo.ts; importar do bmsoft em src/components/ImportarBMModal.tsx e server/importbm.ts
+Cadastros › Departamentos: lista genérica; campos em server/schema.ts
+Cadastros › Templates (mensagens prontas do WhatsApp e dos chamados): lista genérica; escolha do template em src/components/BotaoTemplates.tsx
+Cadastros › Categorias de Chamado (prazo de SLA em horas): lista genérica
+Cadastros › Segmentos (grupos de pessoas por critérios): lista genérica; critérios em src/components/CriteriosSegmento.tsx
+Cadastros › Produtos (catálogo, preço de tabela, fotos, importar do bmsoft): lista genérica; fotos em src/components/FotosField.tsx e server/fotos.ts
+Cadastros › Funis de Vendas (e as etapas do Kanban de cada funil): lista genérica com etapas como detalhe; "Criar funil padrão" no Kanban (src/components/Kanban.tsx)
+
+ACESSO
+Acesso › Usuários (só administrador; perfil, departamento, revezamento de leads, permissões): lista genérica; botão Permissões em src/components/PermissoesUsuario.tsx; regras em server/permissoes.ts
+Alterar a minha senha (cadeado ao lado do nome, no menu): src/components/Sidebar.tsx; rota /api/minha-senha em server/app.ts
+
+SISTEMA › CONFIGURAÇÕES (só administrador): src/components/ConfiguracoesView.tsx; gravação em server/config.ts
+Configurações › Campos Personalizados de Pessoas: src/components/CamposPersonalizados.tsx
+Configurações › E-mail (SMTP comercial e do suporte, Testar): src/components/ConfigEmail.tsx; envio em server/email.ts
+Configurações › WhatsApp (Z-API ou Evolution, conectar, QR Code, número das campanhas): src/components/ConfigWhatsApp.tsx; regras em server/whatsapp.ts
+Configurações › Chatbot (IA Gemini/Claude/DeepSeek, chave, modelo, devolver ao bot, encerrar por inatividade): src/components/ConfigChatbot.tsx; regras em server/chatbot.ts
+Configurações › Automação (fluxo de nós do atendimento do WhatsApp: menus, perguntas, IA, departamentos): src/components/ConfigJornada.tsx; regras em server/jornada.ts
+Configurações › Mensagens automáticas (lembrete de atividade, proposta e contrato vencendo, pedido aprovado/faturado): src/components/ConfigAutomaticas.tsx; regras em server/automaticas.ts
+Configurações › Vendas (tarefa "Retorno Envio" ao enviar proposta ou pedido): src/components/ConfigVendas.tsx
+Configurações › Assinatura (D4Sign): src/components/ConfigAssinatura.tsx; regras em server/d4sign.ts
+Configurações › Google Agenda: src/components/ConfigAgendaGoogle.tsx; regras em server/agendaGoogle.ts
+Configurações › Modelos de contrato (texto com variáveis): src/components/ModelosContrato.tsx; geração em server/contratos.ts
+Senhas e tokens das configurações gravados cifrados: server/segredo.ts

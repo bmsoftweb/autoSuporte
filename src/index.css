@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Jost é a família padrão (carregada em index.html), igual ao crmWeb */
+@theme {
+  --font-sans: "Jost", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+  /* Altura compartilhada pelo topo da sidebar e pelo header, para as bordas inferiores alinharem */
+  --altura-topo: 4.375rem; /* 70px */
+}
+
+:root.dark {
+  color-scheme: dark;
+}
+
+html,
+body {
+  min-height: 100%;
+  font-family: var(--font-sans);
+}
+
+/* ==========================================
+   CAMPOS DE ENTRADA (padrão do meuConsultorioWeb, igual ao crmWeb)
+   ==========================================
+   Sem moldura, só uma barra de 2px à esquerda: amarela se o campo tem o atributo
+   required, verde se é opcional. Foco: sem anel, só o fundo um pouco mais escuro. */
+:where(input, select, textarea):where(:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="file"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]):not([type="hidden"])) {
+  border: 0 solid transparent !important;
+  border-left-width: 2px !important;
+  border-left-color: #10b981 !important; /* emerald-500 — campo opcional */
+  border-radius: 0 !important;
+}
+
+:where(input, select, textarea):where(:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="file"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]):not([type="hidden"])):where(:required) {
+  border-left-color: #eab308 !important; /* yellow-500 — campo obrigatório */
+}
+
+:where(input, select, textarea):where(:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="file"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]):not([type="hidden"])):focus {
+  outline: none !important;
+  box-shadow: none !important;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.06)) !important;
+}
+
+/* Tamanho dos campos escolhido em "Customizar layout" do formulário (RecordForm) */
+@media (min-width: 64rem) {
+  .campo-span {
+    grid-column: span var(--span) / span var(--span);
+  }
+}
+.campo-altura :is(input:not([type='file']), select, textarea) {
+  height: var(--altura);
+}

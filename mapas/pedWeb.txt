@@ -1,0 +1,70 @@
+Mapa do pedWeb - Pedidos Mobile (app Next.js que funciona offline no celular; raiz do repositório)
+Quase todas as telas estão num único arquivo: app/page.tsx, dentro da função CRMApp. Procure pelas funções e textos citados abaixo; as linhas são aproximadas.
+Dados no celular: banco local do navegador (Dexie, "CRM_Offline_DB") em lib/dexie.ts. Servidor: rotas em app/api/*/route.ts, banco MySQL em lib/db.ts. Funcionamento offline: public/sw.js.
+A tela atual é a variável activeView (menu, clientes, produtos, pedidos, visitas, agenda, consultas-menu, consultas, iframe-consulta, sync, configuracoes, database); os blocos de cada tela começam por volta da linha 7573.
+
+ENTRADA E MENU
+Login (ID do servidor, TOKEN de 8 dígitos, usuário e senha, botão Entrar): app/page.tsx, tela por volta da linha 7172; regras em handleLoginSync e handleLogin (linhas ~4843 e ~5018). Mensagens: "Informe o ID do servidor", "Informe o TOKEN do servidor", "O TOKEN deve ter 8 dígitos", "Usuário não encontrado ou senha incorreta. Por favor, sincronize os dados primeiro.". Servidor: app/api/login/route.ts, app/api/server-name/route.ts, app/api/verify-server/route.ts
+Sair: handleLogout (linha ~5132)
+Menu lateral (Clientes, Produtos, Pedidos, Visitas, Agenda, Sincronizar, Configurações, Banco de dados, Sair): app/page.tsx por volta da linha 7455. Agenda, Visitas e Banco de dados dependem de permissão do usuário (permitirVerAgenda, permitirVerVisitas, permitirVerBancoDados, linha ~1672)
+Barra de baixo (HOME, CLIENTES, PRODUTOS, PEDIDOS, CONSULTAS, SYNC): app/page.tsx por volta da linha 12715
+Tela inicial (HOME, atalhos para as opções): bloco activeView === 'menu', linha ~7575
+Tema claro/escuro: toggleTheme (linha ~1537)
+Online/offline: handleOnline e handleOffline (linha ~7109)
+
+CLIENTES
+Clientes › lista (abas Todos e Recentes, busca, busca avançada): bloco a partir da linha ~9674; busca avançada em handleClienteAdvancedSearch (linha ~2104) e janela isClienteAdvancedSearchOpen (linha ~12581)
+Clientes › bolinha colorida ao lado do nome (situação financeira do cliente, títulos vencidos): renderClientStatusDot (linha ~2877), isClientOverdue e isClientOverdueForParcel (linha ~2833)
+Clientes › situação financeira (títulos em aberto do cliente): janela financModalCliente (linha ~12251); servidor app/api/clientes/financ/route.ts
+Clientes › formulário de inclusão/alteração: bloco a partir da linha ~9788; abrir em openModal (linha ~5412), carregar em loadClienteRecordIntoForm (linha ~3290), salvar em handleSave (linha ~5170), excluir em handleDelete (linha ~5343)
+Clientes › CPF/CNPJ já cadastrado: checkExistingCpfCnpj e handleCpfCnpjConflict (linha ~3313)
+Clientes › CEP preenche o endereço: handleCepBlur (linha ~3388)
+Clientes › campos obrigatórios por aba (cadeado ao lado do campo): isFieldRequired, getRequiredFieldsByTab, toggleFieldRequirement e renderPadlock (linhas ~3062 a ~3222)
+Clientes › campos personalizados: RenderPersonalFields (linha ~573)
+Clientes › relatório impresso do cliente: RenderPrintableClientReport (linha ~963)
+Servidor dos clientes: app/api/clientes/route.ts e app/api/clientes/[id]/route.ts
+
+PRODUTOS
+Produtos › lista e busca avançada: bloco activeView === 'produtos' (linha ~7625); janela isAdvancedSearchModalOpen (linha ~12428)
+Produtos › ficha do produto (abas Geral, Preços, Foto): openProdutoModal (linha ~5521), handleSaveProduto (linha ~5362), handleDeleteProduto (linha ~5392)
+Produtos › custo e margem de lucro (indicadores ao lado do preço): ProductCostIndicator (linha ~1343), OrderProfitMarginIndicator (linha ~1375)
+Produtos › nomes das tabelas de preço: definidos em Configurações (Nomes das Tabelas de Preço)
+Servidor: app/api/produtos/route.ts, app/api/produtos/[id]/route.ts, fotos em app/api/produtos/fotos/route.ts, classes e marcas em app/api/produtos/classes e app/api/produtos/marcas
+
+PEDIDOS
+Pedidos › lista (filtros Todos, Não enviados, Faturados, Não faturados, Hoje, Semana, Mês): bloco activeView === 'pedidos' (linha ~8265); filtros em pedidosFilter e janela isFilterModalOpen (linha ~11999)
+Pedidos › Novo Pedido / editar (abas Iniciar, Produtos, Financeiro, Finalizar): janela isPedidoModalOpen (linha ~10597); abrir em openPedidoModal (linha ~6795) e handleEditPedido (linha ~5923); salvar em handleSavePedido (linha ~6835). "Aguarde a sincronização para incluir novo pedido" quando a sincronização está em andamento
+Pedidos › Iniciar (Tipo de Pedido, Cliente, Classificação do Pedido, Plano de Pagamento, Data de Entrega): mesma janela; planos em PlanSelectionModal (linha ~399), plano inicial do cliente em planoInicialDoCliente e motivoClienteSemPlanos (linha ~2758), mensagem de plano inválido em mensagemPlanoInvalido (linha ~2802)
+Pedidos › Produtos (incluir produto, quantidade, unitário, desconto por item em % ou R$): janela isAddProdutoModalOpen (linha ~11566); incluir vários de uma vez em components/BulkAddModal.tsx
+Pedidos › Financeiro (Total Bruto, Desconto Valor, Acréscimo Valor, Frete Valor, Tot. Líquido do Pedido, Parcelas, Cronograma de Pagamento, Vencimento, Banco): totais em calculateOrderTotals (linha ~6401), parcelas em generateInstallments (linha ~6415), acréscimo do plano em getPlanoAcrescimoPerc (linha ~2920), soma das parcelas em somaParcelas (linha ~2857)
+Pedidos › Finalizar (Resumo do Pedido, assinatura do cliente): mesma janela; assinatura em SignaturePad (linha ~13287)
+Pedidos › imprimir/compartilhar o pedido em PDF: handlePrintPedido (linha ~6150)
+Pedidos › clonar pedido: handleClonePedido e gravarClonePedido (linha ~5984), janela pedidoParaClonar (linha ~12104)
+Pedidos › excluir pedido: handleDeletePedido e confirmDeletePedido (linha ~6124), janela pedidoParaExcluir (linha ~12897)
+Pedidos › fechar pedido / excluir pedido com status X: handleClosePedido e confirmClosePedido (linha ~5873), handleDeleteStatusX (linha ~5898), janelas orderToClose e orderToDeleteStatusX (linhas ~12942 e ~12988)
+Pedidos › ver itens do pedido: handleViewOrderItems (linha ~5841)
+Pedidos › importar pedido de PDF (um ou vários pedidos): components/ImportarPedidoPdfModal.tsx; montagem em montarItensDoPdf, abrirPedidoDoPdfNoFormulario e criarPedidosDoPdfEmLote (linhas ~6590 a ~6649); servidor app/api/pedidos/importar-pdf/route.ts. Mensagens: "Nenhum pedido pôde ser criado. Verifique os clientes e os produtos.", "Escolha um plano de pagamento válido antes de criar os pedidos."
+Servidor dos pedidos: app/api/pedidos/route.ts (gravação), app/api/pedidos/produtos, app/api/pedidos/parcelas, app/api/pedidos/classific; planos em app/api/planos
+
+VISITAS E AGENDA
+Visitas › lista (abas Todos, Pendentes, Canceladas): bloco activeView === 'visitas' (linha ~9314)
+Visitas › Nova Visita / editar: formulário a partir da linha ~9537; abrir em openVisitaModal (linha ~5773), salvar em handleVisitaSave (linha ~5586), excluir em handleVisitaDelete (linha ~5754); localização em capturarLocalizacao (linha ~5549) e fetchCurrentLocation (linha ~3487). Mensagens: "Não foi possível obter a localização. Verifique as permissões do navegador.", "Geolocalização não é suportada pelo seu navegador."
+Visitas › observação da visita: abrirVisitaObsModal e salvarVisitaObs (linha ~5688), janela visitaObsModal (linha ~13148)
+Agenda (calendário do mês com as visitas): bloco activeView === 'agenda' (linha ~8638); hasVisitsOnDay e getVisitsForDay (linha ~3245), nextMonth/prevMonth (linha ~3269)
+Servidor: app/api/visitas/route.ts, app/api/visitas/[id]/route.ts, tipos em app/api/visitas/tipos
+
+CONSULTAS
+Consultas (lista de consultas e Dashboard): bloco activeView === 'consultas-menu' (linha ~7876); consultas cadastradas vêm de app/api/app_menu_consulta/route.ts. "Link não configurado para esta consulta."
+Consultas › Dashboard (Vendas do Dia, Vendas da Semana, Meta Mensal, Ticket Médio, Pedidos do Mês, Vendas por Semana, Evolução - Últimos 30 Dias, Produtos Mais Vendidos): bloco activeView === 'consultas' (linha ~7974); gráficos em components/DashboardCharts.tsx; dados em app/api/vendas/produtos/route.ts
+Consulta aberta numa página externa (iframe): bloco activeView === 'iframe-consulta' (linha ~7950)
+
+SINCRONIZAÇÃO
+Sincronizar (enviar o que foi feito no celular e baixar clientes, produtos, pedidos e cadastros do servidor): bloco activeView === 'sync' (linha ~8968); baixar em pullFromServer (linha ~3539), sincronização completa em handleSync (linha ~4268), só pedidos em syncOrdersOnly (linha ~4667); sincronização automática por volta da linha ~7143
+Erros da sincronização: "Erro ao buscar clientes", "Falha ao sincronizar e verificar o cliente ...", "Erro ao sincronizar visita", "Sem resposta do servidor ao enviar pedido ... Verifique sua conexão.", "Erro ao sincronizar pedido ..." (linhas ~3729 a ~4776)
+Apagar os dados do celular / reiniciar o banco local: handleClearLocalData (linha ~4796) e handleResetDatabase (linha ~4980)
+
+CONFIGURAÇÕES E BANCO DE DADOS
+Configurações (Sincronização Automática, Ativo Padrão para Novos Clientes, Nomes das Tabelas de Preço, Versão do Sistema): bloco activeView === 'configuracoes' (linha ~9143); servidor app/api/config/route.ts
+Banco de dados (inspeção das tabelas do servidor MySQL ou do banco local do celular): bloco activeView === 'database' (linha ~8765); fetchDbTables e fetchDbTableData (linha ~2040); servidor app/api/admin/database/route.ts
+Estrutura das tabelas do servidor (criação/atualização): app/api/init-db/route.ts
+Cadastros de apoio vindos do servidor: usuários (app/api/usuarios), vendedores (app/api/vendedores), transportadoras (app/api/transportadoras), bancos (app/api/bancos), empresas e filiais (app/api/empresas)
