@@ -20,7 +20,7 @@ CREATE TABLE usuarios (
   nome VARCHAR(120) NOT NULL,
   email VARCHAR(160) NOT NULL UNIQUE,
   senha_hash VARCHAR(100) NOT NULL,   -- bcrypt
-  tipo VARCHAR(20) NOT NULL DEFAULT 'cliente',  -- 'admin' mantém os cadastros; 'cliente' só tira dúvidas
+  tipo VARCHAR(20) NOT NULL DEFAULT 'cliente',  -- 'admin' mantém os cadastros; 'cliente' só tira dúvidas; 'tecnico' tira dúvidas com resposta técnica
   config_listas TEXT NULL,            -- preferências das listas (colunas, larguras...) em JSON
   ativo TINYINT(1) NOT NULL DEFAULT 1
 );

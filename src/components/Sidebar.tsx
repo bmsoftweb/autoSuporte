@@ -159,6 +159,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ sistemas, ativo, onAbrir, usua
           )}
         {!sistemas.length && !rec && <p className="px-4 text-xs text-stone-400">Nenhum sistema liberado para o seu acesso.</p>}
         {sistemas.length > 0 && botao('historico', 'Minhas conversas', History, rec)}
+        {/* Técnico: vê o fluxograma, sem alterar */}
+        {usuario.tipo === 'tecnico' && botao('ecossistema', 'Fluxograma', Network, rec)}
 
         {/* Cadastros: só administradores (o servidor também barra os demais) */}
         {usuario.tipo === 'admin' && (

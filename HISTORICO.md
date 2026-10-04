@@ -2,6 +2,12 @@
 
 Mais recente primeiro. PATCH a cada envio ao GitHub; MAJOR/MINOR só quando pedido.
 
+## 0.0.9 — 2026-10-04
+
+- Usuários: perfil novo Técnico. O técnico recebe respostas técnicas só do banco de dados (tabelas, colunas, valores, parâmetros, SQL), sem nada do código-fonte; o administrador recebe resposta técnica completa, com arquivos e métodos; o cliente continua como estava. Nenhuma resposta cita número de linha.
+- Fluxograma: o técnico vê o quadro (menu próprio), sem alterar; gravar continua só para o administrador.
+- Dev: o Vite ignora backups (versao_*), mapas, .md e logs ao recarregar; .claude/launch.json na porta 3000.
+
 ## 0.0.8 — 2026-10-01
 
 - Mapa do Receita (mapas/Receita.txt), montado a partir da cópia local D:\bmsoft\Receita; mapa do Cadastros gravado no cadastro (repositório corrigido para bmsoftsistemas/Cadastros).

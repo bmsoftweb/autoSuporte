@@ -10,5 +10,9 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify(JSON.parse(fs.readFileSync('package.json', 'utf-8')).version),
   },
   // Porta de HMR própria, para rodar junto com o crmWeb (24679) e o portal (24678)
-  server: { hmr: { port: 24680 } },
+  server: {
+    hmr: { port: 24680 },
+    // Backups (versao_*), mapas, histórico e logs não são do app: mexer neles não recarrega a página
+    watch: { ignored: ['**/versao_*/**', '**/mapas/**', '**/*.md', '**/*.log'] },
+  },
 });

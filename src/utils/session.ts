@@ -12,8 +12,8 @@ const LEMBRETE = 'autosuporte_lembrar';
 export interface Usuario {
   nome: string;
   email: string;
-  /** admin = mantém os cadastros; cliente = só tira dúvidas */
-  tipo?: 'admin' | 'cliente';
+  /** admin = mantém os cadastros; cliente/tecnico = só tiram dúvidas (tecnico recebe respostas técnicas) */
+  tipo?: 'admin' | 'cliente' | 'tecnico';
 }
 
 export interface Sessao {

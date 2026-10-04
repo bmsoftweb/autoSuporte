@@ -30,7 +30,7 @@ import { AvisoErro } from './AvisoErro';
 import { ConfirmDialog } from './ConfirmDialog';
 
 /**
- * Fluxograma (só administrador): quadro único com os sistemas da empresa.
+ * Fluxograma: quadro único com os sistemas da empresa. Administrador altera; técnico só vê (somenteLeitura).
  * Arraste um sistema da lista para o quadro e ligue a bolinha de baixo de um sistema ao de outro:
  * A ligação é mútua: nas conversas de um, o repositório do outro abre junto (sistemas relacionados).
  */
@@ -45,6 +45,9 @@ type NoSistema = Node<SistemaEco, 'sistema'>;
 
 const MIME = 'application/x-ecossistema-sistema';
 
+/** Técnico: quadro só para ver (sem arrastar, ligar, renomear grupo nem salvar) */
+const SomenteLeitura = React.createContext(false);
+
 /** Tema escuro do app (classe "dark" no <html>), acompanhando a troca pelo botão do cabeçalho */
 function useTemaEscuro() {
   const [escuro, setEscuro] = useState(() => document.documentElement.classList.contains('dark'));
@@ -56,14 +59,16 @@ function useTemaEscuro() {
   return escuro;
 }
 
-const CardSistema: React.FC<NodeProps<NoSistema>> = ({ data, selected }) => (
+const CardSistema: React.FC<NodeProps<NoSistema>> = ({ data, selected }) => {
+  const leitura = React.useContext(SomenteLeitura);
+  return (
   <div
     className={`w-56 rounded-xl border-2 bg-white dark:bg-stone-900 shadow-sm ${
       selected ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-900' : 'border-stone-300 dark:border-stone-700'
     }`}
   >
     {PONTOS.map((p) => (
-      <Handle key={p.id} id={p.id} type="source" position={p.lado} style={p.estilo} className="!w-3 !h-3 !bg-blue-500 !border-2 !border-white dark:!border-stone-900" />
+      <Handle key={p.id} id={p.id} type="source" position={p.lado} style={p.estilo} className={`!w-3 !h-3 !bg-blue-500 !border-2 !border-white dark:!border-stone-900 ${leitura ? '!opacity-0' : ''}`} />
     ))}
     <div className="flex items-center gap-2 px-3 py-2 rounded-t-[10px] bg-blue-50 dark:bg-blue-950/50">
       <Boxes className="w-4 h-4 shrink-0 text-blue-600 dark:text-blue-400" />
@@ -76,7 +81,8 @@ const CardSistema: React.FC<NodeProps<NoSistema>> = ({ data, selected }) => (
       {data.tem_mapa && <Map className="w-3 h-3 shrink-0 text-emerald-600" aria-label="Tem mapa" />}
     </div>
   </div>
-);
+  );
+};
 
 /** 5 pontos de contato por sistema; cada um serve de entrada e de saída (o sentido é de onde se começou a arrastar) */
 const PONTOS: { id: string; lado: Position; estilo?: React.CSSProperties }[] = [
@@ -95,6 +101,7 @@ type NoQuadro = NoSistema | NoGrupo;
 
 const CardGrupo: React.FC<NodeProps<NoGrupo>> = ({ id, data, selected }) => {
   const { updateNodeData } = useReactFlow();
+  const leitura = React.useContext(SomenteLeitura);
   return (
     <>
       <NodeResizer isVisible={selected} minWidth={180} minHeight={110} lineClassName="!border-blue-400" handleClassName="!w-2.5 !h-2.5 !bg-blue-500" />
@@ -108,6 +115,8 @@ const CardGrupo: React.FC<NodeProps<NoGrupo>> = ({ id, data, selected }) => {
           onChange={(e) => updateNodeData(id, { titulo: e.target.value })}
           onFocus={(e) => e.target.select()}
           maxLength={60}
+          readOnly={leitura}
+          tabIndex={leitura ? -1 : undefined}
           placeholder="Nome do grupo"
           aria-label="Nome do grupo"
           className="nodrag sem-barra m-2 px-2 py-1 w-[calc(100%-1rem)] bg-transparent text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 rounded-md outline-none focus:bg-white dark:focus:bg-stone-900"
@@ -144,7 +153,7 @@ const TIPOS_LIGACAO = { desvio: LigacaoDesvio };
 const LINHA = { type: 'desvio', style: { strokeWidth: 2 } };
 const idLigacao = (de: string, para: string) => `${de}>${para}`;
 
-const Editor: React.FC<{ onToast: (msg: string) => void }> = ({ onToast }) => {
+const Editor: React.FC<{ onToast: (msg: string) => void; somenteLeitura: boolean }> = ({ onToast, somenteLeitura }) => {
   const [sistemas, setSistemas] = useState<SistemaEco[] | null>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState<NoQuadro>([]);
   /** Arrastando um grupo: posição inicial dele e dos sistemas que estavam dentro (vão junto) */
@@ -332,6 +341,7 @@ const Editor: React.FC<{ onToast: (msg: string) => void }> = ({ onToast }) => {
     <div className="flex-1 min-h-0 flex flex-col gap-3 p-4 bg-white dark:bg-stone-900">
       {erro && <AvisoErro mensagem={erro} onFechar={() => setErro(null)} />}
       <div className="flex-1 min-h-0 flex gap-3">
+        {!somenteLeitura && (
         <nav aria-label="Sistemas" className="w-52 shrink-0 overflow-y-auto rounded-xl border border-stone-200 dark:border-stone-800 py-2">
           <div className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-stone-400">Componentes</div>
           <button
@@ -372,6 +382,7 @@ const Editor: React.FC<{ onToast: (msg: string) => void }> = ({ onToast }) => {
           ))}
           {!foraDoQuadro.length && <p className={`px-3 ${HINT_CLASS}`}>Todos os sistemas já estão no quadro.</p>}
         </nav>
+        )}
 
         <div ref={quadroRef} className="flex-1 min-w-0 rounded-xl border border-stone-200 dark:border-stone-800 overflow-hidden">
           <ReactFlow
@@ -386,6 +397,9 @@ const Editor: React.FC<{ onToast: (msg: string) => void }> = ({ onToast }) => {
                 setAlterado(true);
               }
             }}
+            nodesDraggable={!somenteLeitura}
+            nodesConnectable={!somenteLeitura}
+            elementsSelectable={!somenteLeitura}
             onNodeDragStart={iniciarArrasteGrupo}
             onNodeDrag={arrastarGrupo}
             elevateNodesOnSelect={false}
@@ -404,6 +418,7 @@ const Editor: React.FC<{ onToast: (msg: string) => void }> = ({ onToast }) => {
               e.dataTransfer.dropEffect = 'move';
             }}
             onDrop={(e) => {
+              if (somenteLeitura) return;
               if (e.dataTransfer.getData(MIME) === GRUPO) {
                 e.preventDefault();
                 adicionarGrupo(rf.screenToFlowPosition({ x: e.clientX, y: e.clientY }));
@@ -414,7 +429,7 @@ const Editor: React.FC<{ onToast: (msg: string) => void }> = ({ onToast }) => {
               e.preventDefault();
               adicionar(s, rf.screenToFlowPosition({ x: e.clientX, y: e.clientY }));
             }}
-            deleteKeyCode={['Delete', 'Backspace']}
+            deleteKeyCode={somenteLeitura ? null : ['Delete', 'Backspace']}
             colorMode={escuro ? 'dark' : 'light'}
             minZoom={0.2}
             fitViewOptions={{ padding: 0.2, maxZoom: 1 }}
@@ -427,6 +442,9 @@ const Editor: React.FC<{ onToast: (msg: string) => void }> = ({ onToast }) => {
         </div>
       </div>
 
+      {somenteLeitura ? (
+        <p className={`${HINT_CLASS} shrink-0`}>Sistemas ligados: nas conversas de um, o repositório do outro abre junto. Só o administrador altera o quadro.</p>
+      ) : (
       <div className="flex items-center gap-3 shrink-0">
         <p className={`${HINT_CLASS} flex-1`}>
           Arraste de uma das bolinhas azuis de um sistema até uma bolinha de outro para ligar: nas conversas de um, o repositório do outro abre junto. Clique numa
@@ -444,6 +462,7 @@ const Editor: React.FC<{ onToast: (msg: string) => void }> = ({ onToast }) => {
           {alterado ? 'Salvar' : 'Salvo'}
         </button>
       </div>
+      )}
 
       {confirmacao && (
         <ConfirmDialog
@@ -465,8 +484,10 @@ const Editor: React.FC<{ onToast: (msg: string) => void }> = ({ onToast }) => {
 };
 
 /** Cadastros › Fluxograma: quadro gráfico das ligações entre os sistemas */
-export const EcossistemaView: React.FC<{ onToast: (msg: string) => void }> = ({ onToast }) => (
+export const EcossistemaView: React.FC<{ onToast: (msg: string) => void; somenteLeitura?: boolean }> = ({ onToast, somenteLeitura = false }) => (
   <ReactFlowProvider>
-    <Editor onToast={onToast} />
+    <SomenteLeitura.Provider value={somenteLeitura}>
+      <Editor onToast={onToast} somenteLeitura={somenteLeitura} />
+    </SomenteLeitura.Provider>
   </ReactFlowProvider>
 );

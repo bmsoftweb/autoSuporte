@@ -73,6 +73,7 @@ export interface ResourceDef {
 
 export const PERFIS = [
   { value: 'cliente', label: 'Cliente' },
+  { value: 'tecnico', label: 'Técnico' },
   { value: 'admin', label: 'Administrador' },
 ];
 
@@ -171,7 +172,7 @@ export const RESOURCES: ResourceDef[] = [
         filterable: true,
         options: PERFIS,
         default: 'cliente',
-        hint: 'Administrador mantém os cadastros; cliente só tira dúvidas',
+        hint: 'Administrador mantém os cadastros; cliente e técnico só tiram dúvidas. Técnico recebe respostas técnicas só do banco (tabelas, colunas, SQL); administrador também vê arquivos e código',
       },
       { name: 'ativo', label: 'Ativo', type: 'boolean', listed: true, filterable: true },
     ],

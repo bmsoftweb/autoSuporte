@@ -7,6 +7,7 @@ import { createCreditosRouter } from './creditos.js';
 import { createEcossistemaRouter } from './ecossistema.js';
 import { createCrudRouter } from './crud.js';
 import { pool } from './db.js';
+import { PROMPT_ADMIN, PROMPT_TECNICO } from './prompt.js';
 import { decifrar } from './segredo.js';
 
 // ==========================================================
@@ -121,7 +122,9 @@ export function createApp() {
 
   // Só administradores: sistemas ligados (liberados/relacionados), conversas, configurações, mapa e créditos.
   // A grade (/api/crud, /api/meta, /api/options) confere recurso a recurso em server/crud.ts
-  app.use(['/api/ligados', '/api/conversas', '/api/config', '/api/mapa', '/api/creditos', '/api/ecossistema'], (_req: Request, res: Response, next: NextFunction) => {
+  // Exceção: o técnico vê o fluxograma (GET), sem gravar
+  app.use(['/api/ligados', '/api/conversas', '/api/config', '/api/mapa', '/api/creditos', '/api/ecossistema'], (req: Request, res: Response, next: NextFunction) => {
+    if (res.locals.usuario.tipo === 'tecnico' && req.method === 'GET' && req.baseUrl === '/api/ecossistema') return next();
     if (res.locals.usuario.tipo !== 'admin') return res.status(403).json({ error: 'Somente administradores mantêm os cadastros.' });
     next();
   });
@@ -262,7 +265,13 @@ export function createApp() {
             WHERE r.sistema_id = ? ORDER BY s.nome`,
           [sistemaId],
         );
-        const sessao = await abrirSessao(comToken(sis[0]), usuario.nome, undefined, rel.map(comToken));
+        const sessao = await abrirSessao(
+          comToken(sis[0]),
+          usuario.nome,
+          // Técnico (só banco de dados) e administrador (com o código): instruções próprias; o cliente usa as do agente (Configurações › Agente de IA)
+          usuario.tipo === 'tecnico' ? { system: PROMPT_TECNICO } : usuario.tipo === 'admin' ? { system: PROMPT_ADMIN } : undefined,
+          rel.map(comToken),
+        );
         sessaoId = sessao.id;
         relacionados = sessao.relacionados;
         fora = sessao.fora;

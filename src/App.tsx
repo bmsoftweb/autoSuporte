@@ -233,7 +233,9 @@ export default function App() {
         )}
 
         {ativo === 'config' && sessao.usuario.tipo === 'admin' && <ConfiguracoesView onToast={showToast} />}
-        {ativo === 'ecossistema' && sessao.usuario.tipo === 'admin' && <EcossistemaView onToast={showToast} />}
+        {ativo === 'ecossistema' && (sessao.usuario.tipo === 'admin' || sessao.usuario.tipo === 'tecnico') && (
+          <EcossistemaView onToast={showToast} somenteLeitura={sessao.usuario.tipo !== 'admin'} />
+        )}
 
         {!sistemaAtivo && !recursoAtivo && ativo !== 'historico' && ativo !== 'config' && ativo !== 'ecossistema' && (
           <main className="flex-1 flex flex-col items-center justify-center gap-3 p-6 text-center text-stone-500 dark:text-stone-400">

@@ -47,7 +47,7 @@ export async function conferirAcessoRepo(repo_url: string, branch: string | null
 export async function abrirSessao(
   sistema: Repo,
   usuario: string,
-  outra?: { system: string; tetoCentavos: number },
+  outra?: { system: string; tetoCentavos?: number },
   /** Sistemas relacionados: abertos em /workspace/relacionados/<pasta>; o que o token não lê fica de fora (não barra a conversa) */
   relacionados: Repo[] = [],
 ) {
