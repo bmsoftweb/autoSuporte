@@ -129,17 +129,27 @@ export function rotaDesvio(a: Ponto, b: Ponto, obstaculos: Retangulo[], dirInici
     pts.push({ x: minX + (c % cols) * CELULA, y: minY + Math.floor(c / cols) * CELULA });
   }
   pts.reverse();
-  // Ponta final exata (a grade pode estar até meia célula fora): arrasta a última perna até ela
-  const k = pts.length - 1;
-  if (k >= 1 && pts[k - 1].x === pts[k].x) pts[k - 1] = { ...pts[k - 1], x: b.x };
-  else if (k >= 1) pts[k - 1] = { ...pts[k - 1], y: b.y };
-  pts[k] = { ...b };
-  return pts.filter((p, i) => {
+  const cantos = pts.filter((p, i) => {
     if (i === 0 || i === pts.length - 1) return true;
     const a0 = pts[i - 1];
     const a1 = pts[i + 1];
     return !((a0.x === p.x && p.x === a1.x) || (a0.y === p.y && p.y === a1.y));
   });
+  // Ponta final exata (a grade pode estar até meia célula fora): desloca a última perna inteira até ela,
+  // sem dente no meio da linha. Se a última perna sai do início (linha reta), não dá para deslocar: fica o dente.
+  const k = cantos.length - 1;
+  if (k >= 2) {
+    if (cantos[k - 1].x === cantos[k].x) cantos[k - 1] = { ...cantos[k - 1], x: b.x };
+    else cantos[k - 1] = { ...cantos[k - 1], y: b.y };
+  } else if (k === 1) {
+    const vertical = cantos[0].x === cantos[1].x;
+    if ((vertical && cantos[0].x !== b.x) || (!vertical && cantos[0].y !== b.y)) {
+      const meio = vertical ? (cantos[0].y + b.y) / 2 : (cantos[0].x + b.x) / 2;
+      cantos.splice(1, 0, vertical ? { x: cantos[0].x, y: meio } : { x: meio, y: cantos[0].y }, vertical ? { x: b.x, y: meio } : { x: meio, y: b.y });
+    }
+  }
+  cantos[cantos.length - 1] = { ...b };
+  return cantos;
 }
 
 /** Caminho SVG pelos pontos, com cantos levemente arredondados */

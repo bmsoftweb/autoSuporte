@@ -2,6 +2,10 @@
 
 Mais recente primeiro. PATCH a cada envio ao GitHub; MAJOR/MINOR só quando pedido.
 
+## 0.0.10 — 2026-10-04
+
+- Fluxograma: as ligações chegam retas na bolinha de destino, sem o degrau de alguns pixels perto da ponta.
+
 ## 0.0.9 — 2026-10-04
 
 - Usuários: perfil novo Técnico. O técnico recebe respostas técnicas só do banco de dados (tabelas, colunas, valores, parâmetros, SQL), sem nada do código-fonte; o administrador recebe resposta técnica completa, com arquivos e métodos; o cliente continua como estava. Nenhuma resposta cita número de linha.
