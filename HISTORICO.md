@@ -2,6 +2,10 @@
 
 Mais recente primeiro. PATCH a cada envio ao GitHub; MAJOR/MINOR só quando pedido.
 
+## 0.0.12 — 2026-10-06
+
+- Chat: a caixa da pergunta ganhou o rótulo "Sua dúvida" e moldura fina com cantos arredondados (classe `.campo-caixa`); os botões de anexar e Enviar acompanham o arredondado.
+
 ## 0.0.11 — 2026-10-06
 
 - Usuários: modelo da IA, esforço, chave da Anthropic e "Sugerir SQL" ficam em cada usuário (JSON em `usuarios.config`); saíram de Configurações › Agente de IA, que mantém só o teto por conversa e as instruções.

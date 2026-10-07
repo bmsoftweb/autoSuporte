@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AlertCircle, AlertTriangle, Bot, ImagePlus, Loader2, MessagesSquare, Network, SendHorizontal, X } from 'lucide-react';
 import { chamar, fetchMinhaConversa, mudarVisibilidade, renomearConversa, Sistema, Visibilidade } from '../api';
-import { INPUT_CLASS } from '../utils/formStyles';
 import { CompactarConversa } from './CompactarConversa';
 import { ConfirmDialog } from './ConfirmDialog';
 import { NomeConversa, VisibilidadeConversa } from './NomeConversa';
@@ -293,6 +292,9 @@ export const ChatSistema: React.FC<ChatSistemaProps> = ({ sistema, visivel, nova
               </button>
             </div>
           )}
+          <label htmlFor="chat-pergunta" className="text-[11px] font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400">
+            Sua dúvida
+          </label>
           <div className="flex gap-2">
             <input
               ref={arquivoRef}
@@ -309,11 +311,12 @@ export const ChatSistema: React.FC<ChatSistemaProps> = ({ sistema, visivel, nova
               onClick={() => arquivoRef.current?.click()}
               disabled={aguardando}
               title="Anexar um print da tela (também dá para colar com Ctrl+V)"
-              className="flex items-center justify-center px-3 rounded-lg text-stone-600 dark:text-stone-300 border border-stone-300 dark:border-stone-700 hover:bg-stone-100 dark:hover:bg-stone-800 cursor-pointer disabled:opacity-50 shrink-0"
+              className="flex items-center justify-center px-3 rounded-xl text-stone-600 dark:text-stone-300 border border-stone-300 dark:border-stone-700 hover:bg-stone-100 dark:hover:bg-stone-800 cursor-pointer disabled:opacity-50 shrink-0"
             >
               <ImagePlus className="w-4 h-4" />
             </button>
             <textarea
+              id="chat-pergunta"
               ref={perguntaRef}
               required={!imagem}
               rows={2}
@@ -336,14 +339,14 @@ export const ChatSistema: React.FC<ChatSistemaProps> = ({ sistema, visivel, nova
                   enviar();
                 }
               }}
-              className={`${INPUT_CLASS} flex-1 resize-none text-[13px]`}
+              className="campo-caixa flex-1 resize-none bg-stone-50 dark:bg-stone-950/60 px-4 py-3 text-[13px] leading-relaxed text-stone-800 dark:text-stone-100 placeholder:text-stone-400 dark:placeholder:text-stone-500 transition-colors"
             />
             <button
               type="button"
               onClick={enviar}
               disabled={aguardando}
               title="Enviar a dúvida"
-              className="flex items-center justify-center gap-2 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-default shrink-0"
+              className="flex items-center justify-center gap-2 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-default shrink-0"
             >
               {aguardando ? <Loader2 className="w-4 h-4 animate-spin" /> : <SendHorizontal className="w-4 h-4" />}
               <span className="hidden sm:inline">{aguardando ? 'Aguarde...' : 'Enviar'}</span>
