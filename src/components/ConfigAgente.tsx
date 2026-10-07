@@ -7,19 +7,14 @@ import { ConfirmDialog } from './ConfirmDialog';
 import { NumberField } from './NumberField';
 
 interface Agente {
-  modelo: string;
-  esforco: string;
   /** Dólares, ex.: 1 = US$ 1,00 */
   orcamento: number;
   instrucoes: string;
 }
-type Opcao = { value: string; label: string };
 
-/** Configurações › Agente de IA: modelo, esforço, teto por conversa, mapa do projeto e instruções */
+/** Configurações › Agente de IA: teto por conversa e instruções (modelo e esforço ficam em cada usuário) */
 export const ConfigAgente: React.FC<{ onToast: (msg: string) => void }> = ({ onToast }) => {
   const [v, setV] = useState<Agente | null>(null);
-  const [modelos, setModelos] = useState<Opcao[]>([]);
-  const [esforcos, setEsforcos] = useState<Opcao[]>([]);
   const [promptPadrao, setPromptPadrao] = useState('');
   const [salvando, setSalvando] = useState(false);
   const [restaurar, setRestaurar] = useState(false);
@@ -29,8 +24,6 @@ export const ConfigAgente: React.FC<{ onToast: (msg: string) => void }> = ({ onT
     fetchConfig<Agente>('agente', 'ia')
       .then((r) => {
         setV(r.valor);
-        setModelos(r.modelos);
-        setEsforcos(r.esforcos);
         setPromptPadrao(r.prompt_padrao);
       })
       .catch((e) => setErro(e.message));
@@ -63,36 +56,10 @@ export const ConfigAgente: React.FC<{ onToast: (msg: string) => void }> = ({ onT
 
       <p className="text-xs text-stone-600 dark:text-stone-300">
         Vale para as conversas novas. As que já estão abertas continuam com a configuração com que começaram. Para comparar o custo, veja cada
-        conversa em console.anthropic.com › Sessions.
+        conversa em console.anthropic.com › Sessions. Modelo e esforço: no cadastro de cada usuário (Cadastros › Usuários).
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className={FIELD_CLASS}>
-          <label htmlFor="ag-modelo" className={LABEL_CLASS}>
-            Modelo
-          </label>
-          <select id="ag-modelo" value={v.modelo} onChange={(e) => alterar({ modelo: e.target.value })} required className={`${campo} cursor-pointer`}>
-            {modelos.map((m) => (
-              <option key={m.value} value={m.value}>
-                {m.label}
-              </option>
-            ))}
-          </select>
-          <span className={HINT_CLASS}>O Sonnet costuma dar conta de achar a tela e explicar, pela metade do preço</span>
-        </div>
-        <div className={FIELD_CLASS}>
-          <label htmlFor="ag-esforco" className={LABEL_CLASS}>
-            Esforço
-          </label>
-          <select id="ag-esforco" value={v.esforco} onChange={(e) => alterar({ esforco: e.target.value })} required className={`${campo} cursor-pointer`}>
-            {esforcos.map((m) => (
-              <option key={m.value} value={m.value}>
-                {m.label}
-              </option>
-            ))}
-          </select>
-          <span className={HINT_CLASS}>Quanto o agente pensa e investiga a cada pergunta</span>
-        </div>
         <div className={FIELD_CLASS}>
           <label htmlFor="ag-orcamento" className={LABEL_CLASS}>
             Teto por conversa (US$)

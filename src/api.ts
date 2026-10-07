@@ -38,6 +38,17 @@ export const login = async (email: string, senha: string) => (await chamar('POST
 export const fetchSistemas = () => get<Sistema[]>('/api/sistemas');
 export const trocarMinhaSenha = (atual: string, nova: string) => chamar('POST', '/api/minha-senha', { atual, nova });
 
+/** Modelo, esforço e chave da Anthropic do próprio usuário ('' = o padrão do agente) */
+export interface MinhaIa {
+  modelo: string;
+  esforco: string;
+  tem_chave: boolean;
+  modelos: { value: string; label: string }[];
+  esforcos: { value: string; label: string }[];
+}
+export const fetchMinhaIa = () => get<MinhaIa>('/api/minha-ia');
+export const salvarMinhaIa = (v: { modelo: string; esforco: string; chave: string }) => chamar('PUT', '/api/minha-ia', v);
+
 /** Conversa do próprio usuário, para reabrir no chat (a lista "Minhas conversas" é a grade do recurso minhas_conversas) */
 export const fetchMinhaConversa = (sessao: string) =>
   get<{

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Boxes, ChevronDown, ChevronLeft, ChevronRight, Headset, History, KeyRound, Network, LockKeyhole, LogOut, MessageSquareText, MessagesSquare, Settings, User, Wallet, X, type LucideIcon } from 'lucide-react';
-import { Creditos, fetchCreditos, Sistema, trocarMinhaSenha } from '../api';
-import { FIELD_CLASS, INPUT_CLASS, LABEL_CLASS } from '../utils/formStyles';
+import { Boxes, ChevronDown, CircleHelp, ChevronLeft, ChevronRight, Headset, History, KeyRound, Network, LockKeyhole, LogOut, MessageSquareText, MessagesSquare, Settings, User, Wallet, X, type LucideIcon } from 'lucide-react';
+import { Creditos, fetchCreditos, fetchMinhaIa, MinhaIa, salvarMinhaIa, Sistema, trocarMinhaSenha } from '../api';
+import { FIELD_CLASS, HINT_CLASS, INPUT_CLASS, LABEL_CLASS } from '../utils/formStyles';
 import { Usuario } from '../utils/session';
 import { EVENTO_CREDITOS } from './ConfigCreditos';
 import { ConfirmDialog } from './ConfirmDialog';
@@ -197,7 +197,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ sistemas, ativo, onAbrir, usua
         <div className={`flex ${rec ? 'flex-col' : ''} items-center gap-1 shrink-0`}>
           <button
             onClick={() => setTrocandoSenha(true)}
-            title={senhaOk ? 'Senha alterada' : 'Alterar a minha senha'}
+            title={senhaOk ? 'Alterações gravadas' : 'Minha senha e IA (modelo, esforço e chave da Anthropic)'}
             className={`p-1.5 rounded-lg transition-colors cursor-pointer shrink-0 ${
               senhaOk ? 'text-emerald-600' : 'text-stone-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:text-blue-400 dark:hover:bg-blue-950/50'
             }`}
@@ -309,9 +309,19 @@ const SaldoCreditos: React.FC<{ rec: boolean; onAbrir: () => void }> = ({ rec, o
   );
 };
 
-/** Troca da própria senha: atual + nova duas vezes (mínimo de 4) */
+/** Senha (opcional: só troca se preencher) e IA do próprio usuário: modelo, esforço e chave da Anthropic */
 const TrocarSenha: React.FC<{ onFechar: () => void; onFeito: () => void }> = ({ onFechar, onFeito }) => {
   const [v, setV] = useState({ atual: '', nova: '', repetir: '' });
+  const [ia, setIa] = useState<MinhaIa | null>(null);
+  const [chave, setChave] = useState('');
+  const [ajuda, setAjuda] = useState(false);
+
+  useEffect(() => {
+    fetchMinhaIa()
+      .then(setIa)
+      .catch(() => setIa(null));
+  }, []);
+
   const campo = (k: 'atual' | 'nova' | 'repetir', rotulo: string, primeiro = false) => (
     <div className={FIELD_CLASS}>
       <label htmlFor={`senha-${k}`} className={LABEL_CLASS}>
@@ -320,7 +330,6 @@ const TrocarSenha: React.FC<{ onFechar: () => void; onFeito: () => void }> = ({ 
       <input
         id={`senha-${k}`}
         type="password"
-        required
         autoFocus={primeiro}
         autoComplete={k === 'atual' ? 'current-password' : 'new-password'}
         value={v[k]}
@@ -330,25 +339,163 @@ const TrocarSenha: React.FC<{ onFechar: () => void; onFeito: () => void }> = ({ 
       />
     </div>
   );
+  const combo = (k: 'modelo' | 'esforco', rotulo: string, opcoes: MinhaIa['modelos'], dica: string) => (
+    <div className={FIELD_CLASS}>
+      <label htmlFor={`ia-${k}`} className={LABEL_CLASS}>
+        {rotulo}
+      </label>
+      <select id={`ia-${k}`} value={ia![k]} onChange={(e) => setIa({ ...ia!, [k]: e.target.value })} className={`${INPUT_CLASS} w-full cursor-pointer`}>
+        <option value="">— Padrão do agente —</option>
+        {opcoes.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+      <span className={HINT_CLASS}>{dica}</span>
+    </div>
+  );
+  const secao = 'text-[11px] font-bold uppercase tracking-wider text-stone-400';
+
   return (
     <ConfirmDialog
-      titulo="Alterar a minha senha"
-      mensagem="Informe a senha atual e a nova (pelo menos 4 caracteres)."
-      confirmar="Alterar senha"
+      titulo="Minha senha e IA"
+      mensagem="Para trocar a senha, informe a atual e a nova (pelo menos 4 caracteres); em branco, a senha não muda."
+      confirmar="Salvar"
       tom="normal"
+      larga
       onConfirmar={async () => {
-        if (v.nova.length < 4) throw new Error('A nova senha precisa ter pelo menos 4 caracteres.');
-        if (v.nova !== v.repetir) throw new Error('A confirmação não é igual à nova senha.');
-        await trocarMinhaSenha(v.atual, v.nova);
+        if (v.atual || v.nova || v.repetir) {
+          if (v.nova.length < 4) throw new Error('A nova senha precisa ter pelo menos 4 caracteres.');
+          if (v.nova !== v.repetir) throw new Error('A confirmação não é igual à nova senha.');
+          await trocarMinhaSenha(v.atual, v.nova);
+        }
+        if (ia) await salvarMinhaIa({ modelo: ia.modelo, esforco: ia.esforco, chave });
         onFeito();
       }}
       onCancelar={onFechar}
     >
       <div className="flex flex-col gap-3">
+        <span className={secao}>Senha</span>
         {campo('atual', 'Senha atual', true)}
-        {campo('nova', 'Nova senha')}
-        {campo('repetir', 'Repita a nova senha')}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {campo('nova', 'Nova senha')}
+          {campo('repetir', 'Repita a nova senha')}
+        </div>
+        {ia && (
+          <>
+            <span className={`${secao} mt-2`}>Inteligência artificial</span>
+            {combo('modelo', 'Modelo', ia.modelos, 'O Sonnet costuma dar conta de achar a tela e explicar, pela metade do preço')}
+            {combo('esforco', 'Esforço', ia.esforcos, 'Quanto o agente pensa e investiga a cada pergunta (só vale com o modelo escolhido)')}
+            <div className={FIELD_CLASS}>
+              <div className="flex items-center gap-2">
+                <label htmlFor="ia-chave" className={LABEL_CLASS}>
+                  Chave da Anthropic
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setAjuda(true)}
+                  title="Como gerar a chave da Anthropic"
+                  className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-semibold text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/50 cursor-pointer"
+                >
+                  <CircleHelp className="w-3.5 h-3.5" />
+                  Como gerar a chave
+                </button>
+              </div>
+              <input
+                id="ia-chave"
+                type="password"
+                autoComplete="off"
+                value={chave}
+                placeholder={ia.tem_chave ? '******** (gravada)' : 'Obrigatória para usar a IA: cole a sua chave sk-ant-...'}
+                onChange={(e) => setChave(e.target.value)}
+                onFocus={(e) => e.target.select()}
+                className={`${INPUT_CLASS} w-full`}
+              />
+              <span className={HINT_CLASS}>Começa com sk-ant-. As suas conversas passam a ser cobradas na sua conta da Anthropic. Em branco mantém a atual</span>
+            </div>
+          </>
+        )}
       </div>
+      {ajuda && <AjudaChave onFechar={() => setAjuda(false)} />}
     </ConfirmDialog>
+  );
+};
+
+const PASSOS_CHAVE: [string, React.ReactNode][] = [
+  ['Crie a sua conta', <>Acesse <b>console.anthropic.com</b> e crie uma conta (ou entre na sua, se já tiver).</>],
+  ['Coloque créditos', <>Em <b>Settings › Billing</b>, cadastre o cartão e compre créditos. As conversas são cobradas nesse saldo; sem saldo, elas param.</>],
+  ['Abra as chaves', <>No menu, vá em <b>Settings › API keys</b>.</>],
+  ['Crie a chave', <>Clique em <b>Create Key</b> e dê um nome, por exemplo <i>autosuporte</i>.</>],
+  ['Copie na hora', <>A chave começa com <b>sk-ant-</b> e só aparece completa uma vez. Se perder, apague e crie outra.</>],
+  [
+    'Cole aqui',
+    <>
+      Cole a chave no campo <b>Chave da Anthropic</b> e clique em <b>Salvar</b>. Na primeira conversa, o autoSuporte prepara o agente na sua conta (leva alguns
+      segundos a mais).
+    </>,
+  ],
+];
+
+/** Passo a passo para gerar a chave da API (botão "Como gerar a chave" do campo); fica por cima do diálogo da senha */
+const AjudaChave: React.FC<{ onFechar: () => void }> = ({ onFechar }) => {
+  useEffect(() => {
+    const tecla = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      e.stopPropagation();
+      onFechar();
+    };
+    window.addEventListener('keydown', tecla, true);
+    return () => window.removeEventListener('keydown', tecla, true);
+  }, [onFechar]);
+
+  return (
+    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-stone-950/60" onClick={onFechar} aria-hidden="true" />
+      <div role="dialog" aria-modal="true" className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl shadow-2xl p-5">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border bg-blue-50 dark:bg-blue-950/50 border-blue-200 dark:border-blue-900">
+            <KeyRound className="w-5 h-5 text-blue-600" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h3 className="text-base font-bold text-stone-900 dark:text-stone-100">Como gerar a chave da Anthropic</h3>
+            <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">Passo a passo no Console da Anthropic.</p>
+          </div>
+          <button type="button" onClick={onFechar} title="Fechar" className="p-1 rounded-lg text-stone-400 hover:text-stone-600 hover:bg-stone-100 dark:hover:bg-stone-800 cursor-pointer">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="mt-4 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/40 border-l-2 border-amber-500 text-xs text-stone-700 dark:text-stone-300">
+          <b>Com a sua chave, as suas conversas são cobradas na sua conta da Anthropic</b>, direto no seu cartão. Acompanhe o gasto em <b>Usage</b>, no Console.
+        </div>
+
+        <ol className="mt-4 flex flex-col gap-3">
+          {PASSOS_CHAVE.map(([titulo, texto], i) => (
+            <li key={titulo} className="flex gap-3">
+              <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center shrink-0">{i + 1}</span>
+              <div className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed">
+                <div className="font-semibold text-stone-900 dark:text-stone-100">{titulo}</div>
+                {texto}
+              </div>
+            </li>
+          ))}
+        </ol>
+
+        <p className="mt-4 text-[11px] text-stone-500 dark:text-stone-400">
+          Chave vazou? Apague no Console na hora e crie outra. Nunca envie a chave por e-mail ou mensagem.
+        </p>
+
+        <div className="mt-5 flex justify-end">
+          <button
+            type="button"
+            onClick={onFechar}
+            className="px-4 py-2.5 rounded-lg text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 cursor-pointer"
+          >
+            Entendi
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };

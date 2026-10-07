@@ -1,14 +1,15 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import express, { NextFunction, Request, Response } from 'express';
-import { abrirSessao, compactarConversa, Imagem, perguntar, Repo } from './agente.js';
+import { abrirSessao, compactarConversa, conferirSessao, iaDoUsuario, Imagem, perguntar, prepararContaUsuario, Repo } from './agente.js';
 import { createConfigRouter } from './config.js';
 import { createCreditosRouter } from './creditos.js';
 import { createEcossistemaRouter } from './ecossistema.js';
-import { createCrudRouter } from './crud.js';
+import { createCrudRouter, gravarConfigUsuario } from './crud.js';
 import { pool } from './db.js';
 import { PROMPT_ADMIN, PROMPT_TECNICO } from './prompt.js';
-import { decifrar } from './segredo.js';
+import { ESFORCOS, MODELOS } from './schema.js';
+import { cifrar, decifrar } from './segredo.js';
 
 // ==========================================================
 // Sessão: token "usuarioId.expiracao.assinatura" (HMAC-SHA256), igual ao crmWeb
@@ -67,7 +68,7 @@ export function createApp() {
     const usuarioId = lerToken(String(req.header('authorization') || '').replace(/^Bearer\s+/i, ''));
     if (!usuarioId) return res.status(401).json({ error: 'Sessão expirada. Entre novamente.' });
     try {
-      const [rows] = await pool.query<any[]>('SELECT id, nome, tipo, senha_hash FROM usuarios WHERE id = ? AND ativo = 1', [usuarioId]);
+      const [rows] = await pool.query<any[]>('SELECT id, nome, tipo, senha_hash, config FROM usuarios WHERE id = ? AND ativo = 1', [usuarioId]);
       if (!rows.length) return res.status(401).json({ error: 'Seu acesso foi desativado.' });
       res.locals.usuario = rows[0];
       next();
@@ -87,6 +88,48 @@ export function createApp() {
       res.json({ success: true });
     } catch (err: any) {
       res.status(500).json({ error: err.message });
+    }
+  });
+
+  /**
+   * Cada usuário paga as próprias conversas: sem chave da Anthropic, não usa a IA.
+   * Só o administrador usa a conta principal (ANTHROPIC_API_KEY) quando não tem chave.
+   */
+  const SEM_CHAVE =
+    'Você ainda não cadastrou a sua chave da Anthropic. Clique no cadeado ao lado do seu nome, no menu (Minha senha e IA), e cadastre a chave; o botão "Como gerar a chave" mostra o passo a passo.';
+  const semChave = (u: any) => {
+    if (u.tipo === 'admin') return false;
+    try {
+      return !JSON.parse(u.config || '{}')?.anthropic_key;
+    } catch {
+      return true;
+    }
+  };
+
+  /** Modelo, esforço e chave da Anthropic do próprio usuário (mesmo diálogo da senha); a chave nunca volta ao navegador */
+  app.get('/api/minha-ia', (_req: Request, res: Response) => {
+    let c: any = {};
+    try {
+      c = JSON.parse(res.locals.usuario.config || '{}') || {};
+    } catch {
+      // conteúdo inválido no banco: sem configuração
+    }
+    res.json({ modelo: c.modelo || '', esforco: c.esforco || '', tem_chave: Boolean(c.anthropic_key), modelos: MODELOS, esforcos: ESFORCOS });
+  });
+
+  app.put('/api/minha-ia', async (req: Request, res: Response) => {
+    try {
+      const modelo = String(req.body?.modelo || '');
+      const esforco = String(req.body?.esforco || '');
+      if (modelo && !MODELOS.some((m) => m.value === modelo)) throw new Error('Modelo inválido.');
+      if (esforco && !ESFORCOS.some((e) => e.value === esforco)) throw new Error('Esforço inválido.');
+      const chave = String(req.body?.chave || '').trim();
+      if (chave && !chave.startsWith('sk-ant-')) throw new Error('A chave da Anthropic começa com "sk-ant-".');
+      // Chave em branco mantém a atual
+      await gravarConfigUsuario(res.locals.usuario.id, { modelo, esforco, ...(chave ? { anthropic_key: cifrar(chave) } : {}) });
+      res.json({ success: true });
+    } catch (err: any) {
+      res.status(400).json({ error: err.message });
     }
   });
 
@@ -203,6 +246,7 @@ export function createApp() {
 
   /** Botão "Compactar": a IA resume a conversa em uma pergunta e uma resposta (FAQ). Só devolve; quem grava é o PUT acima */
   app.post('/api/minhas-conversas/:sessao/compactar', async (req: Request, res: Response) => {
+    if (semChave(res.locals.usuario)) return res.status(400).json({ error: SEM_CHAVE });
     try {
       const sessao = String(req.params.sessao);
       if ((await donoDaConversa(sessao, res.locals.usuario)) === null) return res.status(404).json({ error: 'Conversa não encontrada.' });
@@ -211,7 +255,7 @@ export function createApp() {
           WHERE p.sessao_id = ? ORDER BY p.id`,
         [sessao],
       );
-      res.json(await compactarConversa(rows[0].sistema ?? '', rows));
+      res.json(await compactarConversa(rows[0].sistema ?? '', rows, iaDoUsuario(res.locals.usuario.config)));
     } catch (err: any) {
       console.error('Falha ao compactar a conversa:', err);
       res.status(503).json({ error: 'Não foi possível compactar a conversa agora. Tente novamente.' });
@@ -230,6 +274,7 @@ export function createApp() {
     const img = req.body?.imagem;
     const imagem: Imagem | null = img ? { tipo: img.tipo, base64: String(img.base64 || '') } : null;
 
+    if (semChave(usuario)) return res.status(400).json({ error: SEM_CHAVE });
     if (!pergunta && !imagem) return res.status(400).json({ error: 'Digite a dúvida ou cole um print da tela.' });
     if (imagem && (!TIPOS_IMAGEM.includes(imagem.tipo) || !imagem.base64 || imagem.base64.length > MAX_IMAGEM_BASE64)) {
       return res.status(400).json({ error: 'Imagem inválida ou grande demais.' });
@@ -254,6 +299,7 @@ export function createApp() {
       }
 
       const nova = !sessaoId;
+      if (!nova) await conferirSessao(sessaoId, iaDoUsuario(usuario.config).chave);
       const comToken = (s: any) => ({ ...s, github_token: s.github_token ? decifrar(s.github_token, `Cadastros › Sistemas › ${s.nome}`) : null });
       let relacionados: (Repo & { pasta: string })[] = [];
       let fora: { nome: string; motivo: string }[] = [];
@@ -265,12 +311,17 @@ export function createApp() {
             WHERE r.sistema_id = ? ORDER BY s.nome`,
           [sistemaId],
         );
+        // Chave própria: agente e ambiente na conta do usuário (criados na primeira conversa)
+        const ia = await prepararContaUsuario(iaDoUsuario(usuario.config), (ids) => gravarConfigUsuario(usuario.id, ids));
+        // Técnico (só banco de dados) e administrador (com o código): instruções próprias; o cliente usa as do agente (Configurações › Agente de IA)
+        const proprias = usuario.tipo === 'tecnico' ? PROMPT_TECNICO : usuario.tipo === 'admin' ? PROMPT_ADMIN : null;
+        const semSql = '\n\nNão escreva consultas SQL na resposta, mesmo que peçam: cite as tabelas e colunas e explique em palavras o que conferir.';
         const sessao = await abrirSessao(
           comToken(sis[0]),
           usuario.nome,
-          // Técnico (só banco de dados) e administrador (com o código): instruções próprias; o cliente usa as do agente (Configurações › Agente de IA)
-          usuario.tipo === 'tecnico' ? { system: PROMPT_TECNICO } : usuario.tipo === 'admin' ? { system: PROMPT_ADMIN } : undefined,
+          proprias ? { system: proprias + (ia.sugerirSql ? '' : semSql) } : undefined,
           rel.map(comToken),
+          ia,
         );
         sessaoId = sessao.id;
         relacionados = sessao.relacionados;
@@ -303,7 +354,7 @@ export function createApp() {
       const texto = abertura + (pergunta || 'Veja o print da tela e me ajude.');
       let resposta = '';
       try {
-        resposta = await perguntar(sessaoId, texto, imagem, (t) => res.write(t));
+        resposta = await perguntar(sessaoId, texto, imagem, (t) => res.write(t), undefined, iaDoUsuario(usuario.config).chave);
       } catch (err: any) {
         console.error('Falha ao consultar o agente:', err);
         res.write('\n\n(Não consegui concluir a análise agora. Tente novamente em instantes.)');

@@ -2,6 +2,14 @@
 
 Mais recente primeiro. PATCH a cada envio ao GitHub; MAJOR/MINOR só quando pedido.
 
+## 0.0.11 — 2026-10-06
+
+- Usuários: modelo da IA, esforço, chave da Anthropic e "Sugerir SQL" ficam em cada usuário (JSON em `usuarios.config`); saíram de Configurações › Agente de IA, que mantém só o teto por conversa e as instruções.
+- Conta própria: cada usuário usa a própria conta da Anthropic e paga as próprias conversas. Na primeira conversa com a chave, o agente e o ambiente são criados na conta dele; trocar a chave recria. Usuário sem chave não usa a IA (aviso no chat); só o administrador usa a conta principal sem chave.
+- Conversa aberta com outra chave: mensagem pedindo para abrir uma conversa nova.
+- Menu: o cadeado abre "Minha senha e IA" (senha opcional, modelo, esforço e chave), com o passo a passo "Como gerar a chave"; PDF do passo a passo em docs/chave-api-anthropic.pdf.
+- Respostas do administrador sem caminhos de arquivo, variáveis, funções ou trechos de código; "Sugerir SQL" desligado tira as consultas SQL das respostas de técnico e administrador.
+
 ## 0.0.10 — 2026-10-04
 
 - Fluxograma: as ligações chegam retas na bolinha de destino, sem o degrau de alguns pixels perto da ponta.

@@ -77,6 +77,20 @@ export const PERFIS = [
   { value: 'admin', label: 'Administrador' },
 ];
 
+/** Modelos oferecidos (só os que aceitam o ajuste de esforço) */
+export const MODELOS = [
+  { value: 'claude-opus-5-5', label: 'Claude Opus 5.5 — respostas melhores (US$ 4 / 20 por milhão de tokens)' },
+  { value: 'claude-sonnet-5-5', label: 'Claude Sonnet 5.5 — metade do custo (US$ 2 / 10 por milhão de tokens)' },
+];
+export const ESFORCOS = [
+  { value: 'low', label: 'Baixo — menos buscas e raciocínio, mais barato' },
+  { value: 'medium', label: 'Médio — equilíbrio' },
+  { value: 'high', label: 'Alto — investiga mais, mais caro' },
+];
+/** Chaves de usuarios.config (JSON) editadas no cadastro como campos comuns */
+export const CONFIG_USUARIO = ['modelo', 'esforco', 'anthropic_key', 'sugerir_sql'];
+const doConfig = (chave: string) => `IF(JSON_VALID(t.config), JSON_UNQUOTE(JSON_EXTRACT(t.config, '$.${chave}')), NULL)`;
+
 /** Conversa privada (padrão) ou pública: a pública poderá ser liberada aos usuários finais */
 export const VISIBILIDADES = [
   { value: 'privado', label: 'Privada' },
@@ -175,6 +189,43 @@ export const RESOURCES: ResourceDef[] = [
         hint: 'Administrador mantém os cadastros; cliente e técnico só tiram dúvidas. Técnico recebe respostas técnicas só do banco (tabelas, colunas, SQL); administrador também vê arquivos e código',
       },
       { name: 'ativo', label: 'Ativo', type: 'boolean', listed: true, filterable: true },
+      {
+        name: 'modelo',
+        label: 'Modelo da IA',
+        type: 'enum',
+        options: MODELOS,
+        default: 'claude-sonnet-5-5',
+        sql: doConfig('modelo'),
+        hint: 'O Sonnet costuma dar conta de achar a tela e explicar, pela metade do preço. Em branco: o modelo padrão do agente',
+      },
+      {
+        name: 'esforco',
+        label: 'Esforço',
+        type: 'enum',
+        options: ESFORCOS,
+        default: 'medium',
+        sql: doConfig('esforco'),
+        hint: 'Quanto o agente pensa e investiga a cada pergunta (só vale com o modelo preenchido)',
+      },
+      {
+        name: 'sugerir_sql',
+        label: 'Sugerir SQL',
+        type: 'boolean',
+        default: true,
+        // Sem valor gravado: ligado (como era antes do campo existir)
+        sql: `COALESCE(IF(JSON_VALID(t.config), CAST(JSON_EXTRACT(t.config, '$.sugerir_sql') AS UNSIGNED), NULL), 1)`,
+        hint: 'Técnico e administrador: as respostas trazem consultas SQL para conferir ou corrigir dados. Desligado: só tabelas e colunas',
+      },
+      {
+        name: 'anthropic_key',
+        label: 'Chave da Anthropic',
+        type: 'password',
+        cifrado: true,
+        maxLength: 255,
+        placeholder: 'Obrigatória para usar a IA (só o administrador usa a conta principal sem chave)',
+        sql: doConfig('anthropic_key'),
+        hint: 'Chave da API (sk-ant-...) da conta do próprio usuário na Anthropic: as conversas dele são cobradas lá (o agente é criado nessa conta na primeira conversa). Gravada cifrada; na alteração, em branco mantém a atual',
+      },
     ],
   },
   {

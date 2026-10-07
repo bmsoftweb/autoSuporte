@@ -49,20 +49,8 @@ function prepararCreditos(v: any): ConfigCreditos {
   return { saldo, data, alerta, desde };
 }
 
-/** Modelos oferecidos (só os que aceitam o ajuste de esforço) */
-export const MODELOS = [
-  { value: 'claude-opus-5-5', label: 'Claude Opus 5.5 — respostas melhores (US$ 4 / 20 por milhão de tokens)' },
-  { value: 'claude-sonnet-5-5', label: 'Claude Sonnet 5.5 — metade do custo (US$ 2 / 10 por milhão de tokens)' },
-];
-export const ESFORCOS = [
-  { value: 'low', label: 'Baixo — menos buscas e raciocínio, mais barato' },
-  { value: 'medium', label: 'Médio — equilíbrio' },
-  { value: 'high', label: 'Alto — investiga mais, mais caro' },
-];
-
+/** Modelo e esforço ficam em cada usuário (Cadastros › Usuários, usuarios.config) */
 export interface ConfigAgente {
-  modelo: string;
-  esforco: 'low' | 'medium' | 'high';
   /** Teto de gasto por conversa, em dólares (ex.: 1.00) */
   orcamento: number;
   instrucoes: string;
@@ -70,8 +58,6 @@ export interface ConfigAgente {
 
 /** Valores de quem ainda não salvou a configuração: os mesmos com que o agente foi criado */
 const PADRAO_AGENTE: ConfigAgente = {
-  modelo: 'claude-opus-5-5',
-  esforco: 'medium',
   orcamento: (Number(process.env.ORCAMENTO_CENTAVOS) || 100) / 100,
   instrucoes: PROMPT_PADRAO,
 };
@@ -110,29 +96,25 @@ export async function lerConfig(grupo: string, chave: string): Promise<any> {
 /** Configuração do agente, com os padrões no que ainda não foi salvo */
 export async function lerConfigAgente(): Promise<ConfigAgente> {
   // ler_mapa: interruptor antigo (o mapa agora é campo do cadastro de Sistemas); não volta para a tela
-  const { ler_mapa: _antigo, ...gravado } = (await lerConfig('agente', 'ia')) || {};
+  // modelo/esforco: antigos daqui, agora em cada usuário
+  const { ler_mapa: _antigo, modelo: _m, esforco: _e, ...gravado } = (await lerConfig('agente', 'ia')) || {};
   return { ...PADRAO_AGENTE, ...gravado };
 }
 
 /** Valida o que veio da tela; erro com mensagem para o administrador */
 function prepararAgente(v: any): ConfigAgente {
-  const modelo = String(v?.modelo || '');
-  if (!MODELOS.some((m) => m.value === modelo)) throw new Error('Modelo inválido.');
-  const esforco = String(v?.esforco || '');
-  if (!ESFORCOS.some((e) => e.value === esforco)) throw new Error('Esforço inválido.');
   const orcamento = Math.round(Number(v?.orcamento) * 100) / 100;
   if (!Number.isFinite(orcamento) || orcamento < 0.1 || orcamento > 50) throw new Error('Teto por conversa: entre US$ 0,10 e US$ 50,00.');
   const instrucoes = String(v?.instrucoes || '').trim();
   if (instrucoes.length < 20) throw new Error('Instruções do agente: escreva as instruções (ou use "Restaurar padrão").');
   if (instrucoes.length > 50_000) throw new Error('Instruções do agente: texto grande demais.');
-  return { modelo, esforco: esforco as ConfigAgente['esforco'], orcamento, instrucoes };
+  return { orcamento, instrucoes };
 }
 
-/** Leva modelo, esforço e instruções para o agente na Anthropic (as conversas novas usam a versão nova) */
+/** Leva as instruções para o agente na Anthropic (as conversas novas usam a versão nova) */
 async function aplicarNoAgente(cfg: ConfigAgente) {
   const client = new Anthropic();
   await client.beta.agents.update(process.env.AGENT_ID!, {
-    model: { id: cfg.modelo, effort: cfg.esforco },
     system: cfg.instrucoes,
   });
 }
@@ -146,7 +128,7 @@ export function createConfigRouter(): Router {
       const { grupo, chave } = req.params;
       validar(grupo, chave);
       if (grupo === 'agente') {
-        return res.json({ valor: await lerConfigAgente(), modelos: MODELOS, esforcos: ESFORCOS, prompt_padrao: PROMPT_PADRAO });
+        return res.json({ valor: await lerConfigAgente(), prompt_padrao: PROMPT_PADRAO });
       }
       res.json({ valor: await lerConfig(grupo, chave) });
     } catch (err: any) {

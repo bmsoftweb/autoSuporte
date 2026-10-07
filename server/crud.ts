@@ -4,7 +4,7 @@ import { abrirSessao, perguntar } from './agente.js';
 import { pool } from './db.js';
 import { PROMPT_MAPA } from './prompt.js';
 import { cifrar, decifrar } from './segredo.js';
-import { FieldDef, ResourceDef, RESOURCES, getResource, writableFields, columnNames, colunaSql } from './schema.js';
+import { CONFIG_USUARIO, FieldDef, ResourceDef, RESOURCES, getResource, writableFields, columnNames, colunaSql } from './schema.js';
 
 /** Teto de gasto da montagem do mapa: percorrer o repositório custa mais que uma pergunta */
 const TETO_MAPA_CENTAVOS = 500; // ponytail: fixo em US$ 5; virar configuração se precisar ajustar
@@ -120,6 +120,39 @@ async function gravarLigados(resource: ResourceDef, donoId: string, ids: number[
   } finally {
     conn.release();
   }
+}
+
+/** Tira do payload os campos guardados em usuarios.config (JSON); null = nenhum veio */
+function separarConfig(resource: ResourceDef, payload: Record<string, any>): Record<string, any> | null {
+  if (resource.name !== 'usuarios') return null;
+  const cfg: Record<string, any> = {};
+  for (const k of CONFIG_USUARIO) {
+    if (!(k in payload)) continue;
+    cfg[k] = payload[k];
+    delete payload[k];
+  }
+  return Object.keys(cfg).length ? cfg : null;
+}
+
+/** Junta os valores ao JSON de usuarios.config (as outras chaves ficam); vazio apaga a chave */
+export async function gravarConfigUsuario(id: string, valores: Record<string, any>) {
+  const [rows] = await pool.query<any[]>('SELECT config FROM usuarios WHERE id = ?', [id]);
+  let cfg: Record<string, any> = {};
+  try {
+    cfg = JSON.parse(rows[0]?.config || '{}') || {};
+  } catch {
+    // conteúdo inválido no banco: recomeça
+  }
+  for (const [k, v] of Object.entries(valores)) {
+    if (v === null || v === '') delete cfg[k];
+    else cfg[k] = v;
+  }
+  // Chave nova pode ser de outra conta: o agente e o ambiente são recriados nela na próxima conversa
+  if ('anthropic_key' in valores) {
+    delete cfg.agent_id;
+    delete cfg.environment_id;
+  }
+  await pool.query('UPDATE usuarios SET config = ? WHERE id = ?', [JSON.stringify(cfg), id]);
 }
 
 /** Traduz erros do MySQL para mensagens legíveis */
@@ -395,6 +428,7 @@ export function createCrudRouter() {
       const payload = buildWritePayload(resource, req.body || {}, false);
       validateRequired(resource, payload, false);
       antesDeGravar(resource, payload, false);
+      const config = separarConfig(resource, payload);
       const ligados = ligadosDoCorpo(resource, req.body);
 
       const cols = Object.keys(payload);
@@ -403,6 +437,7 @@ export function createCrudRouter() {
         cols.map((c) => payload[c]),
       );
       const newId = String(result.insertId);
+      if (config) await gravarConfigUsuario(newId, config);
       if (ligados) await gravarLigados(resource, newId, ligados);
       res.json({ success: true, id: newId });
     } catch (err: any) {
@@ -428,10 +463,11 @@ export function createCrudRouter() {
           throw new Error('Você não pode tirar o seu próprio perfil de administrador nem se desativar.');
         }
       }
+      const config = separarConfig(resource, payload);
       const ligados = ligadosDoCorpo(resource, req.body);
 
       const cols = Object.keys(payload);
-      if (!cols.length && !ligados) return res.status(400).json({ error: 'Nenhuma alteração foi informada.' });
+      if (!cols.length && !ligados && !config) return res.status(400).json({ error: 'Nenhuma alteração foi informada.' });
       if (cols.length) {
         const [result] = await pool.query<any>(
           `UPDATE ${resource.table} t SET ${cols.map((c) => `t.${c} = ?`).join(', ')} WHERE t.${pkCol(resource)} = ?`,
@@ -439,6 +475,7 @@ export function createCrudRouter() {
         );
         if (result.affectedRows === 0) return res.status(404).json({ error: `${resource.labelSingular} não encontrado.` });
       }
+      if (config) await gravarConfigUsuario(req.params.id, config);
       if (ligados) await gravarLigados(resource, req.params.id, ligados);
       res.json({ success: true });
     } catch (err: any) {
