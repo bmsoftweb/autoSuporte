@@ -2,6 +2,10 @@
 
 Mais recente primeiro. PATCH a cada envio ao GitHub; MAJOR/MINOR só quando pedido.
 
+## 0.0.13 — 2026-10-06
+
+- Menu: o grupo do sistema aberto também recolhe ao clicar (antes ficava sempre aberto).
+
 ## 0.0.12 — 2026-10-06
 
 - Chat: a caixa da pergunta ganhou o rótulo "Sua dúvida" e moldura fina com cantos arredondados (classe `.campo-caixa`); os botões de anexar e Enviar acompanham o arredondado.

@@ -137,8 +137,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ sistemas, ativo, onAbrir, usua
               {semGrupo.map((s) => botao(`chat:${s.id}`, s.nome, MessagesSquare, rec))}
               {grupos.map((g) => {
                 const doGrupo = sistemas.filter((s) => s.grupo === g);
-                // O grupo do sistema aberto fica sempre visível
-                const aberto = !fechados.includes(g) || doGrupo.some((s) => ativo === `chat:${s.id}`);
+                const aberto = !fechados.includes(g);
                 return (
                   <div key={g}>
                     <button
